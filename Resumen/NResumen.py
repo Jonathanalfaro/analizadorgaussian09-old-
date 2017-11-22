@@ -10,13 +10,14 @@ class NResumen:
         for linea in contenidoLog:
             l = linea.replace('\r','')
             contenido.append(l)
+
         return contenido
 
 
     @staticmethod
     def hazResumen(contenidoLog):
         resumen = []
-        palabras = ['normal','multiplicity','freq','pressure', 'imaginary fre']
+        palabras = ['normal','multiplicity','freq','pressure', 'imaginary frequencies']
         for palabra in palabras:
             r = NResumen.buscaPalabra(palabra,contenidoLog)
             if r == -1:
