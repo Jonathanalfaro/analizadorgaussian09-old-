@@ -53,22 +53,19 @@ class NResumen:
     def obtenFrequenciasNegativas(contenido,posicioninicio):
         fneg = []
         expreg = re.compile(r'(Frequencies){1}\s+(-){2}\s+-?')
-        for i in range(posicioninicio,posicioninicio+100):
-            linea = contenido[posicioninicio]
-            fneg.append(str(i))
+        for i in range(posicioninicio+1,posicioninicio+100):
+            linea = contenido[i]
             if expreg.search(linea) != None:
-                fneg.append(linea)
                 aux = linea.split()
-                for elemento in linea:
+                for elemento in aux:
                     try:
                         f = float(elemento)
-                        f.append(f)
+
                         if f < 0.0:
-                            fneg.append(f)
+                            fneg.append(str(f))
                         else:
                             return fneg
                     except:
                         pass
-            else:
-                pass
-            return fneg
+
+        return fneg

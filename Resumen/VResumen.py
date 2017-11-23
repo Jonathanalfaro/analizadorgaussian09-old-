@@ -20,6 +20,7 @@ class VResumen:
         self.padactivo = 1
 
         self.tamypad1 = min(len(self.contenidoPad1),32700)
+        self.tamypad2 = self.tamypad1
         self.pad1 = curses.newpad(self.tamypad1 + 1, 1000)
         self.pad2 = curses.newpad(self.tamypad1 + 1, 1000)
         self.contenidoPad2 = NResumen.hazResumen(self.contenidoPad1)
