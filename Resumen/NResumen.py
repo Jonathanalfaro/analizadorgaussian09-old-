@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import re
 from DResumen import DResumen
 
@@ -18,13 +20,30 @@ class NResumen:
     def hazResumen(contenidoLog):
         r = 0
         resumen = []
-        palabras = ['normal','multiplicity','freq','pressure']
-        for palabra in palabras:
-            r = NResumen.buscaPalabra(palabra,contenidoLog)
-            if r == -1:
-                resumen.append('Error')
+        r = NResumen.buscaPalabra(' #',contenidoLog)
+        resumen.append('Comando inicial: ' + contenidoLog[r])
+        r = NResumen.buscaPalabra('termination',contenidoLog)
+        if r == -1:
+            resumen.append('Error, no se encontraron datos de la terminación')
+        else:
+            if 'Normal' in contenidoLog[r]:
+                resumen.append('Terminación normal')
             else:
-                resumen.append(contenidoLog[r])
+                resumen.append(('Terminación erronea'))
+
+        r = NResumen.buscaPalabra('multiplicity',contenidoLog)
+        if r ==-1:
+            resumen.append('Error, no hay datos de carga y multiplicidad en el archivo')
+        else:
+            aux = contenidoLog[r].split()
+            resumen.append('Carga: '+ aux[2] + ' Multiplicidad: ' + aux[5])
+
+        r = NResumen.buscaPalabra('pressure',contenidoLog)
+        if r == -1:
+            resumen.append('Error, No se encontraron resultados para temperatura y presión')
+        else:
+            aux = contenidoLog[r].split()
+            resumen.append("Temperatura: " + aux[1] +' '+ aux[2] + ' Presión: ' + aux[4] + ' ' + aux[5] )
         r = NResumen.buscaPalabra('imaginary frequencies',contenidoLog)
         if r == -1:
             resumen.append('No hay frecuencias negativas')
@@ -32,6 +51,7 @@ class NResumen:
             fneg = NResumen.obtenFrequenciasNegativas(contenidoLog,r)
             for elemento in fneg:
                 resumen.append(elemento)
+
         return resumen
 
 
@@ -60,7 +80,6 @@ class NResumen:
                 for elemento in aux:
                     try:
                         f = float(elemento)
-
                         if f < 0.0:
                             fneg.append(str(f))
                         else:

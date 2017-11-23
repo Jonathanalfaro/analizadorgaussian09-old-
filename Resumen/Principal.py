@@ -1,6 +1,8 @@
 import curses
 import sys
-
+import locale
+locale.setlocale(locale.LC_ALL, '')
+code = locale.getpreferredencoding()
 from VResumen import VResumen
 
 
