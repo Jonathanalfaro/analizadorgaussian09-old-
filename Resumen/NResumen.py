@@ -18,6 +18,7 @@ class NResumen:
 
     @staticmethod
     def hazResumen(contenidoLog):
+        caux = ''
         r = 0
         resumen = []
         r = NResumen.buscaPalabra(' #',contenidoLog)
@@ -56,7 +57,22 @@ class NResumen:
             resumen.append('No hay datos de la matriz')
         else:
             matriz = NResumen.obtenMatriz(r,contenidoLog)
-            resumen.append('matriz \n' +matriz)
+            resumen.append('Atomic Charges Matrix\n\n')
+            for linea in matriz:
+                for elemento in linea:
+                    caux += str(elemento)
+                resumen.append(caux)
+
+        r = NResumen.buscaPalabra('Atomic Spin Densities.',contenidoLog)
+        if r == -1:
+            resumen.append('No hay datos de la matriz')
+        else:
+            matriz2 = NResumen.obtenMatriz(r,contenidoLog)
+            resumen.append('Atomic Spin Densities Matrix\n\n')
+            for linea in matriz:
+                for elemento in linea:
+                    caux += str(elemento)
+                resumen.append(caux)
 
         return resumen
 
@@ -104,20 +120,28 @@ class NResumen:
 
     @staticmethod
     def obtenMatriz(pos, contenido):
-        matriz = ''
-        espacio = ' '
+        matriz = []
+        for i in range(43):
+            matriz.append([0] * 43)
+        ultimapos = 0
         c = 0
         natomos = 0
+        ind = 0
         expreg = re.compile(r'\s+\d+\s+[A-Z]+\s+(-?\d+\.?\d+\s{0,})+$')
         for i in range(pos, len(contenido) - 1):
             if expreg.search((contenido[i])) != None:
-                aux = contenido[i].split()
-                matriz = matriz + espacio.join(aux) + '\n'
-                natomos = natomos + 1
+                aux = contenido[i].split()[2:]
+                ultimapos = ind
+                for j in range(0, len(aux)-1):
+                    matriz[natomos] [ultimapos] = aux[j]
+                    ultimapos  = (ultimapos + 1) %43
+                natomos = (natomos + 1) % 43
+                c = 0
             else:
                 c = c + 1
-                if c > natomos//6 and c > 2:
+                if c > 2:
                     break
+            ind = ultimapos
         return matriz
 
 
