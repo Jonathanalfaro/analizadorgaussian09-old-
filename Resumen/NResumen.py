@@ -68,7 +68,7 @@ class NResumen:
             resumen.append('No hay datos de la matriz')
         else:
             matriz2 = NResumen.obtenMatriz(r,contenidoLog)
-            resumen.append('Atomic Spin Densities Matrix\n\n')
+            resumen.append('Atomic Spin Ddensities Matrix\n\n')
             for linea in matriz:
                 for elemento in linea:
                     caux += str(elemento)
