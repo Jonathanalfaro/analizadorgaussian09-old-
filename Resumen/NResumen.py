@@ -51,6 +51,12 @@ class NResumen:
             fneg = NResumen.obtenFrequenciasNegativas(contenidoLog,r)
             for elemento in fneg:
                 resumen.append(elemento)
+        r = NResumen.buscaPalabra('Condensed to atoms',contenidoLog)
+        if r == -1:
+            resumen.append('No hay datos de la matriz')
+        else:
+            matriz = NResumen.obtenMatriz(r,contenidoLog)
+            resumen.append('matriz \n' +matriz)
 
         return resumen
 
@@ -88,3 +94,31 @@ class NResumen:
                         pass
 
         return fneg
+
+    @staticmethod
+    def obtenDatosMulliken(contenidoLog):
+        mulli = ''
+        expreg = re.compile(r'(mulliken)+\s?' ,re.I)
+        for i in range (len(contenidoLog),0):
+            pass
+
+    @staticmethod
+    def obtenMatriz(pos, contenido):
+        matriz = ''
+        espacio = ' '
+        c = 0
+        natomos = 0
+        expreg = re.compile(r'\s+\d+\s+[A-Z]+\s+(-?\d+\.?\d+\s{0,})+$')
+        for i in range(pos, len(contenido) - 1):
+            if expreg.search((contenido[i])) != None:
+                aux = contenido[i].split()
+                matriz = matriz + espacio.join(aux) + '\n'
+                natomos = natomos + 1
+            else:
+                c = c + 1
+                if c > natomos//6 and c > 2:
+                    break
+        return matriz
+
+
+
