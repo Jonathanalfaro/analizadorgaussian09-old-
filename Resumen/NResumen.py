@@ -59,6 +59,7 @@ class NResumen:
             matriz = NResumen.obtenMatriz(r,contenidoLog)
             resumen.append('Atomic Charges Matrix\n\n')
             for linea in matriz:
+                caux = ''
                 for elemento in linea:
                     caux += str(elemento)
                 resumen.append(caux)
@@ -69,7 +70,8 @@ class NResumen:
         else:
             matriz2 = NResumen.obtenMatriz(r,contenidoLog)
             resumen.append('Atomic Spin Densities Matrix\n\n')
-            for linea in matriz:
+            for linea in matriz2:
+                caux = ''
                 for elemento in linea:
                     caux += str(elemento)
                 resumen.append(caux)
@@ -128,20 +130,18 @@ class NResumen:
         natomos = 0
         ind = 0
         expreg = re.compile(r'\s+\d+\s+[A-Z]+\s+(-?\d+\.?\d+\s{0,})+$')
-        for i in range(pos, len(contenido) - 1):
-            if expreg.search((contenido[i])) != None:
-                aux = contenido[i].split()[2:]
-                ultimapos = ind
-                for j in range(0, len(aux)-1):
-                    matriz[natomos] [ultimapos] = aux[j]
-                    ultimapos  = (ultimapos + 1) %43
+        for linea in contenido[pos+2:]:
+            if expreg.search(linea) != None:
+                aux = linea.split()[2:]
+                ind = ultimapos
+                for elemento in aux:
+                    matriz[natomos][ind] = elemento
+                    ind = ind + 1
                 natomos = (natomos + 1) % 43
-                c = 0
             else:
-                c = c + 1
-                if c > 2:
+                ultimapos = ultimapos + 6
+                if ultimapos >= 43:
                     break
-            ind = ultimapos
         return matriz
 
 
