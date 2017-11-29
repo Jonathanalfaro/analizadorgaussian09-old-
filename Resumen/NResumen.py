@@ -23,6 +23,7 @@ class NResumen:
         r = NResumen.buscaPalabra('natoms=',contenidoLog)
         natomos = int(contenidoLog[r].split()[1])
         resumen = []
+        matriz = []
         r = NResumen.buscaPalabra(' #',contenidoLog)
         resumen.append('Comando inicial: ' + contenidoLog[r])
         resumen.append('')
@@ -82,7 +83,7 @@ class NResumen:
             resumen.append('Error, no se encontraron datos')
         else:
             aptch = NResumen.obtenDatosMulliken(r,contenidoLog)
-        r = NResumen.buscaPalabra('with hydrogens summed',contenidoLog)
+        r = NResumen.buscaPalabra('APT Atomic charges with hydrogens summed',contenidoLog)
         aths = []
         if r == -1:
             resumen.append('Error, no se encontraron datos')
@@ -91,7 +92,7 @@ class NResumen:
             aths = NResumen.obtenDatosMulliken(r,contenidoLog)
         resumen.append('APT atomic charges \t APT atomic charges hydrogens summed')
         for i in range (len(aptch)):
-            resumen.append(str(float(aptch[i])) + '\t\t\t' + str(aths[i]))
+           resumen.append(str(float(aptch[i])) + '\t\t\t' + str(aths[i]))
         resumen.append(' ')
         r = NResumen.buscaPalabra('Condensed to atoms',contenidoLog)
         if r == -1:
@@ -147,7 +148,7 @@ class NResumen:
 
 
     @staticmethod
-    def buscaPalabra(palabra, contenido):
+    def buscaPalabraold(palabra, contenido):
         nl= 0
         pos = -1
         expreg = re.compile(r'(%s)+' % palabra, re.I)
@@ -160,6 +161,19 @@ class NResumen:
                 if (palabra == ' #'):
                     break
             nl = nl + 1
+        return pos
+
+    @staticmethod
+    def buscaPalabra(palabra, contenido):
+        pos = -1
+        expreg = re.compile(r'(%s)+' % palabra, re.I)
+        for i in range(len(contenido) - 1,0,-1):
+            res = expreg.search(contenido[i])
+            if res == None:
+                pass
+            else:
+                pos = i
+                break
         return pos
 
     @staticmethod
