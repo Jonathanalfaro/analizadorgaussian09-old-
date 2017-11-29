@@ -109,9 +109,11 @@ class NResumen:
         resumen.append(' ')
         r = NResumen.buscaPalabra('Atomic-Atomic Spin Densities.',contenidoLog)
         diagonal = ''
+        resumen.append('Valores de la diagonal: ')
         for i in range(len(matriz)):
             diagonal = diagonal + str(matriz[i][i]) + ' '
-        resumen.append('Valores de la diagonal: ' + diagonal)
+
+            resumen.append(matriz[i][i])
         resumen.append(' ')
         if r == -1:
             resumen.append('No hay datos de la matriz')
@@ -126,9 +128,12 @@ class NResumen:
                 resumen.append(caux)
             resumen.append(' ')
             diagonal = ''
+            resumen.append('Valores de la diagonal: ')
             for i in range(len(matriz2)):
                 diagonal = diagonal + str(matriz2[i][i]) + ' '
-            resumen.append('Valores de la diagonal: '+diagonal)
+
+                resumen.append(matriz2[i][i])
+
             resumen.append(' ')
         r = NResumen.buscaPalabra('Hirshfeld spin densities, ',contenidoLog)
         if r == -1:
