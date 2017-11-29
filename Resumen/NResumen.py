@@ -21,7 +21,7 @@ class NResumen:
         caux = ''
         r = 0
         resumen = []
-        r = NResumen.buscaPalabra(' #',contenidoLog)
+        r = NResumen.buscaPalabra(' # ',contenidoLog)
         resumen.append('Comando inicial: ' + contenidoLog[r])
         r = NResumen.buscaPalabra('termination',contenidoLog)
         if r == -1:
@@ -61,10 +61,13 @@ class NResumen:
             for linea in matriz:
                 caux = ''
                 for elemento in linea:
-                    caux += str(elemento)
+                    caux += str(elemento) +'\t'
                 resumen.append(caux)
-
-        r = NResumen.buscaPalabra('Atomic Spin Densities.',contenidoLog)
+        r = NResumen.buscaPalabra('Atomic-Atomic Spin Densities.',contenidoLog)
+        diagonal = ''
+        for i in range(len(matriz)):
+            diagonal = diagonal + str(matriz[i][i]) + ' '
+        resumen.append('Valores de la diagonal: ' + diagonal)
         if r == -1:
             resumen.append('No hay datos de la matriz')
         else:
@@ -73,7 +76,22 @@ class NResumen:
             for linea in matriz2:
                 caux = ''
                 for elemento in linea:
-                    caux += str(elemento)
+                    caux += str(elemento) + '\t'
+                resumen.append(caux)
+            diagonal = ''
+            for i in range(len(matriz2)):
+                diagonal = diagonal + str(matriz2[i][i]) + ' '
+            resumen.append('Valores de la diagonal: '+diagonal)
+        r = NResumen.buscaPalabra('Hirshfeld spin densities, ',contenidoLog)
+        if r == -1:
+            resumen.append('No hay datos de la matriz')
+        else:
+            matriz = NResumen.obtenMatriz(r,contenidoLog)
+            resumen.append(' Hirshfeld spin densities, charges and dipoles using IRadAn= 4:\n\n')
+            for linea in matriz:
+                caux = ''
+                for elemento in linea[0:2]:
+                    caux += str(elemento) +'\t'
                 resumen.append(caux)
 
         return resumen
@@ -83,15 +101,16 @@ class NResumen:
     @staticmethod
     def buscaPalabra(palabra, contenido):
         nl= 0
+        pos = -1
         expreg = re.compile(r'(%s)+' % palabra, re.I)
         for linea in contenido:
             res = expreg.search(linea)
             if res == None:
                 pass
             else:
-                return nl
+                pos = nl
             nl = nl + 1
-        return -1
+        return pos
 
     @staticmethod
     def obtenFrequenciasNegativas(contenido,posicioninicio):
