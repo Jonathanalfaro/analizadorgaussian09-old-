@@ -20,10 +20,14 @@ class NResumen:
     def hazResumen(contenidoLog):
         caux = ''
         r = 0
+        r = NResumen.buscaPalabra('natoms=',contenidoLog)
+        natomos = int(contenidoLog[r].split()[1])
         resumen = []
-        r = NResumen.buscaPalabra(' # ',contenidoLog)
+        r = NResumen.buscaPalabra(' #',contenidoLog)
         resumen.append('Comando inicial: ' + contenidoLog[r])
         r = NResumen.buscaPalabra('termination',contenidoLog)
+
+
         if r == -1:
             resumen.append('Error, no se encontraron datos de la terminación')
         else:
@@ -31,13 +35,25 @@ class NResumen:
                 resumen.append('Terminación normal')
             else:
                 resumen.append(('Terminación erronea'))
-
+        resumen.append('Numero de átomos: ' + str(natomos))
         r = NResumen.buscaPalabra('multiplicity',contenidoLog)
         if r ==-1:
             resumen.append('Error, no hay datos de carga y multiplicidad en el archivo')
         else:
             aux = contenidoLog[r].split()
             resumen.append('Carga: '+ aux[2] + ' Multiplicidad: ' + aux[5])
+        r = NResumen.buscaPalabra('HF=',contenidoLog)
+        if r ==-1:
+            resumen.append('Error, no hay datos HF')
+        else:
+            hf = ''
+            index = contenidoLog[r].index('HF=')
+            for i in range(index,len(contenidoLog[r])):
+                if (contenidoLog[r][i]) == ('\\'):
+                    break
+                hf = hf + contenidoLog[r][i]
+
+            resumen.append('Valor ' + hf)
 
         r = NResumen.buscaPalabra('pressure',contenidoLog)
         if r == -1:
@@ -56,7 +72,7 @@ class NResumen:
         if r == -1:
             resumen.append('No hay datos de la matriz')
         else:
-            matriz = NResumen.obtenMatriz(r,contenidoLog)
+            matriz = NResumen.obtenMatriz(r,contenidoLog,natomos)
             resumen.append('Atomic Charges Matrix\n\n')
             for linea in matriz:
                 caux = ''
@@ -71,7 +87,7 @@ class NResumen:
         if r == -1:
             resumen.append('No hay datos de la matriz')
         else:
-            matriz2 = NResumen.obtenMatriz(r,contenidoLog)
+            matriz2 = NResumen.obtenMatriz(r,contenidoLog,natomos)
             resumen.append('Atomic Spin Densities Matrix\n\n')
             for linea in matriz2:
                 caux = ''
@@ -86,7 +102,7 @@ class NResumen:
         if r == -1:
             resumen.append('No hay datos de la matriz')
         else:
-            matriz = NResumen.obtenMatriz(r,contenidoLog)
+            matriz = NResumen.obtenMatriz(r,contenidoLog,natomos)
             resumen.append(' Hirshfeld spin densities, charges and dipoles using IRadAn= 4:\n\n')
             for linea in matriz:
                 caux = ''
@@ -109,6 +125,8 @@ class NResumen:
                 pass
             else:
                 pos = nl
+                if (palabra == ' #'):
+                    break
             nl = nl + 1
         return pos
 
@@ -140,10 +158,10 @@ class NResumen:
             pass
 
     @staticmethod
-    def obtenMatriz(pos, contenido):
+    def obtenMatriz(pos, contenido,na):
         matriz = []
-        for i in range(43):
-            matriz.append([0] * 43)
+        for i in range(na):
+            matriz.append([0] * na)
         ultimapos = 0
         c = 0
         natomos = 0
@@ -155,13 +173,25 @@ class NResumen:
                 ind = ultimapos
                 for elemento in aux:
                     matriz[natomos][ind] = elemento
-                    ind = ind + 1
-                natomos = (natomos + 1) % 43
+                    ind = (ind + 1) % na
+                natomos = (natomos + 1) % na
             else:
                 ultimapos = ultimapos + 6
-                if ultimapos >= 43:
+                if ultimapos >= na:
                     break
         return matriz
 
-
+    @staticmethod
+    def buscarLinea(palabra,contenido):
+        nl = 0
+        posiciones = []
+        expreg = re.compile(r'(%s)+' % palabra, re.I)
+        for linea in contenido:
+            res = expreg.search(linea)
+            if res == None:
+                pass
+            else:
+                posiciones.append(nl)
+            nl = nl + 1
+        return posiciones
 

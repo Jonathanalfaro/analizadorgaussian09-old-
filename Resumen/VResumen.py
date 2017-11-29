@@ -18,14 +18,14 @@ class VResumen:
         self.posycursor = 2
         self.posxcursor = 0
         self.padactivo = 1
-
+        self.padBuscar = curses.newpad(1, 1000)
         self.tamypad1 = min(len(self.contenidoPad1),32700)
         self.tamypad2 = self.tamypad1
         self.pad1 = curses.newpad(self.tamypad1 + 1, 1000)
         self.pad2 = curses.newpad(self.tamypad1 + 1, 1000)
         self.contenidoPad2 = NResumen.hazResumen(self.contenidoPad1)
         self.ponDatosPad(self.contenidoPad1, self.contenidoPad2)
-        self.barraAyuda = "Presiona 'q' para salir | Presiona b para buscar"
+        self.barraAyuda = "Presiona 'q' para salir | Presiona i para saltar a una linea"
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_WHITE)
 
@@ -74,6 +74,34 @@ class VResumen:
             stdscr.addstr(self.pad1yf + 1, len(self.ruta1), " " * (maxx - len(self.ruta1) - 1))
             stdscr.attroff(curses.color_pair(2))
 
+
+            if k == ord('b'):
+                palabra = VResumen.dialogoBuscar(stdscr,self.padBuscar)
+                posiciones= NResumen.buscarLinea(palabra, self.contenidoPad1)
+                if len(posiciones) == 0:
+                    pass
+                else:
+                    l = ''
+                    p = 0
+                    self.posypad1 = posiciones[p] + 1
+                    stdscr.timeout(10)
+                    stdscr.keypad(True)
+                    while l != ord('q'):
+
+                        if l == ord('s'):
+                            p = (p + 1) % len(posiciones)
+                        if l == ord('a'):
+                            p = (p - 1) % len(posiciones)
+                        self.posypad1 = posiciones[p]
+
+                        self.pad1.refresh(self.posypad1, self.posxpad1, self.pad1yi, self.pad1xi, self.pad1yf,
+                                          self.pad1xf)
+                        self.padBuscar.addstr(0,0,'Linea: ' +str(posiciones[p]) + ' Presiona q salir de la busqueda')
+                        y, x = stdscr.getmaxyx()
+
+                        self.padBuscar.refresh(0, 0, 0, 0, 1, x - 2)
+                        l = stdscr.getch()
+                self.padactivo = 1
 
 
             if k == ord('1'):
@@ -132,3 +160,20 @@ class VResumen:
             self.pad2.refresh(self.posypad2, self.posxpad2, self.pad2yi, self.pad2xi, self.pad2yf, self.pad1xf)
 
             k = stdscr.getch()
+
+
+
+    @staticmethod
+    def dialogoBuscar(stdscr, padBuscar):
+        stdscr.timeout(-1)
+        y, x = stdscr.getmaxyx()
+
+        curses.echo()
+        padBuscar.addstr(0, 0, 'Palabra a buscar: ')
+        y, x = stdscr.getmaxyx()
+
+        padBuscar.refresh(0, 0, 0, 0, 1, x - 2)
+        palabra = stdscr.getstr(0, 20, 100)
+        curses.noecho()
+        stdscr.timeout(10)
+        return palabra
