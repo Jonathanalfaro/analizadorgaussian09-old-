@@ -6,7 +6,7 @@ class VResumen:
 
     def __init__(self, ruta):
         self.ruta1 = ruta
-        self.contenidoPad1 = NResumen.obtenContenidoLog(self.ruta1)
+        self.contenidoArchivo = NResumen.obtenContenidoLog(self.ruta1)
         self.posypad1 = 0
         self.posypad2 = 0
         self.posxpad1 = 0
@@ -19,26 +19,22 @@ class VResumen:
         self.posxcursor = 0
         self.padactivo = 1
         self.padBuscar = curses.newpad(1, 1000)
-        self.tamypad1 = min(len(self.contenidoPad1),32700)
+        self.tamypad1 = 32700
         self.tamypad2 = self.tamypad1
         self.pad1 = curses.newpad(self.tamypad1 + 1, 1000)
-        self.pad2 = curses.newpad(self.tamypad1 + 1, 1000)
-        self.contenidoPad2 = NResumen.hazResumen(self.contenidoPad1)
-        self.ponDatosPad(self.contenidoPad1, self.contenidoPad2)
+        #self.pad2 = curses.newpad(self.tamypad1 + 1, 1000)
+        self.contenidoPad = NResumen.hazResumen(self.contenidoArchivo)
+        self.ponDatosPad(self.contenidoPad)
         self.barraAyuda = "Presiona 'q' para salir | Presiona i para saltar a una linea"
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_WHITE)
 
 
 
-    def ponDatosPad(self, contenido1, contenido2):
+    def ponDatosPad(self, contenido):
         y = 0
-        for linea in contenido1:
+        for linea in contenido:
             self.pad1.addstr(y, 1, linea)
-            y = y + 1
-        y = 0
-        for linea in contenido2:
-            self.pad2.addstr(y, 1, linea)
             y = y + 1
 
 
@@ -53,10 +49,8 @@ class VResumen:
             maxy, maxx = stdscr.getmaxyx()
 
             self.pad1xf = int(maxx - 1)
-            self.pad1yf = maxy // 2 - 1
-            self.pad2yi = maxy // 2 + 1
-            self.pad2xf = maxx - 1
-            self.pad2yf = maxy - 2
+            self.pad1yf = maxy-2
+
 
             stdscr.attron(curses.color_pair(1))
             stdscr.addstr(1, 0, self.ruta1)
@@ -65,7 +59,7 @@ class VResumen:
 
             stdscr.attron(curses.color_pair(1))
             stdscr.addstr(maxy-1,0,self.barraAyuda)
-            stdscr.addstr(self.pad2yf + 1, len(self.barraAyuda), " " * (self.pad2xf - len(self.barraAyuda)))
+            #stdscr.addstr(self.pad2yf + 1, len(self.barraAyuda), " " * (self.pad2xf - len(self.barraAyuda)))
             stdscr.attroff(curses.color_pair(1))
 
 
@@ -77,7 +71,7 @@ class VResumen:
 
             if k == ord('b'):
                 palabra = VResumen.dialogoBuscar(stdscr,self.padBuscar)
-                posiciones= NResumen.buscarLinea(palabra, self.contenidoPad1)
+                posiciones= NResumen.buscarLinea(palabra, self.contenidoArchivo)
                 if len(posiciones) == 0:
                     pass
                 else:
@@ -110,10 +104,6 @@ class VResumen:
                 self.padactivo = 1
 
 
-            if k == ord('2'):
-                self.posycursor = self.pad2yi
-                self.posxcursor = self.pad2xi
-                self.padactivo = 2
 
 
             if k == curses.KEY_DOWN:
@@ -126,13 +116,13 @@ class VResumen:
                 self.posxcursor = self.posxcursor - 1
                 if self.posxcursor <= 0:
                     self.posxpad1 = self.posxpad1 - 1
-                    self.posxpad2 = self.posxpad1 - 1
+
 
             if k == curses.KEY_RIGHT:
                 self.posxcursor = self.posxcursor + 1
                 if self.posxcursor >= maxx - 1:
                     self.posxpad1 = self.posxpad1 + 1
-                    self.posxpad2 = self.posxpad2 + 1
+
 
             if self.padactivo == 1:
                 self.posycursor = max(self.pad1yi, self.posycursor)
@@ -141,13 +131,6 @@ class VResumen:
                     self.posypad1 = min(self.posypad1 + 1, self.tamypad1)
                 if self.posycursor <= self.pad1yi + 1 and k != -1:
                     self.posypad1 = max(0, self.posypad1 - 1)
-            else:
-                self.posycursor = max(self.pad2yi, self.posycursor)
-                self.posycursor = min(self.pad2yf, self.posycursor)
-                if self.posycursor > self.pad2yf - 1 and k != -1:
-                    self.posypad2 = min(self.posypad2 + 1, self.tamypad2)
-                if self.posycursor <= self.pad2yi + 1 and k != -1:
-                    self.posypad2 = max(0, self.posypad2 - 1)
 
 
 
@@ -157,7 +140,7 @@ class VResumen:
 
 
             self.pad1.refresh(self.posypad1, self.posxpad1, self.pad1yi, self.pad1xi, self.pad1yf, self.pad1xf)
-            self.pad2.refresh(self.posypad2, self.posxpad2, self.pad2yi, self.pad2xi, self.pad2yf, self.pad1xf)
+            #self.pad2.refresh(self.posypad2, self.posxpad2, self.pad2yi, self.pad2xi, self.pad2yf, self.pad1xf)
 
             k = stdscr.getch()
 
