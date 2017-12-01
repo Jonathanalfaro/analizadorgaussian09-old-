@@ -21,7 +21,11 @@ class NResumen:
         caux = ''
         r = 0
         r = NResumen.buscaPalabra('natoms=',contenidoLog)
-        natomos = int(contenidoLog[r].split()[1])
+        if r != -1:
+            natomos = int(contenidoLog[r].split()[1])
+        else:
+            n = NResumen.obtenDatosMulliken(105,contenidoLog)
+            natomos = len(n)
         resumen = []
         matriz = []
         r = NResumen.buscaPalabra(' #',contenidoLog)
@@ -201,12 +205,12 @@ class NResumen:
                         pass
 
         return fneg
-
+    #Modificar para que busque en al expresion regular 3 o mas flotantes y una letra al final
     @staticmethod
     def obtenDatosMulliken(lineainicio,contenido):
         datos = []
         vaux = 0
-        expreg = re.compile(r'\s+\d+\s+[a-zA-Z]+\s+-?\d+.\d+')
+        expreg = re.compile(r'\s+\d+\s+[a-zA-Z]+\s+-?\d+.?\d+\s+')
         for i in range(lineainicio + 1, len(contenido) - 1):
             if expreg.search(contenido[i]) != None and vaux < 2:
                 cad = contenido[i].split()
