@@ -68,12 +68,13 @@ class NResumen:
             aux = contenidoLog[r].split()
             resumen.append("Temperatura: " + aux[1] +' '+ aux[2] + ' Presión: ' + aux[4] + ' ' + aux[5] )
             resumen.append(' ')
-        r = NResumen.buscaPalabra('imaginary frequencies',contenidoLog)
+        r = NResumen.buscaPalabra('imaginary frequencies \(',contenidoLog)
         if r == -1:
             resumen.append('No hay frecuencias negativas')
             resumen.append(' ')
         else:
             fneg = NResumen.obtenFrequenciasNegativas(contenidoLog,r)
+            resumen.append('Hay ' + len(fneg) + ' frecuencias negativas')
             for elemento in fneg:
                 resumen.append(elemento)
             resumen.append(' ')
