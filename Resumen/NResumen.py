@@ -231,7 +231,7 @@ class NResumen:
         c = 0
         natomos = 0
         ind = 0
-        expreg = re.compile(r'\s+\d+\s+[A-Z]+\s+(-?\d+\.?\d+\s{0,})+$')
+        expreg = re.compile(r'\s+\d+\s+[a-zA-Z]+\s+(-?\d+\.?\d+\s{0,})+$')
         for linea in contenido[pos+2:]:
             if expreg.search(linea) != None:
                 aux = linea.split()[2:]

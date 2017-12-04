@@ -53,19 +53,20 @@ class VResumen:
 
 
             stdscr.attron(curses.color_pair(1))
-            stdscr.addstr(1, 0, self.ruta1)
-            stdscr.addstr(1, len(self.ruta1), " " * (self.pad1xf - len(self.ruta1)))
+            if len(self.ruta1) <= maxx:
+                stdscr.addstr(1, 0, self.ruta1)
+                stdscr.addstr(1, len(self.ruta1), " " * (self.pad1xf - len(self.ruta1)))
+            else:
+                ruta = self.ruta1[0:maxx]
+                stdscr.addstr(1, 0, ruta)
+                #stdscr.addstr(1, len(ruta), " " * (self.pad1xf - len(ruta)))
             stdscr.attroff(curses.color_pair(1))
 
             stdscr.attron(curses.color_pair(1))
             stdscr.addstr(maxy-1,0,self.barraAyuda)
             #stdscr.addstr(self.pad2yf + 1, len(self.barraAyuda), " " * (self.pad2xf - len(self.barraAyuda)))
-            stdscr.attroff(curses.color_pair(1))
 
 
-            stdscr.attron(curses.color_pair(2))
-            stdscr.addstr(self.pad1yf + 1, 0, self.ruta1)
-            stdscr.addstr(self.pad1yf + 1, len(self.ruta1), " " * (maxx - len(self.ruta1) - 1))
             stdscr.attroff(curses.color_pair(2))
 
 
