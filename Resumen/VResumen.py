@@ -34,7 +34,7 @@ class VResumen:
     def ponDatosPad(self, contenido):
         y = 0
         for linea in contenido:
-            self.pad1.addstr(y, 1, linea)
+            self.pad1.addstr(y, 1, str(linea))
             y = y + 1
 
 

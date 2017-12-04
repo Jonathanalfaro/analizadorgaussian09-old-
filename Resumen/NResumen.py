@@ -78,7 +78,7 @@ class NResumen:
             resumen.append(' ')
         else:
             fneg = NResumen.obtenFrequenciasNegativas(contenidoLog,r)
-            resumen.append('Hay ' + len(fneg) + ' frecuencias negativas')
+            resumen.append('Hay ' + str(len(fneg)) + ' frecuencias negativas')
             for elemento in fneg:
                 resumen.append(elemento)
             resumen.append(' ')
