@@ -4,9 +4,10 @@ from NResumen import NResumen
 
 class VResumen:
 
-    def __init__(self, ruta):
-        self.ruta1 = ruta
-        self.contenidoArchivo = NResumen.obtenContenidoLog(self.ruta1)
+    def __init__(self, parametrosentrada):
+        self.ruta1 = parametrosentrada[len(parametrosentrada)-1]
+        self.paramentrosresumen = parametrosentrada[0:len(parametrosentrada)-2]
+        self.contenidoArchivo = NResumen.obtencontenidolog(self.ruta1)
         self.posypad1 = 0
         self.posypad2 = 0
         self.posxpad1 = 0
@@ -23,7 +24,7 @@ class VResumen:
         self.tamypad2 = self.tamypad1
         self.pad1 = curses.newpad(self.tamypad1 + 1, 1000)
         #self.pad2 = curses.newpad(self.tamypad1 + 1, 1000)
-        self.contenidoPad = NResumen.hazResumen(self.contenidoArchivo)
+        self.contenidoPad = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen)
         self.ponDatosPad(self.contenidoPad)
         self.barraAyuda = "Presiona 'q' para salir | Presiona i para saltar a una linea"
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
