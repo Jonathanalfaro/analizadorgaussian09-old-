@@ -84,7 +84,8 @@ class NResumen:
 
         #A partir de aqui se mostrarán solo si la palabra se pasó como parámetro en la ejecucion del programa
         for elemento in parametros:
-            if elemento =='--APT atomic charges':
+
+            if elemento.lower() =='mulliken':
                 r = NResumen.buscaPalabra('APT atomic charges:',contenidoLog)
                 aptch = []
                 if r == -1:
@@ -102,59 +103,69 @@ class NResumen:
                 for i in range (len(aptch)):
                     resumen.append(str(float(aptch[i])) + '\t\t\t' + str(aths[i]))
                 resumen.append(' ')
-            r = NResumen.buscaPalabra('Condensed to atoms',contenidoLog)
-            if r == -1:
-                resumen.append('No hay datos de la matriz')
-            else:
-                matriz = NResumen.obtenMatriz(r,contenidoLog,natomos)
-                resumen.append('Atomic Charges Matrix\n\n')
-                resumen.append(' ')
-                for linea in matriz:
-                    caux = ''
-                    for elemento in linea:
-                        caux += str(elemento) +'\t'
-                    resumen.append(caux)
-            resumen.append(' ')
-            r = NResumen.buscaPalabra('Atomic-Atomic Spin Densities.',contenidoLog)
-            diagonal = ''
-            resumen.append('Valores de la diagonal: ')
-            for i in range(len(matriz)):
-                diagonal = diagonal + str(matriz[i][i]) + ' '
+            if elemento.lower() == 'atomic_charges_matrix':
+                r = NResumen.buscaPalabra('Condensed to atoms',contenidoLog)
+                if r == -1:
+                    resumen.append('No hay datos de la matriz')
+                else:
+                    matriz = NResumen.obtenMatriz(r,contenidoLog,natomos)
+                    resumen.append('Atomic Charges Matrix\n\n')
+                    resumen.append(' ')
+                    for linea in matriz:
+                        caux = ''
+                        for elemento in linea:
+                            caux += str(elemento) +'\t'
+                        resumen.append(caux)
+                    diagonal = ''
+                    resumen.append('Valores de la diagonal: ')
+                    for i in range(len(matriz)):
+                        diagonal = diagonal + str(matriz[i][i]) + ' '
 
-                resumen.append(matriz[i][i])
-            resumen.append(' ')
-            if r == -1:
-                resumen.append('No hay datos de la matriz')
-            else:
-                matriz2 = NResumen.obtenMatriz(r,contenidoLog,natomos)
-                resumen.append('Atomic Spin Densities Matrix\n\n')
+                        resumen.append(matriz[i][i])
+                    resumen.append(' ')
                 resumen.append(' ')
-                for linea in matriz2:
-                    caux = ''
-                    for elemento in linea:
-                        caux += str(elemento) + '\t'
-                    resumen.append(caux)
-                resumen.append(' ')
+            if elemento == 'Atomic-Atomic Spin Densities':
+                r = NResumen.buscaPalabra('Atomic-Atomic Spin Densities.',contenidoLog)
                 diagonal = ''
                 resumen.append('Valores de la diagonal: ')
-                for i in range(len(matriz2)):
-                    diagonal = diagonal + str(matriz2[i][i]) + ' '
+                for i in range(len(matriz)):
+                    diagonal = diagonal + str(matriz[i][i]) + ' '
 
-                    resumen.append(matriz2[i][i])
+                    resumen.append(matriz[i][i])
+                resumen.append(' ')
+                if r == -1:
+                    resumen.append('No hay datos de la matriz')
+                else:
+                    matriz2 = NResumen.obtenMatriz(r,contenidoLog,natomos)
+                    resumen.append('Atomic Spin Densities Matrix\n\n')
+                    resumen.append(' ')
+                    for linea in matriz2:
+                        caux = ''
+                        for elemento in linea:
+                            caux += str(elemento) + '\t'
+                        resumen.append(caux)
+                    resumen.append(' ')
+                    diagonal = ''
+                    resumen.append('Valores de la diagonal: ')
+                    for i in range(len(matriz2)):
+                        diagonal = diagonal + str(matriz2[i][i]) + ' '
 
-                resumen.append(' ')
-            r = NResumen.buscaPalabra('Hirshfeld spin densities, ',contenidoLog)
-            if r == -1:
-                resumen.append('No hay datos de la matriz Hirshfeld spin densities')
-            else:
-                matriz = NResumen.obtenMatriz(r,contenidoLog,natomos)
-                resumen.append(' Hirshfeld spin densities, charges and dipoles using IRadAn= 4:\n\n')
-                resumen.append(' ')
-                for linea in matriz:
-                    caux = ''
-                    for elemento in linea[0:2]:
-                        caux += str(elemento) +'\t'
-                    resumen.append(caux)
+                        resumen.append(matriz2[i][i])
+
+                    resumen.append(' ')
+            if elemento == 'Hirshfeld spin densities':
+                r = NResumen.buscaPalabra('Hirshfeld spin densities, ',contenidoLog)
+                if r == -1:
+                    resumen.append('No hay datos de la matriz Hirshfeld spin densities')
+                else:
+                    matriz = NResumen.obtenMatriz(r,contenidoLog,natomos)
+                    resumen.append(' Hirshfeld spin densities, charges and dipoles using IRadAn= 4:\n\n')
+                    resumen.append(' ')
+                    for linea in matriz:
+                        caux = ''
+                        for elemento in linea[0:2]:
+                            caux += str(elemento) +'\t'
+                        resumen.append(caux)
 
         return resumen
 

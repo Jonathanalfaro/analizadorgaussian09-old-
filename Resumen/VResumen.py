@@ -6,7 +6,7 @@ class VResumen:
 
     def __init__(self, parametrosentrada):
         self.ruta1 = parametrosentrada[len(parametrosentrada)-1]
-        self.paramentrosresumen = parametrosentrada[0:len(parametrosentrada)-2]
+        self.paramentrosresumen = parametrosentrada
         self.contenidoArchivo = NResumen.obtencontenidolog(self.ruta1)
         self.posypad1 = 0
         self.posypad2 = 0
