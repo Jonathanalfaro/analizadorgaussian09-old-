@@ -93,7 +93,11 @@ class NResumen:
                 NResumen.opcasd(resumen,contenidoLog,matriz,natomos)
             if elemento == '--hirshfeld spin densities' or elemento == '-hsd':
                 NResumen.opchsd(resumen,contenidoLog,[], natomos)
-
+            if elemento == '--ALL' or elemento =='-a':
+                NResumen.opcmulliken(resumen, contenidoLog)
+                NResumen.opcacm(resumen, contenidoLog, natomos)
+                NResumen.opcasd(resumen, contenidoLog, matriz, natomos)
+                NResumen.opchsd(resumen, contenidoLog, [], natomos)
         return resumen
 
 

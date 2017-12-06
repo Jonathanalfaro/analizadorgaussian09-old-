@@ -16,6 +16,7 @@ parser.add_argument('-m','--mulliken',help='Muestra los datos de Mulliken',actio
 parser.add_argument('-acm','--atomic_charges_matrix',help='Muestra la matriz de cargas atomicas y su diagonal',action="store_true")
 parser.add_argument('-asd','--atomic_spin_densities',help='Muestra la matriz de densidades atómicas y su diagonal',action="store_true")
 parser.add_argument('-hsd','--hirshfeld_spin_densities',help='Muestra la matriz de Hirshfeld',action="store_true")
+parser.add_argument('-a','--ALL',help='Muestra todos los datos',action="store_true")
 parser.add_argument('file', nargs = 1, help="Nombre de archivo a procesar")
 parser.parse_args()
 
