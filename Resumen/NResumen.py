@@ -28,7 +28,7 @@ class NResumen:
             natomos = len(n)
         resumen = []
         matriz = []
-        r = NResumen.buscaPalabra('^\s#\s?[a-zA-Z]?test$',contenidoLog)
+        r = NResumen.buscaPalabra('^\s#\s?[ ]?test$',contenidoLog)
         resumen.append('Comando inicial: ' + contenidoLog[r])
         resumen.append('')
         r = NResumen.buscaPalabra('termination',contenidoLog)
@@ -107,7 +107,12 @@ class NResumen:
 
         #A partir de aqui se mostrarán solo si la palabra se pasó como parámetro en la ejecucion del programa
         for elemento in parametros:
-
+            if '--ALL' in parametros or '-a' in parametros:
+                NResumen.opcmulliken(resumen, contenidoLog)
+                NResumen.opcacm(resumen, contenidoLog, natomos)
+                NResumen.opcasd(resumen, contenidoLog, matriz, natomos)
+                NResumen.opchsd(resumen, contenidoLog, [], natomos)
+                break
             if elemento =='--mulliken' or elemento == '-m':
                 NResumen.opcmulliken(resumen,contenidoLog)
             if elemento == '--atomic_charges_matrix' or elemento =='-acm':
@@ -116,11 +121,7 @@ class NResumen:
                 NResumen.opcasd(resumen,contenidoLog,matriz,natomos)
             if elemento == '--hirshfeld spin densities' or elemento == '-hsd':
                 NResumen.opchsd(resumen,contenidoLog,[], natomos)
-            if elemento == '--ALL' or elemento =='-a':
-                NResumen.opcmulliken(resumen, contenidoLog)
-                NResumen.opcacm(resumen, contenidoLog, natomos)
-                NResumen.opcasd(resumen, contenidoLog, matriz, natomos)
-                NResumen.opchsd(resumen, contenidoLog, [], natomos)
+
         return resumen
 
 
