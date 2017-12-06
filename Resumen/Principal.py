@@ -10,8 +10,7 @@ from VResumen import VResumen
 
 
 parser = argparse.ArgumentParser()
-#parser.add_argument('pclave', nargs = '+', help="Palabras claves a procesar, por ejemplo"
- #                                               "\nAPT_atomic_charges")
+
 parser.add_argument('-m','--mulliken',help='Muestra los datos de Mulliken',action="store_true")
 parser.add_argument('-acm','--atomic_charges_matrix',help='Muestra la matriz de cargas atomicas y su diagonal',action="store_true")
 parser.add_argument('-asd','--atomic_spin_densities',help='Muestra la matriz de densidades atómicas y su diagonal',action="store_true")
