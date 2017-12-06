@@ -35,10 +35,18 @@ class NResumen:
         if r == -1:
             resumen.append('Error, no se encontraron datos de la terminación')
         else:
+            datosconv = []
             if 'Normal' in contenidoLog[r]:
                 resumen.append('Terminación normal')
             else:
                 resumen.append(('Terminación erronea'))
+            resumen.append('')
+            resumen.append('Datos de convergencia')
+            r = NResumen.buscaPalabra('converged?',contenidoLog)
+            if r !=-1:
+                datosconv = NResumen.obtendatosconvergencia(r,contenidoLog)
+                for elemento in datosconv:
+                    resumen.append(elemento)
         resumen.append(' ')
         resumen.append('Numero de átomos: ' + str(natomos))
         resumen.append(' ')
@@ -70,6 +78,19 @@ class NResumen:
             aux = contenidoLog[r].split()
             resumen.append("Temperatura: " + aux[1] +' '+ aux[2] + ' Presión: ' + aux[4] + ' ' + aux[5] )
             resumen.append(' ')
+
+
+        r = NResumen.buscaPalabra('Zero-point correction',contenidoLog)
+        if r != -1:
+            for i in range(r, len(contenidoLog)-1):
+                resumen.append(contenidoLog[i])
+                if 'Vibrational' in contenidoLog[i]:
+                    break
+
+        resumen.append('')
+
+
+
         r = NResumen.buscaPalabra('imaginary frequencies \(',contenidoLog)
         if r == -1:
             resumen.append('No hay frecuencias negativas')
@@ -150,6 +171,14 @@ class NResumen:
                         pass
 
         return fneg
+
+    @staticmethod
+    def obtendatosconvergencia(lineainicio,contenido):
+        datosconv = []
+        for i in range (lineainicio, lineainicio+5):
+            datosconv.append(contenido[i])
+        return datosconv
+
     #Modificar para que busque en al expresion regular 3 o mas flotantes y una letra al final
     @staticmethod
     def obtenDatosMulliken(lineainicio,contenido):
