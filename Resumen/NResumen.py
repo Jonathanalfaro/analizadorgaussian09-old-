@@ -28,7 +28,7 @@ class NResumen:
             natomos = len(n)
         resumen = []
         matriz = []
-        r = NResumen.buscaPalabra(' #',contenidoLog)
+        r = NResumen.buscaPalabra('^\s#\s?[a-zA-Z]?test$',contenidoLog)
         resumen.append('Comando inicial: ' + contenidoLog[r])
         resumen.append('')
         r = NResumen.buscaPalabra('termination',contenidoLog)
@@ -42,7 +42,7 @@ class NResumen:
                 resumen.append(('Terminación erronea'))
             resumen.append('')
             resumen.append('Datos de convergencia')
-            r = NResumen.buscaPalabra('converged?',contenidoLog)
+            r = NResumen.buscaPalabra('converged\?',contenidoLog)
             if r !=-1:
                 datosconv = NResumen.obtendatosconvergencia(r,contenidoLog)
                 for elemento in datosconv:
@@ -63,8 +63,10 @@ class NResumen:
         else:
             hf = ''
             index = contenidoLog[r].index('HF=')
-            for i in range(index,len(contenidoLog[r])):
-                if (contenidoLog[r][i]) == ('\\'):
+            for i in range(index+4,len(contenidoLog[r])):
+                #if not contenidoLog[r][i].isdigit() or contenidoLog[r][i] != '-' or contenidoLog[r][i] != '.':
+                #    break
+                if contenidoLog[r][i] == ('\\') or contenidoLog[r][i] == '|':
                     break
                 hf = hf + contenidoLog[r][i]
 
