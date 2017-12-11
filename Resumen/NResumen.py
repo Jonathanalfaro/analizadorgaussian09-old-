@@ -28,7 +28,7 @@ class NResumen:
             natomos = len(n)
         resumen = []
         matriz = []
-        r = NResumen.buscaPalabra('^\s#\s?[ ]?test$',contenidoLog)
+        r = NResumen.buscaPalabra('test$',contenidoLog)
         resumen.append('Comando inicial: ' + contenidoLog[r])
         resumen.append('')
         r = NResumen.buscaPalabra('termination',contenidoLog)
