@@ -41,6 +41,6 @@ Lista de opciones
 | - | - |
 | -a | Muestra toda la informacion que se puede extraer del archivo .log|
 | -m | Muestra la informacion de APT atomic charges y APT atomic charges whit hydrogens summed |
-| -acm | Muestra Atomic Charges Matrix |
+| -acm | Muestra Atomic Charges Matrix y los valores de su diagonal|
 | -hsd | Muestra Hirshfeld Spin Densities | 
-| -asd | Muestra Atomic Spin Densities | 
+| -asd | Muestra Atomic Spin Densities Matrix y su diagonal| 
