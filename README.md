@@ -13,6 +13,12 @@ Para el uso en su máquina local primero necesita descargar el programa.
 
 ##Ayuda de uso
 
+En una terminal cambie el directorio de trabajo a la ubicación donde extrajo el contenido del archivo descargado
+
+Ejecute el programa de la siguiente manera
+
+`python Resumen/Ag09prin.py -a /home/lsvp/Documentos/SERVICIO_SOCIAL/BzPhsolo.out
+`
 
 El programa cuenta con una ayuda a la que puede accederse con el atajo -h
 
@@ -22,12 +28,14 @@ Lo cual da como salida lo siguiente
 
 ![Imagen 3](Img/i3.jpg)
 
+
+
 Lista de opciones
 
 
 | Opción | Acción |
 | - | - |
-| -a, --ALL | Muestra toda la informacion que se puede extraer del archivo .log|
+| -a | Muestra toda la informacion que se puede extraer del archivo .log|
 | -m | Muestra la informacion de APT atomic charges y APT atomic charges whit hydrogens summed |
 | -acm | Muestra Atomic Charges Matrix |
 | -hsd | Muestra Hirshfeld Spin Densities | 
