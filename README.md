@@ -5,10 +5,10 @@ Analizador  de datos de salida del programa Gaussian09 hecho en python y con la 
 
 Para el uso en su máquina local primero necesita descargar el programa.
 
-1.  En la página de Github de clic en la opción 'Clone or download'
+1. En la página de Github de clic en la opción 'Clone or download'
 ![Imagen 2](Img/i1.jpg)
 
-2.  Despues de clic en la opción  'Download ZIP'
+2. Despues de clic en la opción  'Download ZIP'
 ![Imagen 2](Img/i2.jpg)
 
 3. Extraiga el contenido del archivo
@@ -17,7 +17,7 @@ Para el uso en su máquina local primero necesita descargar el programa.
 
 1. En una terminal cambie el directorio de trabajo a la ubicación donde extrajo el contenido del archivo descargado
 
-2 Ejecute el programa de la siguiente manera
+2. Ejecute el programa de la siguiente manera
 
 `python Resumen/Ag09prin.py [opciones] [ruta del log]`
 
