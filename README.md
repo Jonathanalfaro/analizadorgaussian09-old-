@@ -5,7 +5,7 @@ Analizador  de datos de salida del programa Gaussian09 hecho en python y con la 
 
 Para el uso en su máquina local primero necesita descargar el programa.
 
-1.  En la página de Github de clic en la opción 'Clone or download'![Imagen 2](Img/i2.jpg)
+1.  En la página de Github de clic en la opción 'Clone or download'![Imagen 2](Img/i1.jpg)
 
 2.  Despues de clic en la opción  'Download ZIP'![Imagen 2](Img/i2.jpg)
 
