@@ -1,7 +1,7 @@
 # analizadorgaussian
 Analizador  de datos de salida del programa Gaussian09 hecho en python y con la libreria curses
 
-##Ayuda de descarga
+## Ayuda de descarga
 
 Para el uso en su máquina local primero necesita descargar el programa.
 
@@ -13,7 +13,7 @@ Para el uso en su máquina local primero necesita descargar el programa.
 
 3. Extraiga el contenido del archivo
 
-##Ayuda de uso
+## Ayuda de uso
 
 1. En una terminal cambie el directorio de trabajo a la ubicación donde extrajo el contenido del archivo descargado
 
