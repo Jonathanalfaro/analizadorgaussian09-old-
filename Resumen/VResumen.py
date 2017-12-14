@@ -26,7 +26,7 @@ class VResumen:
         #self.pad2 = curses.newpad(self.tamypad1 + 1, 1000)
         self.contenidoPad = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen)
         self.ponDatosPad(self.contenidoPad)
-        self.barraAyuda = "Presiona 'q' para salir | Presiona i para saltar a una linea"
+        self.barraAyuda = "Presiona 'q' para salir"
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_WHITE)
 
