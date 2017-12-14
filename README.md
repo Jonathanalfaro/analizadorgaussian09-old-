@@ -9,13 +9,17 @@ Para el uso en su máquina local primero necesita descargar el programa.
 
 2.  Despues de clic en la opción  'Download ZIP'![Imagen 2](Img/i2.jpg)
 
-3. Extraega el contenido del archivo
+3. Extraiga el contenido del archivo
 
 ##Ayuda de uso
 
-En una terminal cambie el directorio de trabajo a la ubicación donde extrajo el contenido del archivo descargado
+1. En una terminal cambie el directorio de trabajo a la ubicación donde extrajo el contenido del archivo descargado
 
-Ejecute el programa de la siguiente manera
+2 Ejecute el programa de la siguiente manera
+
+`python Resumen/Ag09prin.py [opciones] [ruta del log]`
+
+Ejemplo:
 
 `python Resumen/Ag09prin.py -a /home/lsvp/Documentos/SERVICIO_SOCIAL/BzPhsolo.out
 `
