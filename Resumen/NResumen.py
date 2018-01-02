@@ -3,152 +3,135 @@
 import re
 from DResumen import DResumen
 
+
 class NResumen:
 
     @staticmethod
     def obtencontenidolog(ruta):
         contenido = []
-        contenidoLog =  DResumen.abreArchivo(ruta)
-        for linea in contenidoLog:
-            l = linea.replace('\r','')
-            contenido.append(l)
+        contenidolog = DResumen.abrearchivo(ruta)
+        for linea in contenidolog:
+            lineaaux = linea.replace('\r', '')
+            contenido.append(lineaaux)
 
         return contenido
 
-
     @staticmethod
-    def hazresumen(contenidoLog,parametros):
-        caux = ''
-        r = 0
-        r = NResumen.buscaPalabra('natoms=',contenidoLog)
+    def hazresumen(contenidolog, parametros):
+        r = NResumen.buscapalabra('natoms=', contenidolog)
         if r != -1:
-            natomos = int(contenidoLog[r].split()[1])
+            natomos = int(contenidolog[r].split()[1])
         else:
-            n = NResumen.obtenDatosMulliken(105,contenidoLog)
+            n = NResumen.obtendatosmulliken(105, contenidolog)
             natomos = len(n)
         resumen = []
         matriz = []
-        r = NResumen.buscaPalabra('test$',contenidoLog)
-        resumen.append('Comando inicial: ' + contenidoLog[r])
+        r = NResumen.buscapalabra('test$', contenidolog)
+        resumen.append('Comando inicial: ' + contenidolog[r])
         resumen.append('')
-        r = NResumen.buscaPalabra('termination',contenidoLog)
+        r = NResumen.buscapalabra('termination', contenidolog)
         if r == -1:
             resumen.append('Error, no se encontraron datos de la terminación')
         else:
-            datosconv = []
-            if 'Normal' in contenidoLog[r]:
+
+            if 'Normal' in contenidolog[r]:
                 resumen.append('Terminación normal')
             else:
-                resumen.append(('Terminación erronea'))
+                resumen.append('Terminación erronea')
             resumen.append('')
             resumen.append('Datos de convergencia')
-            r = NResumen.buscaPalabra('converged\?',contenidoLog)
-            if r !=-1:
-                datosconv = NResumen.obtendatosconvergencia(r,contenidoLog)
+            r = NResumen.buscapalabra('converged\?', contenidolog)
+            if r != -1:
+                datosconv = NResumen.obtendatosconvergencia(r, contenidolog)
                 for elemento in datosconv:
                     resumen.append(elemento)
         resumen.append(' ')
         resumen.append('Numero de átomos: ' + str(natomos))
         resumen.append(' ')
-        r = NResumen.buscaPalabra('multiplicity',contenidoLog)
-        if r ==-1:
+        r = NResumen.buscapalabra('multiplicity', contenidolog)
+        if r == -1:
             resumen.append('Error, no hay datos de carga y multiplicidad en el archivo')
         else:
-            aux = contenidoLog[r].split()
-            resumen.append('Carga: '+ aux[2] + ' Multiplicidad: ' + aux[5])
+            aux = contenidolog[r].split()
+            resumen.append('Carga: ' + aux[2] + ' Multiplicidad: ' + aux[5])
             resumen.append(' ')
-        r = NResumen.buscaPalabra('HF=',contenidoLog)
-        if r ==-1:
+        r = NResumen.buscapalabra('HF=', contenidolog)
+        if r == -1:
             resumen.append('Error, no hay datos HF')
         else:
             hf = ''
-            index = contenidoLog[r].index('HF=')
-            for i in range(index+4,len(contenidoLog[r])):
-                #if not contenidoLog[r][i].isdigit() or contenidoLog[r][i] != '-' or contenidoLog[r][i] != '.':
-                #    break
-                if contenidoLog[r][i] == ('\\') or contenidoLog[r][i] == '|':
+            index = contenidolog[r].index('HF=')
+            for i in range(index + 4, len(contenidolog[r])):
+                if contenidolog[r][i] == '\\' or contenidolog[r][i] == '|':
                     break
-                hf = hf + contenidoLog[r][i]
-
+                hf = hf + contenidolog[r][i]
             resumen.append('Valor ' + hf)
             resumen.append(' ')
-
-        r = NResumen.buscaPalabra('pressure',contenidoLog)
+        r = NResumen.buscapalabra('pressure', contenidolog)
         if r == -1:
             resumen.append('Error, No se encontraron resultados para temperatura y presión')
         else:
-            aux = contenidoLog[r].split()
-            resumen.append("Temperatura: " + aux[1] +' '+ aux[2] + ' Presión: ' + aux[4] + ' ' + aux[5] )
+            aux = contenidolog[r].split()
+            resumen.append("Temperatura: " + aux[1] + ' ' + aux[2] + ' Presión: ' + aux[4] + ' ' + aux[5])
             resumen.append(' ')
-
-
-        r = NResumen.buscaPalabra('Zero-point correction',contenidoLog)
+        r = NResumen.buscapalabra('Zero-point correction', contenidolog)
         if r != -1:
-            for i in range(r, len(contenidoLog)-1):
-                resumen.append(contenidoLog[i])
-                if 'Vibrational' in contenidoLog[i]:
+            for i in range(r, len(contenidolog) - 1):
+                resumen.append(contenidolog[i])
+                if 'Vibrational' in contenidolog[i]:
                     break
-
         resumen.append('')
-
-
-
-        r = NResumen.buscaPalabra('imaginary frequencies \(',contenidoLog)
+        r = NResumen.buscapalabra('imaginary frequencies \(', contenidolog)
         if r == -1:
             resumen.append('No hay frecuencias negativas')
             resumen.append(' ')
         else:
-            fneg = NResumen.obtenFrequenciasNegativas(contenidoLog,r)
+            fneg = NResumen.obtenfrequenciasnegativas(contenidolog, r)
             resumen.append('Hay ' + str(len(fneg)) + ' frecuencias negativas')
             for elemento in fneg:
                 resumen.append(elemento)
             resumen.append(' ')
-
-
         #A partir de aqui se mostrarán solo si la palabra se pasó como parámetro en la ejecucion del programa
         for elemento in parametros:
             if '--ALL' in parametros or '-a' in parametros:
-                NResumen.opcmulliken(resumen, contenidoLog)
-                NResumen.opcacm(resumen, contenidoLog, natomos)
-                NResumen.opcasd(resumen, contenidoLog, matriz, natomos)
-                NResumen.opchsd(resumen, contenidoLog, [], natomos)
+                NResumen.opcmulliken(resumen, contenidolog)
+                NResumen.opcacm(resumen, contenidolog, natomos)
+                NResumen.opcasd(resumen, contenidolog, matriz, natomos)
+                NResumen.opchsd(resumen, contenidolog, [], natomos)
                 break
-            if elemento =='--mulliken' or elemento == '-m':
-                NResumen.opcmulliken(resumen,contenidoLog)
-            if elemento == '--atomic_charges_matrix' or elemento =='-acm':
-                NResumen.opcacm(resumen,contenidoLog, natomos)
+            if elemento == '--mulliken' or elemento == '-m':
+                NResumen.opcmulliken(resumen, contenidolog)
+            if elemento == '--atomic_charges_matrix' or elemento == '-acm':
+                NResumen.opcacm(resumen, contenidolog, natomos)
             if elemento == '--atomic_spin_densities' or elemento == '-asd':
-                NResumen.opcasd(resumen,contenidoLog,matriz,natomos)
+                NResumen.opcasd(resumen, contenidolog, matriz, natomos)
             if elemento == '--hirshfeld spin densities' or elemento == '-hsd':
-                NResumen.opchsd(resumen,contenidoLog,[], natomos)
-
+                NResumen.opchsd(resumen, contenidolog, [], natomos)
         return resumen
 
-
-
     @staticmethod
-    def buscaPalabraold(palabra, contenido):
-        nl= 0
+    def buscapalabraold(palabra, contenido):
+        nl = 0
         pos = -1
         expreg = re.compile(r'(%s)+' % palabra, re.I)
         for linea in contenido:
             res = expreg.search(linea)
-            if res == None:
+            if res is None:
                 pass
             else:
                 pos = nl
-                if (palabra == ' #'):
+                if palabra == ' #':
                     break
             nl = nl + 1
         return pos
 
     @staticmethod
-    def buscaPalabra(palabra, contenido):
+    def buscapalabra(palabra, contenido):
         pos = -1
         expreg = re.compile(r'(%s)+' % palabra, re.I)
-        for i in range(len(contenido) - 1,0,-1):
+        for i in range(len(contenido) - 1, 0, -1):
             res = expreg.search(contenido[i])
-            if res == None:
+            if res is None:
                 pass
             else:
                 pos = i
@@ -156,12 +139,12 @@ class NResumen:
         return pos
 
     @staticmethod
-    def obtenFrequenciasNegativas(contenido,posicioninicio):
+    def obtenfrequenciasnegativas(contenido, posicioninicio):
         fneg = []
-        expreg = re.compile(r'(Frequencies){1}\s+(-){2}\s+-?')
-        for i in range(posicioninicio+1,len(contenido)-1):
+        expreg = re.compile(r'(Frequencies)\s+(-){2}\s+-?')
+        for i in range(posicioninicio+1, len(contenido)-1):
             linea = contenido[i]
-            if expreg.search(linea) != None:
+            if expreg.search(linea) is not None:
                 aux = linea.split()
                 for elemento in aux:
                     try:
@@ -172,25 +155,25 @@ class NResumen:
                             return fneg
                     except:
                         pass
-
         return fneg
 
     @staticmethod
-    def obtendatosconvergencia(lineainicio,contenido):
+    def obtendatosconvergencia(lineainicio, contenido):
         datosconv = []
-        for i in range (lineainicio, lineainicio+5):
+        for i in range(lineainicio, lineainicio+5):
             datosconv.append(contenido[i])
         return datosconv
 
     #Modificar para que busque en al expresion regular 3 o mas flotantes y una letra al final
+    
     @staticmethod
-    def obtenDatosMulliken(lineainicio,contenido):
+    def obtendatosmulliken(lineainicio, contenido):
         datos = []
         vaux = 0
 
         expreg = re.compile(r'\s+\d+\s+[a-zA-Z]+\s+-?\d+.?\d+\s+[A-Z]?$')
         for i in range(lineainicio + 1, len(contenido) - 1):
-            if expreg.search(contenido[i]) != None and vaux < 2:
+            if expreg.search(contenido[i]) is not None and vaux < 2:
                 cad = contenido[i].split()
                 datos.append(cad[len(cad)-1] + '\n')
                 vaux = 1
@@ -201,18 +184,15 @@ class NResumen:
         return datos
 
     @staticmethod
-    def obtenMatriz(pos, contenido,na):
+    def obtenmatriz(pos, contenido, na):
         matriz = []
         for i in range(na):
             matriz.append([0] * na)
         ultimapos = 0
-        c = 0
         natomos = 0
-        ind = 0
-        f = 0
-        expreg = re.compile(r'\s+\d+\s+[a-zA-Z]+\s+(-?\d+\.?\d+\s{0,})+$')
+        expreg = re.compile(r'\s+\d+\s+[a-zA-Z]+\s+(-?\d+\.?\d+\s*)+$')
         for linea in contenido[pos+2:]:
-            if expreg.search(linea) != None:
+            if expreg.search(linea) is not None:
                 aux = linea.split()[2:]
                 ind = ultimapos
                 for elemento in aux:
@@ -226,29 +206,27 @@ class NResumen:
         return matriz
 
     @staticmethod
-    def buscarLinea(palabra,contenido):
+    def buscarlinea(palabra, contenido):
         nl = 0
         posiciones = []
         expreg = re.compile(r'(%s)+' % palabra, re.I)
         for linea in contenido:
             res = expreg.search(linea)
-            if res == None:
+            if res is None:
                 pass
             else:
                 posiciones.append(nl)
             nl = nl + 1
         return posiciones
 
-
-
     @staticmethod
-    def opcacm(resumen, contenidoLog,natomos):
-        r = NResumen.buscaPalabra('Condensed to atoms', contenidoLog)
+    def opcacm(resumen, contenidolog, natomos):
+        r = NResumen.buscapalabra('Condensed to atoms', contenidolog)
         if r == -1:
             resumen.append('No hay datos de la matriz')
         else:
-            matriz = NResumen.obtenMatriz(r, contenidoLog, natomos)
-            resumen.append('Atomic Charges Matrix\n\n')
+            matriz = NResumen.obtenmatriz(r, contenidolog, natomos)
+            resumen.append('Atomic Charges Matrix')
             resumen.append(' ')
             for linea in matriz:
                 caux = ''
@@ -264,23 +242,17 @@ class NResumen:
         resumen.append(' ')
 
     @staticmethod
-    def opcmulliken(resumen, contenidoLog):
-        pass
-
-
-    @staticmethod
-    def opcasd(resumen,contenidoLog,matriz,natomos):
-        r = NResumen.buscaPalabra('Atomic-Atomic Spin Densities.', contenidoLog)
+    def opcasd(resumen, contenidolog, matriz, natomos):
+        r = NResumen.buscapalabra('Atomic-Atomic Spin Densities.', contenidolog)
         diagonal = ''
         for i in range(len(matriz)):
             diagonal = diagonal + str(matriz[i][i]) + ' '
-
             resumen.append(matriz[i][i])
         resumen.append(' ')
         if r == -1:
             resumen.append('No hay datos de la matriz de densidades de spin')
         else:
-            matriz2 = NResumen.obtenMatriz(r, contenidoLog, natomos)
+            matriz2 = NResumen.obtenmatriz(r, contenidolog, natomos)
             resumen.append('Atomic Spin Densities Matrix\n\n')
             resumen.append(' ')
             for linea in matriz2:
@@ -293,18 +265,16 @@ class NResumen:
             resumen.append('Valores de la diagonal: ')
             for i in range(len(matriz2)):
                 diagonal = diagonal + str(matriz2[i][i]) + ' '
-
                 resumen.append(matriz2[i][i])
-
             resumen.append(' ')
 
     @staticmethod
-    def opchsd(resumen,contenidoLog,matriz,natomos):
-        r = NResumen.buscaPalabra('Hirshfeld spin densities, ', contenidoLog)
+    def opchsd(resumen, contenidolog, matriz, natomos):
+        r = NResumen.buscapalabra('Hirshfeld spin densities, ', contenidolog)
         if r == -1:
             resumen.append('No hay datos de la matriz Hirshfeld spin densities')
         else:
-            matriz = NResumen.obtenMatriz(r, contenidoLog, natomos)
+            matriz = NResumen.obtenmatriz(r, contenidolog, natomos)
             resumen.append(' Hirshfeld spin densities, charges and dipoles using IRadAn= 4:\n\n')
             resumen.append(' ')
             for linea in matriz:
@@ -314,20 +284,20 @@ class NResumen:
                 resumen.append(caux)
 
     @staticmethod
-    def opcmulliken(resumen,contenidoLog):
-        r = NResumen.buscaPalabra('APT atomic charges:', contenidoLog)
+    def opcmulliken(resumen, contenidolog):
+        r = NResumen.buscapalabra('APT atomic charges:', contenidolog)
         aptch = []
         if r == -1:
             resumen.append('Error, no se encontraron datos')
         else:
-            aptch = NResumen.obtenDatosMulliken(r, contenidoLog)
-        r = NResumen.buscaPalabra('APT Atomic charges with hydrogens summed', contenidoLog)
+            aptch = NResumen.obtendatosmulliken(r, contenidolog)
+        r = NResumen.buscapalabra('APT Atomic charges with hydrogens summed', contenidolog)
         aths = []
         if r == -1:
             resumen.append('Error, no se encontraron datos')
-            resumen.append(' ')
+            resumen.append('')
         else:
-            aths = NResumen.obtenDatosMulliken(r, contenidoLog)
+            aths = NResumen.obtendatosmulliken(r, contenidolog)
             resumen.append('APT atomic charges \t APT atomic charges hydrogens summed')
         for i in range(len(aptch)):
             resumen.append(str(float(aptch[i])) + '\t\t\t' + str(aths[i]))

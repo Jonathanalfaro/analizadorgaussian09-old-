@@ -1,11 +1,9 @@
-
 class DResumen:
 
 
     @staticmethod
-    def abreArchivo(ruta):
+    def abrearchivo(ruta):
         archivo = open(ruta)
         contenido = archivo.readlines()
         archivo.close()
-
         return contenido
