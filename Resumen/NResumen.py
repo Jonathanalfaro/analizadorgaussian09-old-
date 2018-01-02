@@ -26,7 +26,7 @@ class NResumen:
             natomos = len(n)
         resumen = []
         matriz = []
-        r = NResumen.buscapalabra('^ #\s?...\s', contenidolog)
+        r = NResumen.buscapalabra(' #', contenidolog)
         resumen.append('Comando inicial: ' + contenidolog[r])
         resumen.append('')
         r = NResumen.buscapalabra('termination', contenidolog)
@@ -125,10 +125,24 @@ class NResumen:
             nl = nl + 1
         return pos
 
+
+    # Codigo redundante, optimizar !!!!!!!!!!!!!
     @staticmethod
     def buscapalabra(palabra, contenido):
         pos = -1
+        nl = 0
         expreg = re.compile(r'(%s)+' % palabra, re.I)
+        if palabra == ' #':
+            for linea in contenido:
+                res = expreg.search(linea)
+                if res is None:
+                    pass
+                else:
+                    pos = nl
+                    if palabra == ' #':
+                        break
+                nl = nl + 1
+            return pos
         for i in range(len(contenido) - 1, 0, -1):
             res = expreg.search(contenido[i])
             if res is None:
@@ -222,8 +236,8 @@ class NResumen:
     @staticmethod
     def opcacm(resumen, contenidolog, natomos):
         r = NResumen.buscapalabra('Condensed to atoms', contenidolog)
-        if r == -1:
-            resumen.append('No hay datos de la matriz')
+        if r == -1 or 'Mulliken atomic charges:' in contenidolog[r+1]:
+            resumen.append('No hay datos de la matriz ')
         else:
             matriz = NResumen.obtenmatriz(r, contenidolog, natomos)
             resumen.append('Atomic Charges Matrix')
@@ -275,7 +289,7 @@ class NResumen:
             resumen.append('No hay datos de la matriz Hirshfeld spin densities')
         else:
             matriz = NResumen.obtenmatriz(r, contenidolog, natomos)
-            resumen.append(' Hirshfeld spin densities, charges and dipoles using IRadAn= 4:\n\n')
+            resumen.append(' Hirshfeld spin densities:\n\n')
             resumen.append(' ')
             for linea in matriz:
                 caux = ''
