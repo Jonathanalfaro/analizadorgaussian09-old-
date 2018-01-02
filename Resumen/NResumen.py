@@ -42,7 +42,7 @@ class NResumen:
             resumen.append('Datos de convergencia')
             r = NResumen.buscapalabra('converged\?', contenidolog)
             if r != -1:
-                datosconv = NResumen.obtendatosconvergencia(r, contenidolog)
+                datosconv = NResumen.obtendatosconvergencia( #r, contenidolog)
                 for elemento in datosconv:
                     resumen.append(elemento)
         resumen.append(' ')
