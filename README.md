@@ -19,11 +19,11 @@ Para el uso en su máquina local primero necesita descargar el programa.
 
 2. Ejecute el programa de la siguiente manera
 
-`python Resumen/Ag09prin.py [opciones] [ruta del log]`
+`python Resumen/Ag09principal.py [opciones] [ruta del log]`
 
 Ejemplo:
 
-`python Resumen/Ag09prin.py -a /home/lsvp/Documentos/SERVICIO_SOCIAL/BzPhsolo.out
+`python Resumen/Ag09principal.py -a /home/lsvp/Documentos/SERVICIO_SOCIAL/BzPhsolo.out
 `
 
 El programa cuenta con una ayuda a la que puede accederse con el atajo -h

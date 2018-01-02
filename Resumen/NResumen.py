@@ -26,7 +26,7 @@ class NResumen:
             natomos = len(n)
         resumen = []
         matriz = []
-        r = NResumen.buscapalabra('test$', contenidolog)
+        r = NResumen.buscapalabra('^ #\s?...\s', contenidolog)
         resumen.append('Comando inicial: ' + contenidolog[r])
         resumen.append('')
         r = NResumen.buscapalabra('termination', contenidolog)
@@ -65,7 +65,7 @@ class NResumen:
                 if contenidolog[r][i] == '\\' or contenidolog[r][i] == '|':
                     break
                 hf = hf + contenidolog[r][i]
-            resumen.append('Valor ' + hf)
+            resumen.append('Valor HF ' + hf)
             resumen.append(' ')
         r = NResumen.buscapalabra('pressure', contenidolog)
         if r == -1:
