@@ -42,7 +42,7 @@ class NResumen:
             resumen.append('Datos de convergencia')
             r = NResumen.buscapalabra('converged\?', contenidolog)
             if r != -1:
-                datosconv = NResumen.obtendatosconvergencia( #r, contenidolog)
+                datosconv = NResumen.obtendatosconvergencia(r, contenidolog)
                 for elemento in datosconv:
                     resumen.append(elemento)
         resumen.append(' ')
@@ -50,7 +50,7 @@ class NResumen:
         resumen.append(' ')
         r = NResumen.buscapalabra('multiplicity', contenidolog)
         if r == -1:
-            resumen.append('Error, no hay datos de carga y multiplicidad en el archivo')
+            resumen.append('Error, no hay datos de carga y multiplicidad ')
         else:
             aux = contenidolog[r].split()
             resumen.append('Carga: ' + aux[2] + ' Multiplicidad: ' + aux[5])
@@ -240,15 +240,15 @@ class NResumen:
             resumen.append('No hay datos de la matriz ')
         else:
             matriz = NResumen.obtenmatriz(r, contenidolog, natomos)
-            resumen.append('Atomic Charges Matrix')
+            """resumen.append('Atomic Charges Matrix')
             resumen.append(' ')
             for linea in matriz:
                 caux = ''
                 for elemento in linea:
                     caux += str(elemento) + '\t'
-                resumen.append(caux)
+                resumen.append(caux)"""
             diagonal = ''
-            resumen.append('Valores de la diagonal: ')
+            resumen.append('Valores de la diagonal de Atomic Charges Matrix: ')
             for i in range(len(matriz)):
                 diagonal = diagonal + str(matriz[i][i]) + ' '
                 resumen.append(matriz[i][i])
@@ -267,16 +267,16 @@ class NResumen:
             resumen.append('No hay datos de la matriz de densidades de spin')
         else:
             matriz2 = NResumen.obtenmatriz(r, contenidolog, natomos)
-            resumen.append('Atomic Spin Densities Matrix\n\n')
+            """resumen.append('Atomic Spin Densities Matrix\n\n')
             resumen.append(' ')
             for linea in matriz2:
                 caux = ''
                 for elemento in linea:
                     caux += str(elemento) + '\t'
-                resumen.append(caux)
+                resumen.append(caux)"""
             resumen.append(' ')
             diagonal = ''
-            resumen.append('Valores de la diagonal: ')
+            resumen.append('Valores de la diagonal de Atomic-Atomic Spin Densities: ')
             for i in range(len(matriz2)):
                 diagonal = diagonal + str(matriz2[i][i]) + ' '
                 resumen.append(matriz2[i][i])
