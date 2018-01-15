@@ -325,7 +325,7 @@ class NResumen:
 
 
     @staticmethod
-    def opcmulliken(resumen, contenidolog):
+    def opcapt(resumen, contenidolog):
         r = NResumen.buscapalabra('APT atomic charges:', contenidolog)
         aptch = []
         if r == -1:
@@ -342,3 +342,27 @@ class NResumen:
             resumen.append('APT atomic charges \t APT atomic charges hydrogens summed')
         for i in range(len(aptch)):
             resumen.append(str(float(aptch[i])) + '\t\t\t' + str(aths[i]))
+
+
+    @staticmethod
+    def opcmulliken(resumen, contenidolog):
+        resumen.append('')
+        r = NResumen.buscapalabra('Mulliken atomic charges:', contenidolog)
+        aptch = []
+        if r == -1:
+            resumen.append('Error, no se encontraron datos')
+        else:
+            aptch = NResumen.obtendatosmulliken(r, contenidolog)
+        r = NResumen.buscapalabra('^ Mulliken atomic spin', contenidolog)
+        aths = []
+        if r == -1:
+            resumen.append('Error, no se encontraron datos')
+            resumen.append('')
+        else:
+            aths = NResumen.obtendatosmulliken(r, contenidolog)
+            resumen.append('Mulliken atomic charges \t Mulliken atomic spin densities')
+            resumen.append('')
+        for i in range(len(aptch)):
+            resumen.append(str(float(aptch[i])) + '\t\t\t' + str(aths[i]))
+
+        resumen.append('')
