@@ -27,7 +27,11 @@ class NResumen:
         resumen = []
         matriz = []
         r = NResumen.buscapalabra(' #', contenidolog)
-        resumen.append('Comando inicial: ' + contenidolog[r])
+        comin = contenidolog[r]
+        datosini = NResumen.obtendatosiniciales(contenidolog, r)
+        for elemento in datosini:
+            resumen.append(elemento)
+
         resumen.append('')
         r = NResumen.buscapalabra('termination', contenidolog)
         if r == -1:
@@ -39,12 +43,14 @@ class NResumen:
             else:
                 resumen.append('Terminación erronea')
             resumen.append('')
-            resumen.append('Datos de convergencia')
-            r = NResumen.buscapalabra('converged\?', contenidolog)
-            if r != -1:
-                datosconv = NResumen.obtendatosconvergencia(r, contenidolog)
-                for elemento in datosconv:
-                    resumen.append(elemento)
+            if 'opt' in comin:
+                resumen.append('Datos de convergencia')
+                r = NResumen.buscapalabra('converged\?', contenidolog)
+                if r != -1:
+                    datosconv = NResumen.obtendatosconvergencia(r, contenidolog)
+                    for elemento in datosconv:
+                        resumen.append(elemento)
+                        resumen.append(elemento)
         resumen.append(' ')
         resumen.append('Numero de átomos: ' + str(natomos))
         resumen.append(' ')
@@ -81,16 +87,17 @@ class NResumen:
                 if 'Vibrational' in contenidolog[i]:
                     break
         resumen.append('')
-        r = NResumen.buscapalabra('imaginary frequencies \(', contenidolog)
-        if r == -1:
-            resumen.append('No hay frecuencias negativas')
-            resumen.append(' ')
-        else:
-            fneg = NResumen.obtenfrequenciasnegativas(contenidolog, r)
-            resumen.append('Hay ' + str(len(fneg)) + ' frecuencias negativas')
-            for elemento in fneg:
-                resumen.append(elemento)
-            resumen.append(' ')
+        if 'freq' in comin:
+            r = NResumen.buscapalabra('imaginary frequencies \(', contenidolog)
+            if r == -1:
+                resumen.append('No hay frecuencias negativas')
+                resumen.append(' ')
+            else:
+                fneg = NResumen.obtenfrequenciasnegativas(contenidolog, r)
+                resumen.append('Hay ' + str(len(fneg)) + ' frecuencias negativas')
+                for elemento in fneg:
+                    resumen.append(elemento)
+                resumen.append(' ')
         #A partir de aqui se mostrarán solo si la palabra se pasó como parámetro en la ejecucion del programa
         for elemento in parametros:
             if '--ALL' in parametros or '-a' in parametros:
@@ -151,6 +158,26 @@ class NResumen:
                 pos = i
                 break
         return pos
+
+
+    @staticmethod
+    def obtendatosiniciales(contenido,posicioninicio):
+        c1 = 0
+        c2 = 0
+        datosi = []
+        for i in range(posicioninicio, 0, -1):
+            if '***' in contenido[i]:
+                c1 = c1 + 1
+                if c1 == 2:
+                    break
+        for j in range(i, len(contenido), 1):
+            datosi.append(contenido[j])
+            if '-----' in contenido[j]:
+                c2 = c2 + 1
+                if c2 == 2:
+                    break
+
+        return datosi
 
     @staticmethod
     def obtenfrequenciasnegativas(contenido, posicioninicio):
@@ -288,14 +315,14 @@ class NResumen:
         if r == -1:
             resumen.append('No hay datos de la matriz Hirshfeld spin densities')
         else:
-            matriz = NResumen.obtenmatriz(r, contenidolog, natomos)
             resumen.append(' Hirshfeld spin densities:\n\n')
+            resumen.append('')
+            resumen.append('Átomo\tSpin Densities\tCharges')
+            resumen.append('')
+            for i in range(r+2, r+natomos+2, 1):
+                resumen.append('\t'.join(contenidolog[i].split()[1:4]))
             resumen.append(' ')
-            for linea in matriz:
-                caux = ''
-                for elemento in linea[0:2]:
-                    caux += str(elemento) + '\t'
-                resumen.append(caux)
+
 
     @staticmethod
     def opcmulliken(resumen, contenidolog):
