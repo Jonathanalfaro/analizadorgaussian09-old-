@@ -5,9 +5,7 @@ import sys
 import locale
 import argparse
 import re
-import curses
 from Ag09principal import *
-
 locale.setlocale(locale.LC_ALL, '')
 code = locale.getpreferredencoding()
 parser = argparse.ArgumentParser()
@@ -31,11 +29,11 @@ if __name__ == "__main__":
     curses.wrapper(main)
 
 
-# Clase VResumen. Es la ventana que muestra al usuario el resumen del LOG
+#Clase VResumen. Es la ventana que muestra al usuario el resumen del LOG
 class VResumen:
 
     def __init__(self, parametrosentrada):
-        self.ruta1 = parametrosentrada[len(parametrosentrada) - 1]
+        self.ruta1 = parametrosentrada[len(parametrosentrada)-1]
         self.paramentrosresumen = parametrosentrada
         self.contenidoArchivo = NResumen.obtencontenidolog(self.ruta1)
         self.posypad1 = 0
@@ -72,7 +70,7 @@ class VResumen:
         while k != ord('q'):
             maxy, maxx = stdscr.getmaxyx()
             self.pad1xf = int(maxx - 1)
-            self.pad1yf = maxy - 2
+            self.pad1yf = maxy-2
             stdscr.attron(curses.color_pair(1))
             if len(self.ruta1) <= maxx:
                 stdscr.addstr(1, 0, self.ruta1)
@@ -82,7 +80,7 @@ class VResumen:
                 stdscr.addstr(1, 0, ruta)
             stdscr.attroff(curses.color_pair(1))
             stdscr.attron(curses.color_pair(1))
-            stdscr.addstr(maxy - 1, 0, self.barraAyuda)
+            stdscr.addstr(maxy-1, 0, self.barraAyuda)
             stdscr.attroff(curses.color_pair(2))
             if k == ord('1'):
                 self.posycursor = self.pad1yi
@@ -178,14 +176,14 @@ class NResumen:
         resumen.append(' ')
         r = NResumen.buscapalabra('multiplicity', contenidolog)
         if r == -1:
-            resumen.append('')
+            resumen.append('Error, no hay datos de carga y multiplicidad ')
         else:
             aux = contenidolog[r].split()
             resumen.append('Carga: ' + aux[2] + ' Multiplicidad: ' + aux[5])
             resumen.append(' ')
         r = NResumen.buscapalabra('HF=', contenidolog)
         if r == -1:
-            resumen.append('')
+            resumen.append('Error, no hay datos HF')
         else:
             hf = ''
             index = contenidolog[r].index('HF=')
@@ -197,7 +195,7 @@ class NResumen:
             resumen.append(' ')
         r = NResumen.buscapalabra('pressure', contenidolog)
         if r == -1:
-            resumen.append('')
+            resumen.append('Error, No se encontraron resultados para temperatura y presión')
         else:
             aux = contenidolog[r].split()
             resumen.append("Temperatura: " + aux[1] + ' ' + aux[2] + ' Presión: ' + aux[4] + ' ' + aux[5])
@@ -384,7 +382,7 @@ class NResumen:
     def opcacm(resumen, contenidolog, natomos):
         r = NResumen.buscapalabra('Condensed to atoms', contenidolog)
         if r == -1 or 'Mulliken atomic charges:' in contenidolog[r + 1]:
-            resumen.append('')
+            resumen.append('No hay datos de la matriz ')
         else:
             matriz = NResumen.obtenmatriz(r, contenidolog, natomos)
             """resumen.append('Atomic Charges Matrix')
@@ -411,7 +409,7 @@ class NResumen:
             resumen.append(matriz[i][i])
         resumen.append(' ')
         if r == -1:
-            resumen.append('')
+            resumen.append('No hay datos de la matriz de densidades de spin')
         else:
             matriz2 = NResumen.obtenmatriz(r, contenidolog, natomos)
             """resumen.append('Atomic Spin Densities Matrix\n\n')
@@ -448,12 +446,13 @@ class NResumen:
         r = NResumen.buscapalabra('APT atomic charges:', contenidolog)
         aptch = []
         if r == -1:
-            resumen.append('')
+            resumen.append('Error, no se encontraron datos')
         else:
             aptch = NResumen.obtendatosmulliken(r, contenidolog)
         r = NResumen.buscapalabra('APT Atomic charges with hydrogens summed', contenidolog)
         aths = []
         if r == -1:
+            resumen.append('Error, no se encontraron datos')
             resumen.append('')
         else:
             aths = NResumen.obtendatosmulliken(r, contenidolog)
@@ -466,26 +465,23 @@ class NResumen:
         resumen.append('')
         r = NResumen.buscapalabra('Mulliken atomic charges:', contenidolog)
         aptch = []
-        if r == -1:
-            resumen.append('')
-        else:
+        if not r == -1:
             aptch = NResumen.obtendatosmulliken(r, contenidolog)
+            resumen.append('Mulliken atomic charges ')
+            resumen.append('')
+            for i in range(len(aptch)):
+                resumen.append(str(float(aptch[i])))
         r = NResumen.buscapalabra('^ Mulliken atomic spin', contenidolog)
         aths = []
-        if r == -1:
-            resumen.append('')
-            resumen.append('')
-        else:
+        if not r == -1:
             aths = NResumen.obtendatosmulliken(r, contenidolog)
-            resumen.append('Mulliken atomic charges \t Mulliken atomic spin densities')
-            resumen.append('')
-        for i in range(len(aptch)):
-            resumen.append(str(float(aptch[i])) + '\t\t\t' + str(aths[i]))
-
+            resumen.append('Mulliken atomic spin densities')
+            for i in range (len(aths)):
+                resumen.append(str(aths[i]))
         resumen.append('')
 
-
 class DResumen:
+
 
     @staticmethod
     def abrearchivo(ruta):
