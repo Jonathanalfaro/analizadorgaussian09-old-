@@ -138,6 +138,7 @@ class NResumen:
 
     @staticmethod
     def hazresumen(contenidolog, parametros):
+        terminacion = True
         r = NResumen.buscapalabra('natoms=', contenidolog)
         if r != -1:
             natomos = int(contenidolog[r].split()[1])
@@ -161,7 +162,7 @@ class NResumen:
             if 'Normal' in contenidolog[r]:
                 resumen.append('Terminación normal')
             else:
-                resumen.append('Terminación erronea')
+                terminacion = False
             resumen.append('')
             if 'opt' in comin:
                 resumen.append('Datos de convergencia')
@@ -234,6 +235,14 @@ class NResumen:
                 NResumen.opcasd(resumen, contenidolog, matriz, natomos)
             if elemento == '--hirshfeld spin densities' or elemento == '-hsd':
                 NResumen.opchsd(resumen, contenidolog, [], natomos)
+        if not terminacion:
+            resumen = []
+            resumen.append('Terminación Erronea')
+            for i in range(len(contenidolog)-1, 0, -1):
+                if '        ' in contenidolog[i]:
+                    for j in range(i+1, len(contenidolog)-1, 1):
+                        resumen.append(contenidolog[j])
+                    break
         return resumen
 
     @staticmethod
