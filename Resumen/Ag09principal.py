@@ -10,6 +10,7 @@ locale.setlocale(locale.LC_ALL, '')
 code = locale.getpreferredencoding()
 parser = argparse.ArgumentParser()
 parser.add_argument('-m', '--mulliken', help='Muestra los datos de Mulliken', action="store_true")
+parser.add_argument('-apt', '--APT_atomic', help='Muestra los datos de APT', action="store_true")
 parser.add_argument('-acm', '--atomic_charges_matrix', help='Muestra la matriz de cargas atomicas y su diagonal',
                     action="store_true")
 parser.add_argument('-asd', '--atomic_spin_densities', help='Muestra la matriz de densidades atómicas y su diagonal',
@@ -223,10 +224,14 @@ class NResumen:
         for elemento in parametros:
             if '--ALL' in parametros or '-a' in parametros:
                 NResumen.opcmulliken(resumen, contenidolog)
+                NResumen.opcapt(resumen, contenidolog)
                 NResumen.opcacm(resumen, contenidolog, natomos)
                 NResumen.opcasd(resumen, contenidolog, matriz, natomos)
                 NResumen.opchsd(resumen, contenidolog, [], natomos)
                 break
+
+            if elemento == '-apt':
+                NResumen.opcapt(resumen, contenidolog)
             if elemento == '--mulliken' or elemento == '-m':
                 NResumen.opcmulliken(resumen, contenidolog)
             if elemento == '--atomic_charges_matrix' or elemento == '-acm':

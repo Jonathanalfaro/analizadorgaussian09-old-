@@ -14,10 +14,11 @@ Para el uso en su máquina local primero necesita descargar el programa.
 3. Extraiga el contenido del archivo
 
 ## Ayuda de uso
+1. Puede ejecutar el programa directamente desde la cuenta Aess
+    `Ag09principal.py [opciones] [ruta]`
+2. En una terminal cambie el directorio de trabajo a la ubicación donde extrajo el contenido del archivo descargado
 
-1. En una terminal cambie el directorio de trabajo a la ubicación donde extrajo el contenido del archivo descargado
-
-2. Ejecute el programa de la siguiente manera
+3. Ejecute el programa de la siguiente manera
 
 `python Resumen/Ag09principal.py [opciones] [ruta del log]`
 
