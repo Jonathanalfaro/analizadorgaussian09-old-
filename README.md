@@ -14,14 +14,15 @@ Para el uso en su máquina local primero necesita descargar el programa.
 3. Extraiga el contenido del archivo
 
 ## Ayuda de uso
-1. Puede ejecutar el programa directamente desde la cuenta Aess
+1. Puede ejecutar el programa directamente desde la cuenta Aess(También puedes continuar desde el punto 2)
 
     `Ag09principal.py [opciones] [ruta]`
     
     ***Para esto ya no es necesario descargar nada
     Ejemplo:
     
-    ![Imagen_4](Img/i4.jpg)    
+    ![Imagen_4](Img/i4.jpg)  
+      
         
 2. En una terminal cambie el directorio de trabajo a la ubicación donde extrajo el contenido del archivo descargado
 
@@ -55,3 +56,4 @@ Lista de opciones
 | -acm | Muestra Atomic Charges Matrix y los valores de su diagonal|
 | -hsd | Muestra Hirshfeld Spin Densities | 
 | -asd | Muestra Atomic Spin Densities Matrix y su diagonal| 
+| -apt | Muestra APT atomic charges| 
