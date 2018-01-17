@@ -15,7 +15,14 @@ Para el uso en su máquina local primero necesita descargar el programa.
 
 ## Ayuda de uso
 1. Puede ejecutar el programa directamente desde la cuenta Aess
+
     `Ag09principal.py [opciones] [ruta]`
+    
+    ***Para esto ya no es necesario descargar nada
+    Ejemplo:
+    
+    ![Imagen_4](Img/i4.jpg)    
+        
 2. En una terminal cambie el directorio de trabajo a la ubicación donde extrajo el contenido del archivo descargado
 
 3. Ejecute el programa de la siguiente manera

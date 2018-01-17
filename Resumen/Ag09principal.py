@@ -157,7 +157,7 @@ class NResumen:
         resumen.append('')
         r = NResumen.buscapalabra('termination', contenidolog)
         if r == -1:
-            resumen.append('Error, no se encontraron datos de la terminación')
+            resumen.append('')
         else:
 
             if 'Normal' in contenidolog[r]:
@@ -178,14 +178,14 @@ class NResumen:
         resumen.append(' ')
         r = NResumen.buscapalabra('multiplicity', contenidolog)
         if r == -1:
-            resumen.append('Error, no hay datos de carga y multiplicidad ')
+            resumen.append('')
         else:
             aux = contenidolog[r].split()
             resumen.append('Carga: ' + aux[2] + ' Multiplicidad: ' + aux[5])
             resumen.append(' ')
         r = NResumen.buscapalabra('HF=', contenidolog)
         if r == -1:
-            resumen.append('Error, no hay datos HF')
+            resumen.append('')
         else:
             hf = ''
             index = contenidolog[r].index('HF=')
@@ -197,7 +197,7 @@ class NResumen:
             resumen.append(' ')
         r = NResumen.buscapalabra('pressure', contenidolog)
         if r == -1:
-            resumen.append('Error, No se encontraron resultados para temperatura y presión')
+            resumen.append('')
         else:
             aux = contenidolog[r].split()
             resumen.append("Temperatura: " + aux[1] + ' ' + aux[2] + ' Presión: ' + aux[4] + ' ' + aux[5])
@@ -396,7 +396,7 @@ class NResumen:
     def opcacm(resumen, contenidolog, natomos):
         r = NResumen.buscapalabra('Condensed to atoms', contenidolog)
         if r == -1 or 'Mulliken atomic charges:' in contenidolog[r + 1]:
-            resumen.append('No hay datos de la matriz ')
+            resumen.append(' ')
         else:
             matriz = NResumen.obtenmatriz(r, contenidolog, natomos)
             """resumen.append('Atomic Charges Matrix')
@@ -423,7 +423,7 @@ class NResumen:
             resumen.append(matriz[i][i])
         resumen.append(' ')
         if r == -1:
-            resumen.append('No hay datos de la matriz de densidades de spin')
+            resumen.append('')
         else:
             matriz2 = NResumen.obtenmatriz(r, contenidolog, natomos)
             """resumen.append('Atomic Spin Densities Matrix\n\n')
@@ -445,7 +445,7 @@ class NResumen:
     def opchsd(resumen, contenidolog, matriz, natomos):
         r = NResumen.buscapalabra('Hirshfeld spin densities, ', contenidolog)
         if r == -1:
-            resumen.append('No hay datos de la matriz Hirshfeld spin densities')
+            resumen.append('')
         else:
             resumen.append(' Hirshfeld spin densities:\n\n')
             resumen.append('')
@@ -460,13 +460,13 @@ class NResumen:
         r = NResumen.buscapalabra('APT atomic charges:', contenidolog)
         aptch = []
         if r == -1:
-            resumen.append('Error, no se encontraron datos')
+            resumen.append('')
         else:
             aptch = NResumen.obtendatosmulliken(r, contenidolog)
         r = NResumen.buscapalabra('APT Atomic charges with hydrogens summed', contenidolog)
         aths = []
         if r == -1:
-            resumen.append('Error, no se encontraron datos')
+            resumen.append('')
             resumen.append('')
         else:
             aths = NResumen.obtendatosmulliken(r, contenidolog)
