@@ -176,7 +176,7 @@ class NResumen:
                 terminacion = False
             resumen.append('')
             if 'opt' in comin:
-                resumen.append('Datos de convergencia')
+                resumen.append('*** Datos de convergencia***\n')
                 r = NResumen.buscapalabra('converged\?', contenidolog)
                 if r != -1:
                     datosconv = NResumen.obtendatosconvergencia(r, contenidolog)
