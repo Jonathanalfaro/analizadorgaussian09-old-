@@ -31,7 +31,7 @@ def main(stdscr):
 if __name__ == "__main__":
     modo = 'curses'
     for elemento in sys.argv:
-        if '-t' in elemento or '--texto' in elemento:
+        if elemento == '-t'or elemento == '--texto':
             modo = 'term'
             break
     if modo == 'term':
@@ -162,7 +162,7 @@ class NResumen:
         comin = contenidolog[r]
         datosini = NResumen.obtendatosiniciales(contenidolog, r)
         for elemento in datosini:
-            resumen.append(elemento)
+            resumen.append(' '.join(elemento.split()))
 
         resumen.append('')
         r = NResumen.buscapalabra('termination', contenidolog)
@@ -181,7 +181,6 @@ class NResumen:
                 if r != -1:
                     datosconv = NResumen.obtendatosconvergencia(r, contenidolog)
                     for elemento in datosconv:
-                        resumen.append(elemento)
                         resumen.append(elemento)
         resumen.append(' ')
         resumen.append('Numero de átomos: ' + str(natomos))
@@ -206,19 +205,17 @@ class NResumen:
             resumen.append('Valor HF ' + hf)
             resumen.append(' ')
         r = NResumen.buscapalabra('pressure', contenidolog)
-        if r == -1:
-            resumen.append('')
-        else:
+        if r != -1:
             aux = contenidolog[r].split()
             resumen.append("Temperatura: " + aux[1] + ' ' + aux[2] + ' Presión: ' + aux[4] + ' ' + aux[5])
             resumen.append(' ')
         r = NResumen.buscapalabra('Zero-point correction', contenidolog)
         if r != -1:
-            for i in range(r, len(contenidolog) - 1):
-                resumen.append(contenidolog[i])
+            for i in range(r, len(contenidolog) - 1, 1):
+                resumen.append(' '.join(contenidolog[i].split()))
                 if 'Vibrational' in contenidolog[i]:
                     break
-        resumen.append('')
+
         if 'freq' in comin:
             r = NResumen.buscapalabra('imaginary frequencies \(', contenidolog)
             if r == -1:
@@ -318,7 +315,6 @@ class NResumen:
                 c2 = c2 + 1
                 if c2 == 2:
                     break
-
         return datosi
 
     @staticmethod
@@ -358,7 +354,7 @@ class NResumen:
         for i in range(lineainicio + 1, len(contenido) - 1):
             if expreg.search(contenido[i]) is not None and vaux < 2:
                 cad = contenido[i].split()
-                datos.append(cad[len(cad) - 1] + '\n')
+                datos.append(cad[len(cad) - 1])
                 vaux = 1
             else:
                 if vaux == 1:
@@ -417,7 +413,7 @@ class NResumen:
                     caux += str(elemento) + '\t'
                 resumen.append(caux)"""
             diagonal = ''
-            resumen.append('Valores de la diagonal de Atomic Charges Matrix: ')
+            resumen.append('***** Valores de la diagonal de Atomic Charges Matrix *****\n')
             for i in range(len(matriz)):
                 diagonal = diagonal + str(matriz[i][i]) + ' '
                 resumen.append(matriz[i][i])
@@ -445,7 +441,7 @@ class NResumen:
                 resumen.append(caux)"""
             resumen.append(' ')
             diagonal = ''
-            resumen.append('Valores de la diagonal de Atomic-Atomic Spin Densities: ')
+            resumen.append('***** Valores de la diagonal de Atomic-Atomic Spin Densities *****\n')
             for i in range(len(matriz2)):
                 diagonal = diagonal + str(matriz2[i][i]) + ' '
                 resumen.append(matriz2[i][i])
@@ -454,11 +450,8 @@ class NResumen:
     @staticmethod
     def opchsd(resumen, contenidolog, matriz, natomos):
         r = NResumen.buscapalabra('Hirshfeld spin densities, ', contenidolog)
-        if r == -1:
-            resumen.append('')
-        else:
-            resumen.append(' Hirshfeld spin densities:\n\n')
-            resumen.append('')
+        if r != -1:
+            resumen.append(' ******* Hirshfeld spin densities *******\n')
             resumen.append('Átomo\tSpin Densities\tCharges')
             resumen.append('')
             for i in range(r + 2, r + natomos + 2, 1):
@@ -469,20 +462,16 @@ class NResumen:
     def opcapt(resumen, contenidolog):
         r = NResumen.buscapalabra('APT atomic charges:', contenidolog)
         aptch = []
-        if r == -1:
-            resumen.append('')
-        else:
+        if r != -1:
             aptch = NResumen.obtendatosmulliken(r, contenidolog)
         r = NResumen.buscapalabra('APT Atomic charges with hydrogens summed', contenidolog)
         aths = []
-        if r == -1:
-            resumen.append('')
-            resumen.append('')
-        else:
+        if r != -1:
             aths = NResumen.obtendatosmulliken(r, contenidolog)
-            resumen.append('APT atomic charges \t APT atomic charges hydrogens summed')
+            resumen.append('*** APT atomic charges \t APT atomic charges hydrogens summed ***\n')
         for i in range(len(aptch)):
             resumen.append(str(float(aptch[i])) + '\t\t\t' + str(aths[i]))
+        resumen.append('')
 
     @staticmethod
     def opcmulliken(resumen, contenidolog):
@@ -491,15 +480,15 @@ class NResumen:
         aptch = []
         if not r == -1:
             aptch = NResumen.obtendatosmulliken(r, contenidolog)
-            resumen.append('Mulliken atomic charges ')
-            resumen.append('')
+            resumen.append('*** Mulliken atomic charges ***\n')
             for i in range(len(aptch)):
                 resumen.append(str(float(aptch[i])))
+        resumen.append('')
         r = NResumen.buscapalabra('^ Mulliken atomic spin', contenidolog)
         aths = []
         if not r == -1:
             aths = NResumen.obtendatosmulliken(r, contenidolog)
-            resumen.append('Mulliken atomic spin densities')
+            resumen.append('*** Mulliken atomic spin densities ***\n')
             for i in range (len(aths)):
                 resumen.append(str(aths[i]))
         resumen.append('')
@@ -515,7 +504,6 @@ class DResumen:
         return contenido
 
 class VResumenTer:
-
 
     def __init__(self, parametrosentrada):
         self.ruta1 = parametrosentrada[len(parametrosentrada) - 1]
