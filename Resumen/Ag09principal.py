@@ -215,7 +215,7 @@ class NResumen:
                 resumen.append(' '.join(contenidolog[i].split()))
                 if 'Vibrational' in contenidolog[i]:
                     break
-
+        resumen.append('')
         if 'freq' in comin:
             r = NResumen.buscapalabra('imaginary frequencies \(', contenidolog)
             if r == -1:
