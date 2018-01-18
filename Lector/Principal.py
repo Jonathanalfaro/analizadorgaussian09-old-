@@ -1,7 +1,7 @@
 import curses
 import sys
 
-from Resumen.VResumen import VValidar
+from Resumen.VResumenCur import VValidar
 from VLector import VLector
 
 

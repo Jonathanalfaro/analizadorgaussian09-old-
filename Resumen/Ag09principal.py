@@ -6,10 +6,12 @@ import locale
 import argparse
 import re
 from Ag09principal import *
+#from VResumenTer import VResumenTer
 locale.setlocale(locale.LC_ALL, '')
 code = locale.getpreferredencoding()
 parser = argparse.ArgumentParser()
 parser.add_argument('-m', '--mulliken', help='Muestra los datos de Mulliken', action="store_true")
+parser.add_argument('-t', '--texto', help='Muestra los resultados en la salida estandar', action="store_true")
 parser.add_argument('-apt', '--APT_atomic', help='Muestra los datos de APT', action="store_true")
 parser.add_argument('-acm', '--atomic_charges_matrix', help='Muestra la matriz de cargas atomicas y su diagonal',
                     action="store_true")
@@ -22,16 +24,24 @@ parser.parse_args()
 
 
 def main(stdscr):
-    vprincipal = VResumen(sys.argv)
+    vprincipal = VResumenCur(sys.argv)
     vprincipal.muestraventana(stdscr)
 
 
 if __name__ == "__main__":
-    curses.wrapper(main)
+    modo = 'curses'
+    for elemento in sys.argv:
+        if '-t' in elemento or '--texto' in elemento:
+            modo = 'term'
+            break
+    if modo == 'term':
+        vprincipal = VResumenTer(sys.argv)
+    else:
+        curses.wrapper(main)
 
 
 #Clase VResumen. Es la ventana que muestra al usuario el resumen del LOG
-class VResumen:
+class VResumenCur:
 
     def __init__(self, parametrosentrada):
         self.ruta1 = parametrosentrada[len(parametrosentrada)-1]
@@ -503,3 +513,14 @@ class DResumen:
         contenido = archivo.readlines()
         archivo.close()
         return contenido
+
+class VResumenTer:
+
+
+    def __init__(self, parametrosentrada):
+        self.ruta1 = parametrosentrada[len(parametrosentrada) - 1]
+        self.paramentrosresumen = parametrosentrada
+        self.contenidoArchivo = NResumen.obtencontenidolog(self.ruta1)
+        self.resumen = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen)
+        for elemento in self.resumen:
+            print elemento

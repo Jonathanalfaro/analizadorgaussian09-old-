@@ -57,3 +57,4 @@ Lista de opciones
 | -hsd | Muestra Hirshfeld Spin Densities | 
 | -asd | Muestra Atomic Spin Densities Matrix y su diagonal| 
 | -apt | Muestra APT atomic charges| 
+| -t | Muestra el resumen en la salida estándar| 
