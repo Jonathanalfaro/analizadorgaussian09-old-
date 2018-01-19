@@ -64,7 +64,7 @@ class VResumenCur:
         self.pad1 = curses.newpad(self.tamypad1 + 1, 1000)
         self.contenidoPad = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen)
         self.pondatospad(self.contenidoPad)
-        self.barraAyuda = "Presiona 'q' para salir"
+        self.barraAyuda = "Ag09 v0.1\t\t\t\t Presiona 'q' para salir"
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_WHITE)
 
@@ -182,6 +182,17 @@ class NResumen:
                     datosconv = NResumen.obtendatosconvergencia(r, contenidolog)
                     for elemento in datosconv:
                         resumen.append(elemento)
+                resumen.append('')
+                paso = 0
+                #for k in range(len(contenidolog -1, 0, -1)):
+
+                r = NResumen.buscapalabra('Stationary',contenidolog)
+                if r!= -1:
+                    for i in range(r ,0 ,-1):
+                        if 'Converged?' in contenidolog[i]:
+                            paso = paso + 1
+                    resumen.append('Stationary point found en el paso ' + str(paso))
+
         resumen.append(' ')
         resumen.append('Numero de átomos: ' + str(natomos))
         resumen.append(' ')
@@ -512,3 +523,5 @@ class VResumenTer:
         self.resumen = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen)
         for elemento in self.resumen:
             print elemento
+
+        print '\nAnalizador de la salida del programa Gaussian09\nAg09 v0.1'

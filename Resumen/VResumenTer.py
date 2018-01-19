@@ -10,3 +10,4 @@ class VResumenTer:
         self.resumen = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen)
         for elemento in self.resumen:
             print elemento
+        print 'Analizador de la salida del programa Gaussian09\nAg09 v0.1'
