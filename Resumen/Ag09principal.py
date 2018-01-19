@@ -521,7 +521,10 @@ class VResumenTer:
         self.paramentrosresumen = parametrosentrada
         self.contenidoArchivo = NResumen.obtencontenidolog(self.ruta1)
         self.resumen = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen)
+        print '*********************************************************************\n'
+        print '\nAnalizador  Gaussian09\nAg09 v0.1\n\n'
+        print '*********************************************************************\n\n'
+
         for elemento in self.resumen:
             print elemento
 
-        print '\nAnalizador de la salida del programa Gaussian09\nAg09 v0.1'
