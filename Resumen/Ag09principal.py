@@ -64,7 +64,7 @@ class VResumenCur:
         self.pad1 = curses.newpad(self.tamypad1 + 1, 1000)
         self.contenidoPad = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen)
         self.pondatospad(self.contenidoPad)
-        self.barraAyuda = "Ag09 v0.1\t\t\t\t Presiona 'q' para salir"
+        self.barraAyuda = "Presiona 'q' para salir"
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_WHITE)
 
@@ -157,6 +157,10 @@ class NResumen:
             n = NResumen.obtendatosmulliken(105, contenidolog)
             natomos = len(n)
         resumen = []
+        resumen.append('*********************************************************************')
+        resumen.append('Analizador  Gaussian09')
+        resumen.append('Ag09 v0.1')
+        resumen.append('*********************************************************************')
         matriz = []
         r = NResumen.buscapalabra(' #', contenidolog)
         comin = contenidolog[r]
@@ -183,6 +187,7 @@ class NResumen:
                     for elemento in datosconv:
                         resumen.append(elemento)
                 resumen.append('')
+                numpasos = 0
                 paso = 0
                 #for k in range(len(contenidolog -1, 0, -1)):
 
@@ -191,7 +196,10 @@ class NResumen:
                     for i in range(r ,0 ,-1):
                         if 'Converged?' in contenidolog[i]:
                             paso = paso + 1
-                    resumen.append('Stationary point found en el paso ' + str(paso))
+                    for i in range(0,len(contenidolog), 1):
+                        if 'Converged?' in contenidolog[i]:
+                            numpasos = numpasos + 1
+                    resumen.append('Stationary point found en el paso ' + str(paso) + ' de ' + str(numpasos))
 
         resumen.append(' ')
         resumen.append('Numero de átomos: ' + str(natomos))
@@ -521,10 +529,6 @@ class VResumenTer:
         self.paramentrosresumen = parametrosentrada
         self.contenidoArchivo = NResumen.obtencontenidolog(self.ruta1)
         self.resumen = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen)
-        print '*********************************************************************\n'
-        print '\nAnalizador  Gaussian09\nAg09 v0.1\n\n'
-        print '*********************************************************************\n\n'
-
         for elemento in self.resumen:
             print elemento
 
