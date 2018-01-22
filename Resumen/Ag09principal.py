@@ -269,8 +269,6 @@ class NResumen:
                 NResumen.opcasd(resumen, contenidolog, matriz, natomos)
             if elemento == '--hirshfeld spin densities' or elemento == '-hsd':
                 NResumen.opchsd(resumen, contenidolog, [], natomos)
-            if elemento == '--exporta' or elemento == 'e':
-                NResumen.exporta(resumen)
         if not terminacion:
             resumen = []
             resumen.append('Terminación Erronea')
@@ -279,13 +277,15 @@ class NResumen:
                     for j in range(i+1, len(contenidolog)-1, 1):
                         resumen.append(contenidolog[j])
                     break
+        for elemento in parametros:
+            if elemento == '-e':
+                NResumen.exporta(resumen)
 
         return resumen
 
     @staticmethod
     def exporta(resumen):
         csvfile = 'archivo.xlsx'
-        ea =''
         with open(csvfile,'w') as output:
             writer = csv.writer(output)
             for elemento in resumen:
