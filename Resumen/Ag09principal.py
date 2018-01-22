@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import curses
+import random
 import sys
 import locale
 import argparse
@@ -22,9 +23,8 @@ parser.add_argument('-asd', '--atomic_spin_densities', help='Muestra la matriz d
 parser.add_argument('-hsd', '--hirshfeld_spin_densities', help='Muestra la matriz de Hirshfeld', action="store_true")
 parser.add_argument('-a', '--ALL', help='Muestra todos los datos', action="store_true")
 parser.add_argument('-e', '--exporta', help='Exporta los datos a un archivo EXCEL', action="store_true")
-parser.add_argument('file', nargs=1, help="Nombre de archivo a procesar")
-parser.parse_args()
-
+parser.add_argument('file', nargs='+', help="Nombre de archivo a procesar")
+args = parser.parse_args()
 
 def main(stdscr):
     vprincipal = VResumenCur(sys.argv)
@@ -38,7 +38,9 @@ if __name__ == "__main__":
             modo = 'term'
             break
     if modo == 'term':
-        vprincipal = VResumenTer(sys.argv)
+        for archivo in args.file:
+            vprincipal = VResumenTer(sys.argv)
+
     else:
         curses.wrapper(main)
 
@@ -285,13 +287,19 @@ class NResumen:
 
     @staticmethod
     def exporta(resumen):
-        csvfile = 'archivo.xlsx'
+        char = "abcdefghijklmnopqrstuvwyz"
+        nom = ''
+        for i in range(1,6,1):
+            letra_aleatoria = random.choice(char)
+            nom = nom+letra_aleatoria
+        print char
+        csvfile = nom+'.xlsx'
         with open(csvfile,'w') as output:
             writer = csv.writer(output)
             for elemento in resumen:
                 if elemento is not '' and elemento is not ' ':
                     writer.writerow([elemento.replace('\n','').replace('\t\t\t','\t')])
-
+        output.close()
 
     @staticmethod
     def buscapalabraold(palabra, contenido):
