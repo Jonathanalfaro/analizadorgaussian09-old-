@@ -5,7 +5,9 @@ import sys
 import locale
 import argparse
 import re
+import csv
 from Ag09principal import *
+
 #from VResumenTer import VResumenTer
 locale.setlocale(locale.LC_ALL, '')
 code = locale.getpreferredencoding()
@@ -19,6 +21,7 @@ parser.add_argument('-asd', '--atomic_spin_densities', help='Muestra la matriz d
                     action="store_true")
 parser.add_argument('-hsd', '--hirshfeld_spin_densities', help='Muestra la matriz de Hirshfeld', action="store_true")
 parser.add_argument('-a', '--ALL', help='Muestra todos los datos', action="store_true")
+parser.add_argument('-e', '--exporta', help='Exporta los datos a un archivo EXCEL', action="store_true")
 parser.add_argument('file', nargs=1, help="Nombre de archivo a procesar")
 parser.parse_args()
 
@@ -266,6 +269,8 @@ class NResumen:
                 NResumen.opcasd(resumen, contenidolog, matriz, natomos)
             if elemento == '--hirshfeld spin densities' or elemento == '-hsd':
                 NResumen.opchsd(resumen, contenidolog, [], natomos)
+            if elemento == '--exporta' or elemento == 'e':
+                NResumen.exporta(resumen)
         if not terminacion:
             resumen = []
             resumen.append('Terminación Erronea')
@@ -274,7 +279,19 @@ class NResumen:
                     for j in range(i+1, len(contenidolog)-1, 1):
                         resumen.append(contenidolog[j])
                     break
+
         return resumen
+
+    @staticmethod
+    def exporta(resumen):
+        csvfile = 'archivo.xlsx'
+        ea =''
+        with open(csvfile,'w') as output:
+            writer = csv.writer(output)
+            for elemento in resumen:
+                if elemento is not '' and elemento is not ' ':
+                    writer.writerow([elemento.replace('\n','').replace('\t\t\t','\t')])
+
 
     @staticmethod
     def buscapalabraold(palabra, contenido):
