@@ -22,19 +22,23 @@ Para el uso local del programa necesita descargar el programa.
     Ejemplo:
     
     ![Imagen_4](Img/i4.jpg)  
-      
-        
+            
 2. En una terminal cambie el directorio de trabajo a la ubicación donde extrajo el contenido del archivo descargado
 
 3. Ejecute el programa de la siguiente manera
 
-`python Resumen/Ag09principal.py [opciones] [ruta del log]`
+    `python Resumen/Ag09principal.py [opciones] [ruta del log]`
 
-Ejemplo:
+    Ejemplo:
 
-`python Resumen/Ag09principal.py -a /home/lsvp/Documentos/SERVICIO_SOCIAL/BzPhsolo.out
+    `python Resumen/Ag09principal.py -a /home/lsvp/Documentos/SERVICIO_SOCIAL/BzPhsolo.out
 `
 
+4. Ahora puede procesar mas de un archivo a la vez
+
+    `python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/*.log`
+        o
+    `python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/*.out`
 El programa cuenta con una ayuda a la que puede accederse con el atajo -h
 
 `python /home/lsvp/PycharmProjects/ag09/Resumen/Principal.py -h`
