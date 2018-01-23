@@ -9,7 +9,7 @@ import re
 import csv
 from Ag09principal import *
 
-#from VResumenTer import VResumenTer
+
 locale.setlocale(locale.LC_ALL, '')
 code = locale.getpreferredencoding()
 parser = argparse.ArgumentParser()
@@ -39,7 +39,7 @@ if __name__ == "__main__":
             break
     if modo == 'term':
         for archivo in args.file:
-            vprincipal = VResumenTer(sys.argv)
+            vprincipal = VResumenTer(sys.argv, archivo)
 
     else:
         curses.wrapper(main)
@@ -67,7 +67,7 @@ class VResumenCur:
         self.tamypad1 = 32700
         self.tamypad2 = self.tamypad1
         self.pad1 = curses.newpad(self.tamypad1 + 1, 1000)
-        self.contenidoPad = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen)
+        self.contenidoPad = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen,self.ruta1)
         self.pondatospad(self.contenidoPad)
         self.barraAyuda = "Presiona 'q' para salir"
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
@@ -153,7 +153,7 @@ class NResumen:
         return contenido
 
     @staticmethod
-    def hazresumen(contenidolog, parametros):
+    def hazresumen(contenidolog, parametros,ruta):
         terminacion = True
         r = NResumen.buscapalabra('natoms=', contenidolog)
         if r != -1:
@@ -162,6 +162,7 @@ class NResumen:
             n = NResumen.obtendatosmulliken(105, contenidolog)
             natomos = len(n)
         resumen = []
+        resumen.append(ruta)
         resumen.append('*********************************************************************')
         resumen.append('Analizador  Gaussian09')
         resumen.append('Ag09 v0.1')
@@ -281,18 +282,18 @@ class NResumen:
                     break
         for elemento in parametros:
             if elemento == '-e':
-                NResumen.exporta(resumen)
+                NResumen.exporta(resumen,ruta)
 
         return resumen
 
     @staticmethod
-    def exporta(resumen):
-        char = "abcdefghijklmnopqrstuvwyz"
+    def exporta(resumen,ruta):
         nom = ''
-        for i in range(1,6,1):
-            letra_aleatoria = random.choice(char)
-            nom = nom+letra_aleatoria
-        print char
+        for i in range(len(ruta)-1, 0, -1):
+            if ruta[i] == '/':
+                break
+        for j in range (i+1, len(ruta)-4, 1):
+            nom = nom + ruta[j]
         csvfile = nom+'.xlsx'
         with open(csvfile,'w') as output:
             writer = csv.writer(output)
@@ -549,11 +550,11 @@ class DResumen:
 
 class VResumenTer:
 
-    def __init__(self, parametrosentrada):
-        self.ruta1 = parametrosentrada[len(parametrosentrada) - 1]
+    def __init__(self, parametrosentrada, archivo):
+
         self.paramentrosresumen = parametrosentrada
-        self.contenidoArchivo = NResumen.obtencontenidolog(self.ruta1)
-        self.resumen = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen)
+        self.contenidoArchivo = NResumen.obtencontenidolog(archivo)
+        self.resumen = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen,archivo)
         for elemento in self.resumen:
             print elemento
 
