@@ -155,6 +155,7 @@ class NResumen:
     @staticmethod
     def hazresumen(contenidolog, parametros,ruta):
         terminacion = True
+        comin = ''
         r = NResumen.buscapalabra('natoms=', contenidolog)
         if r != -1:
             natomos = int(contenidolog[r].split()[1])
@@ -165,10 +166,12 @@ class NResumen:
         resumen.append(ruta)
         resumen.append('*********************************************************************')
         resumen.append('Analizador  Gaussian09')
-        resumen.append('Ag09 v0.2')
+        resumen.append('Ag09 v0.3')
         resumen.append('*********************************************************************')
         matriz = []
         r = NResumen.buscapalabra(' #', contenidolog)
+        if r == -1:
+            return ['El archivo '+ ruta +' no es un archivo de salida de Gaussian válido']
         comin = contenidolog[r]
         datosini = NResumen.obtendatosiniciales(contenidolog, r)
         for elemento in datosini:
@@ -427,6 +430,16 @@ class NResumen:
                 ultimapos = ultimapos + 6
                 if ultimapos >= na:
                     break
+
+        matrize = []
+        ca = ''
+        for linea in matriz:
+            for columna in linea:
+                ca = ca + str(columna) + '\t'
+            matrize.append(ca)
+            ca = ''
+        NResumen.exporta(matrize,'/matriz')
+
         return matriz
 
     @staticmethod
