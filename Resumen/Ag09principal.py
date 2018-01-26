@@ -258,10 +258,12 @@ class NResumen:
             resumen.append('')
             resumen.append('\t\ttE(Thermal)(Kcal/Mol)\tCV(Cal/Mol-Kelvin)\tS(Cal/Mol-Kelvin)')
             for j in range(i+2,i+100,1):
-                if 'Vibration ' in contenidolog[j]:
-                    break
                 aux = contenidolog[j].split()
+                if len(aux[0])<8:
+                    aux[0] = aux[0] + '\t'
                 resumen.append(aux[0]+'\t\t'+'\t\t\t'.join(aux[1:]))
+                if 'Vibrational ' in contenidolog[j]:
+                    break
         resumen.append('')
         if 'freq' in comin:
             r = NResumen.buscapalabra('imaginary frequencies \(', contenidolog)
