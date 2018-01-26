@@ -1,14 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import curses
-import random
-import sys
-import locale
-import argparse
-import re
-import csv
-from Ag09principal import *
-
+try:
+    import curses
+    import random
+    import sys
+    import locale
+    import argparse
+    import re
+    import csv
+    from Ag09principal import *
+except ImportError as ie:
+    print '{0} install first please'.format(ie)
+    exit(0)
 
 locale.setlocale(locale.LC_ALL, '')
 code = locale.getpreferredencoding()
@@ -166,7 +169,7 @@ class NResumen:
         resumen.append(ruta)
         resumen.append('*********************************************************************')
         resumen.append('Analizador  Gaussian09')
-        resumen.append('Ag09 v0.3')
+        resumen.append('Ag09 v0.4')
         resumen.append('*********************************************************************')
         matriz = []
         r = NResumen.buscapalabra(' #', contenidolog)
@@ -221,17 +224,26 @@ class NResumen:
             resumen.append('Carga: ' + aux[2] + ' Multiplicidad: ' + aux[5])
             resumen.append(' ')
         r = NResumen.buscapalabra('HF=', contenidolog)
-        if r == -1:
-            resumen.append('')
-        else:
+        if not r is -1:
             hf = ''
             index = contenidolog[r].index('HF=')
-            for i in range(index + 4, len(contenidolog[r])):
+            for i in range(index + 3, len(contenidolog[r])):
                 if contenidolog[r][i] == '\\' or contenidolog[r][i] == '|':
                     break
                 hf = hf + contenidolog[r][i]
             resumen.append('Valor HF ' + hf)
             resumen.append(' ')
+        r = NResumen.buscapalabra('Dipole=', contenidolog)
+        if not r is -1:
+            dp = ''
+            index = contenidolog[r].index('Dipole=')
+            for i in range(index + 6, len(contenidolog[r])):
+                if contenidolog[r][i] == '\\' or contenidolog[r][i] == '|':
+                    break
+                dp = dp + contenidolog[r][i]
+            resumen.append('Dipolo ' + dp)
+            resumen.append(' ')
+
         r = NResumen.buscapalabra('pressure', contenidolog)
         if r != -1:
             aux = contenidolog[r].split()
@@ -240,9 +252,18 @@ class NResumen:
         r = NResumen.buscapalabra('Zero-point correction', contenidolog)
         if r != -1:
             for i in range(r, len(contenidolog) - 1, 1):
-                resumen.append(' '.join(contenidolog[i].split()))
-                if 'Vibrational' in contenidolog[i]:
+                if '(Thermal' in contenidolog[i]:
                     break
+                resumen.append(' '.join(contenidolog[i].split()))
+        resumen.append('')
+        resumen.append('\t\ttE(Thermal)(Kcal/Mol)\tCV(Cal/Mol-Kelvin)\tS(Cal/Mol-Kelvin)')
+        for j in range(i+2,i+100,1):
+            if 'Vibration ' in contenidolog[j]:
+                break
+            aux = contenidolog[j].split()
+            if len(aux[0]) < 8:
+                aux[0] = aux[0] +'\t'
+            resumen.append(aux[0]+'\t\t'+'\t\t\t'.join(aux[1:]))
         resumen.append('')
         if 'freq' in comin:
             r = NResumen.buscapalabra('imaginary frequencies \(', contenidolog)
@@ -299,7 +320,7 @@ class NResumen:
             nom = nom + ruta[j]
         csvfile = nom+'.xlsx'
         with open(csvfile,'w') as output:
-            writer = csv.writer(output)
+            writer = csv.writer(output,dialect='excel')
             for elemento in resumen:
                 if elemento is not '' and elemento is not ' ':
                     writer.writerow([elemento.replace('\n','').replace('\t\t\t','\t')])
