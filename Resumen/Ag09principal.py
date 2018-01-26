@@ -261,8 +261,6 @@ class NResumen:
             if 'Vibration ' in contenidolog[j]:
                 break
             aux = contenidolog[j].split()
-            if len(aux[0]) < 8:
-                aux[0] = aux[0] +'\t'
             resumen.append(aux[0]+'\t\t'+'\t\t\t'.join(aux[1:]))
         resumen.append('')
         if 'freq' in comin:
