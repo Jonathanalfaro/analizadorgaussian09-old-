@@ -256,7 +256,7 @@ class NResumen:
                     break
                 resumen.append(' '.join(contenidolog[i].split()))
             resumen.append('')
-            resumen.append('\t\ttE(Thermal)(Kcal/Mol)\tCV(Cal/Mol-Kelvin)\tS(Cal/Mol-Kelvin)')
+            resumen.append('\t\tE(Thermal)(Kcal/Mol)\tCV(Cal/Mol-Kelvin)\tS(Cal/Mol-Kelvin)')
             for j in range(i+2,i+100,1):
                 aux = contenidolog[j].split()
                 if len(aux[0])<8:
