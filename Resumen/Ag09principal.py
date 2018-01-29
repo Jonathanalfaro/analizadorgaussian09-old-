@@ -169,7 +169,7 @@ class NResumen:
         resumen.append(ruta)
         resumen.append('*********************************************************************')
         resumen.append('Analizador  Gaussian09')
-        resumen.append('Ag09 v0.4')
+        resumen.append('Ag09 v0.5')
         resumen.append('*********************************************************************')
         matriz = []
         r = NResumen.buscapalabra(' #', contenidolog)
@@ -318,12 +318,12 @@ class NResumen:
                 break
         for j in range (i+1, len(ruta)-4, 1):
             nom = nom + ruta[j]
-        csvfile = nom+'.xlsx'
+        csvfile = nom+'.csv'
         with open(csvfile,'w') as output:
-            writer = csv.writer(output,dialect='excel')
+            writer = csv.writer(output)
             for elemento in resumen:
                 if elemento is not '' and elemento is not ' ':
-                    writer.writerow([elemento.replace('\n','').replace('\t\t\t','\t')])
+                    writer.writerow(elemento.split())
         output.close()
 
     @staticmethod
