@@ -237,10 +237,15 @@ class NResumen:
         if not r is -1:
             dp = ''
             index = contenidolog[r].index('Dipole=')
-            for i in range(index + 6, len(contenidolog[r])):
+            i = index+6
+            while (True):
                 if contenidolog[r][i] == '\\' or contenidolog[r][i] == '|':
                     break
                 dp = dp + contenidolog[r][i]
+                i = i + 1
+                if i >= len(contenidolog[r])-1:
+                    r = r+1
+                    i = 0
             resumen.append('Dipolo ' + dp)
             resumen.append(' ')
 
