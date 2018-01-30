@@ -241,7 +241,8 @@ class NResumen:
             while (True):
                 if contenidolog[r][i] == '\\' or contenidolog[r][i] == '|':
                     break
-                dp = dp + contenidolog[r][i]
+                if contenidolog[r][i] is not ' ' or contenidolog[r][i] is not'\n':
+                    dp = dp + contenidolog[r][i]
                 i = i + 1
                 if i >= len(contenidolog[r])-1:
                     r = r+1
