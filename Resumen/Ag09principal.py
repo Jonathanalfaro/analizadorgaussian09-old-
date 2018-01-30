@@ -169,7 +169,7 @@ class NResumen:
         resumen.append(ruta)
         resumen.append('*********************************************************************')
         resumen.append('Analizador  Gaussian09')
-        resumen.append('Ag09 v0.5')
+        resumen.append('Ag09 v0.6')
         resumen.append('*********************************************************************')
         matriz = []
         r = NResumen.buscapalabra(' #', contenidolog)
@@ -423,7 +423,7 @@ class NResumen:
         for i in range(lineainicio + 1, len(contenido) - 1):
             if expreg.search(contenido[i]) is not None and vaux < 2:
                 cad = contenido[i].split()
-                datos.append(cad[len(cad) - 1])
+                datos.append(cad[1:])
                 vaux = 1
             else:
                 if vaux == 1:
@@ -549,27 +549,60 @@ class NResumen:
             aths = NResumen.obtendatosmulliken(r, contenidolog)
             resumen.append('*** APT atomic charges \t APT atomic charges hydrogens summed ***\n')
         for i in range(len(aptch)):
-            resumen.append(str(float(aptch[i])) + '\t\t\t' + str(aths[i]))
+            resumen.append(' '.join(aptch[i]) + '\t\t\t' + str(aths[i][1]))
         resumen.append('')
 
     @staticmethod
     def opcmulliken(resumen, contenidolog):
         resumen.append('')
         r = NResumen.buscapalabra('Mulliken atomic charges:', contenidolog)
-        aptch = []
+        mac = []
+        enc = '*** Atom'
         if not r == -1:
-            aptch = NResumen.obtendatosmulliken(r, contenidolog)
-            resumen.append('*** Mulliken atomic charges ***\n')
-            for i in range(len(aptch)):
-                resumen.append(str(float(aptch[i])))
-        resumen.append('')
+            mac = NResumen.obtendatosmulliken(r, contenidolog)
+            enc = enc + '\tMulliken atomic charges'
+            '''resumen.append('*** Mulliken atomic charges ***\n')
+            for i in range(len(mac)):
+                resumen.append(' '.join(mac[i]))
+        resumen.append('')'''
         r = NResumen.buscapalabra('^ Mulliken atomic spin', contenidolog)
-        aths = []
+        mas = []
         if not r == -1:
-            aths = NResumen.obtendatosmulliken(r, contenidolog)
-            resumen.append('*** Mulliken atomic spin densities ***\n')
-            for i in range (len(aths)):
-                resumen.append(str(aths[i]))
+            mas = NResumen.obtendatosmulliken(r, contenidolog)
+            enc = enc + '\tMulliken atomic spin densities'
+            '''resumen.append('*** Mulliken atomic spin densities ***\n')
+            for i in range (len(mas)):
+                resumen.append(' '.join(mas[i]))'''
+        r = NResumen.buscapalabra('^ Mulliken charges with', contenidolog)
+        mchs = []
+        if not r == -1:
+            mchs = NResumen.obtendatosmulliken(r, contenidolog)
+            enc = enc + '\tMulliken charges with hidrogens summed'
+            '''resumen.append('*** Mulliken charges with hydrogens summed ***\n')
+            for i in range(len(mchs)):
+                resumen.append(' '.join(mchs[i]))'''
+        enc = enc + ' ***'
+        resumen.append(enc)
+        j = 0
+        for i in range(0, len(mac)-1,1):
+            aux = '\t'
+            try:
+                aux = aux + '\t\t'.join(mac[i])
+            except :
+                pass
+            try:
+                aux = aux + '\t\t'.join(mas[i])[1:]
+            except :
+                pass
+            if mac[i][0] is 'H':
+                aux = aux + '\t\t' + '0.00000'
+            else:
+                try:
+                    aux = aux + '\t\t'.join(mchs[j])[1:]
+                    j = j+1
+                except :
+                    pass
+            resumen.append(aux)
         resumen.append('')
 
 class DResumen:
