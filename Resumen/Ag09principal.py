@@ -160,8 +160,11 @@ class NResumen:
         terminacion = True
         comin = ''
         for i in range(0, 1000, 1):
-            if 'Gaussian(R)' in contenidolog[i]:
-                break
+            try:
+                if 'Gaussian(R)' in contenidolog[i]:
+                    break
+            except:
+                return ['El archivo ' + ruta + ' no es un archivo de salida de Gaussian válido']
         if i == 1000:
             return ['El archivo ' + ruta + ' no es un archivo de salida de Gaussian válido']
         r = NResumen.buscapalabra('natoms=', contenidolog)
