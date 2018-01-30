@@ -159,6 +159,11 @@ class NResumen:
     def hazresumen(contenidolog, parametros,ruta):
         terminacion = True
         comin = ''
+        for i in range(0, 1000, 1):
+            if 'Gaussian(R)' in contenidolog[i]:
+                break
+        if i == 1000:
+            return ['El archivo ' + ruta + ' no es un archivo de salida de Gaussian válido']
         r = NResumen.buscapalabra('natoms=', contenidolog)
         if r != -1:
             natomos = int(contenidolog[r].split()[1])
