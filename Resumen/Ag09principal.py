@@ -67,10 +67,10 @@ class VResumenCur:
         self.posxcursor = 0
         self.padactivo = 1
         self.padBuscar = curses.newpad(1, 1000)
-        self.tamypad1 = 32700
-        self.tamypad2 = self.tamypad1
-        self.pad1 = curses.newpad(self.tamypad1 + 1, 1000)
         self.contenidoPad = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen,self.ruta1)
+        self.tamypad1 = len(self.contenidoPad)
+        self.tamxpad1 = 1000
+        self.pad1 = curses.newpad(self.tamypad1 + 1, 1000)
         self.pondatospad(self.contenidoPad)
         self.barraAyuda = "Presiona 'q' para salir"
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
@@ -86,6 +86,8 @@ class VResumenCur:
         k = 1
         stdscr.timeout(10)
         stdscr.keypad(True)
+        self.posycursor = 0
+        self.posxcursor = 0
         while k != ord('q'):
             maxy, maxx = stdscr.getmaxyx()
             self.pad1xf = int(maxx - 1)
@@ -101,33 +103,34 @@ class VResumenCur:
             stdscr.attron(curses.color_pair(1))
             stdscr.addstr(maxy-1, 0, self.barraAyuda)
             stdscr.attroff(curses.color_pair(2))
-            if k == ord('1'):
-                self.posycursor = self.pad1yi
-                self.posxcursor = self.pad1xi
-                self.padactivo = 1
+
+
             if k == curses.KEY_DOWN:
                 self.posycursor = self.posycursor + 1
             if k == curses.KEY_UP:
                 self.posycursor = self.posycursor - 1
             if k == curses.KEY_LEFT:
                 self.posxcursor = self.posxcursor - 1
-                if self.posxcursor <= 0:
-                    self.posxpad1 = self.posxpad1 - 1
             if k == curses.KEY_RIGHT:
                 self.posxcursor = self.posxcursor + 1
-                if self.posxcursor >= maxx - 1:
-                    self.posxpad1 = self.posxpad1 + 1
-            if self.padactivo == 1:
-                self.posycursor = max(self.pad1yi, self.posycursor)
-                self.posycursor = min(self.pad1yf, self.posycursor)
-                if self.posycursor > self.pad1yf - 1 and k != -1:
-                    self.posypad1 = min(self.posypad1 + 1, self.tamypad1)
-                if self.posycursor <= self.pad1yi + 1 and k != -1:
-                    self.posypad1 = max(0, self.posypad1 - 1)
+
+            if self.posycursor > self.pad1yf:
+                self.posypad1 = min(self.posypad1 + 1, self.tamypad1 - (self.pad1yf -self.pad1yi))
+            if self.posycursor < self.pad1yi:
+                self.posypad1 = max(0, self.posypad1 - 1)
+
+            if self.posxcursor > self.pad1xf:
+                self.posxpad1 = min(self.posxpad1 + 1, self.tamxpad1)
+            if self.posxcursor <= self.pad1xi + 1:
+                self.posxpad1 = max(0, self.posxpad1 - 1)
+
+            self.posycursor = max(self.pad1yi, self.posycursor)
+            self.posycursor = min(self.pad1yf, self.posycursor)
             self.posxcursor = max(0, self.posxcursor)
             self.posxcursor = min(maxx - 1, self.posxcursor)
             stdscr.move(self.posycursor, self.posxcursor)
-            self.pad1.refresh(self.posypad1, self.posxpad1, self.pad1yi, self.pad1xi, self.pad1yf, self.pad1xf)
+            self.pad1.refresh(self.posypad1, self.posxpad1, self.pad1yi, self.pad1xi
+                              , self.pad1yf, self.pad1xf)
             k = stdscr.getch()
 
     @staticmethod
