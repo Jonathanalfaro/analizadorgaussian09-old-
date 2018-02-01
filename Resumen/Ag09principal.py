@@ -29,6 +29,14 @@ parser.add_argument('-e', '--exporta', help='Exporta los datos a un archivo EXCE
 parser.add_argument('file', nargs='+', help="Nombre de archivo a procesar")
 args = parser.parse_args()
 
+
+''' Método principal, manda a llamar a la ventana principal segun el modo
+    Si es modo curses abre la ventana interactiva, si es modo terminal
+    pone todo en la terminal.
+    
+    :param stdscr: Pantalla estandar de curses
+    
+'''
 def main(stdscr):
     vprincipal = VResumenCur(sys.argv)
     vprincipal.muestraventana(stdscr)
@@ -50,8 +58,21 @@ if __name__ == "__main__":
 
 #Clase VResumen. Es la ventana que muestra al usuario el resumen del LOG
 class VResumenCur:
+    ''' Clase de vista para curses
+        :param parametrosentrada: La lista de los parametros ingresados
+        en la terminal para ejecutar el programa.(Argumentos, ruta)
 
+    '''
     def __init__(self, parametrosentrada):
+        ''' Constructor para la clase VResumenCur.
+
+        Inicializa el objeto y pone los datos del log en el pad de curses
+        que es donde se muestra el resumen
+
+        :param parametrosentrada:
+
+
+        '''
         self.ruta1 = parametrosentrada[len(parametrosentrada)-1]
         self.paramentrosresumen = parametrosentrada
         self.contenidoArchivo = NResumen.obtencontenidolog(self.ruta1)
@@ -76,13 +97,30 @@ class VResumenCur:
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_WHITE)
 
+
+
     def pondatospad(self, contenido):
+
+        ''' Método que se encarga de llenar el pad.
+
+        :param contenido: Lo que se va a poner en el pad
+
+
+        '''
         y = 0
         for linea in contenido:
             self.pad1.addstr(y, 1, str(linea))
             y = y + 1
 
     def muestraventana(self, stdscr):
+        ''' Se encarga de mostrar la ventana y actualizarla.
+
+        Actualiza lo mostrado en el modo curses segun la tecla presionada
+
+        :param stdscr:
+
+
+        '''
         k = 1
         stdscr.timeout(10)
         stdscr.keypad(True)
@@ -114,10 +152,11 @@ class VResumenCur:
             if k == curses.KEY_RIGHT:
                 self.posxcursor = self.posxcursor + 1
 
+
             if self.posycursor > self.pad1yf:
                 self.posypad1 = min(self.posypad1 + 1, self.tamypad1 - (self.pad1yf -self.pad1yi))
             if self.posycursor < self.pad1yi:
-                self.posypad1 = max(0, self.posypad1 - 1)
+                self.posypad1 = max(0, self.posypad1 - 1 )
 
             if self.posxcursor > self.pad1xf:
                 self.posxpad1 = min(self.posxpad1 + 1, self.tamxpad1)
@@ -129,12 +168,23 @@ class VResumenCur:
             self.posxcursor = max(0, self.posxcursor)
             self.posxcursor = min(maxx - 1, self.posxcursor)
             stdscr.move(self.posycursor, self.posxcursor)
+            if k == curses.KEY_RESIZE:
+                self.posypad1 = min(self.pad1yf - self.pad1yi, self.posypad1)
             self.pad1.refresh(self.posypad1, self.posxpad1, self.pad1yi, self.pad1xi
                               , self.pad1yf, self.pad1xf)
             k = stdscr.getch()
 
     @staticmethod
     def dialogobuscar(stdscr, padbuscar):
+
+        ''' Sirve para mostrar la entrada de busqueda un patrón en el resumen.
+
+        :param stdscr:
+        :param padbuscar: pad donde se ingresa la palabra para buscar en el resumen
+        :return: palabra: devuelve la palabra ingresada por el usuario
+
+        '''
+
         stdscr.timeout(-1)
         y, x = stdscr.getmaxyx()
         curses.echo()
@@ -147,9 +197,22 @@ class VResumenCur:
 
 
 class NResumen:
+    ''' Clase lógica NResumen, sirve para hacer el resumen.
 
+
+
+    '''
     @staticmethod
     def obtencontenidolog(ruta):
+        ''' Obtiene el contenido del log del cual se va a hacer el resumen.
+
+        Obtiene el texto del archivo .log o .out llamando a un objeto de la
+        clase DResumen.
+
+        :param ruta: la ruta del archivo a abrir
+        :return: contenido: El texto del archivo .log o .out
+
+        '''
         contenido = []
         contenidolog = DResumen.abrearchivo(ruta)
         for linea in contenidolog:
@@ -160,6 +223,19 @@ class NResumen:
 
     @staticmethod
     def hazresumen(contenidolog, parametros,ruta):
+        ''' Hace el resumen, método principal de este trabajo.
+
+        Sirve para hacer el resumen del contenido del log, usa expresiones regulares
+        para reconocer patrones, se pueden agregar nuevas palabras y buscar otros
+        patrones
+
+        :param contenidolog: El contenido del archivo .log o .out
+        :param parametros: Parámetros ingresados en la linea de comandos
+        :param ruta: La ruta del archivo procesado, sirve para agregarlo a la pantalla
+        :return: El resumen obtenido para mostrarse en modo curses o en modo terminal
+
+        '''
+
         terminacion = True
         comin = ''
         for i in range(0, 1000, 1):
@@ -174,7 +250,7 @@ class NResumen:
         if r != -1:
             natomos = int(contenidolog[r].split()[1])
         else:
-            n = NResumen.obtendatosmulliken(105, contenidolog)
+            n = NResumen.obtendatosaptmulliken(105, contenidolog)
             natomos = len(n)
         resumen = []
         resumen.append(ruta)
@@ -299,8 +375,8 @@ class NResumen:
                 NResumen.opcmulliken(resumen, contenidolog)
                 NResumen.opcapt(resumen, contenidolog)
                 NResumen.opcacm(resumen, contenidolog, natomos)
-                NResumen.opcasd(resumen, contenidolog, matriz, natomos)
-                NResumen.opchsd(resumen, contenidolog, [], natomos)
+                NResumen.opcasd(resumen, contenidolog, natomos)
+                NResumen.opchsd(resumen, contenidolog, natomos)
                 break
 
             if elemento == '-apt':
@@ -310,9 +386,9 @@ class NResumen:
             if elemento == '--atomic_charges_matrix' or elemento == '-acm':
                 NResumen.opcacm(resumen, contenidolog, natomos)
             if elemento == '--atomic_spin_densities' or elemento == '-asd':
-                NResumen.opcasd(resumen, contenidolog, matriz, natomos)
+                NResumen.opcasd(resumen, contenidolog, natomos)
             if elemento == '--hirshfeld spin densities' or elemento == '-hsd':
-                NResumen.opchsd(resumen, contenidolog, [], natomos)
+                NResumen.opchsd(resumen, contenidolog, natomos)
         if not terminacion:
             resumen = []
             resumen.append('Terminación Erronea')
@@ -329,6 +405,16 @@ class NResumen:
 
     @staticmethod
     def exporta(resumen,ruta):
+        ''' Exporta el resumen en formato csv.
+
+        Exporta el resumen(o lo que tenga el parametro resumen) a un archivo .csv
+        cuyo nombre sera igual al del log del que se genera
+
+        :param resumen: Los datos que se van a exportar al csv
+        :param ruta: ruta del .log o .out, sirve para generar el nombre del archivo csv
+
+
+        '''
         nom = ''
         for i in range(len(ruta)-1, 0, -1):
             if ruta[i] == '/':
@@ -345,6 +431,12 @@ class NResumen:
 
     @staticmethod
     def buscapalabraold(palabra, contenido):
+        ''' Metodo en deshuso
+        
+        :param palabra: 
+        :param contenido: 
+        :return: 
+        '''
         nl = 0
         pos = -1
         expreg = re.compile(r'(%s)+' % palabra, re.I)
@@ -362,6 +454,17 @@ class NResumen:
     # Codigo redundante, optimizar !!!!!!!!!!!!!
     @staticmethod
     def buscapalabra(palabra, contenido):
+        ''' Busca una palabra en el contenido del log.
+
+        Busca los patrones en el contenido de los logs, regresa el número de la
+        linea en donde encontró la coincidencia. La búsqueda se hace de manera inversa.
+
+        :param palabra: la palabra a buscar
+        :param contenido: El texto donde se va a buscar
+        :return: pos: El número de linea donde se encontro la coincidencia, si no se
+        encontro se regresa -1
+
+        '''
         pos = -1
         nl = 0
         expreg = re.compile(r'(%s)+' % palabra, re.I)
@@ -387,6 +490,17 @@ class NResumen:
 
     @staticmethod
     def obtendatosiniciales(contenido, posicioninicio):
+        ''' Obtiene los datos contenidos en las primeras lineas del log.
+
+        Sirve para obtener los primeros datos del log, entre ellos se encuentran
+        la cantidad de memoria, el número de procesadores, el comando inicial, etc.
+
+        :param contenido: el contenido del log
+        :param posicioninicio: Desde cual linea se inicia a buscar los datos
+        :return: datosi: Los datos iniciales que incluyen la cantidad de memoria utilizada,
+        el número de procesadores, el comando inicial,etc
+
+        '''
         c1 = 0
         c2 = 0
         datosi = []
@@ -405,6 +519,17 @@ class NResumen:
 
     @staticmethod
     def obtenfrequenciasnegativas(contenido, posicioninicio):
+        ''' Obtiene  una lista con las frecuencias negativas
+
+        Obtiene las frecuencias negativas, si es que las hay, sólo en caso de que el comando inicial contenga
+        la palabra freq
+
+        :param contenido: contenido del log
+        :param posicioninicio: Numero de linea del log desde el cuál se va a empezar a buscar las
+        frecuencias
+        :return: fneg: Lista que contiene las frecuencias negativas, si no las hay esta es vacia
+
+        '''
         fneg = []
         expreg = re.compile(r'(Frequencies)\s+(-){2}\s+-?')
         for i in range(posicioninicio + 1, len(contenido) - 1):
@@ -424,6 +549,17 @@ class NResumen:
 
     @staticmethod
     def obtendatosconvergencia(lineainicio, contenido):
+        ''' Obtiene los datos de convergencia.
+
+        Obtiene los datos de convergencia del contenido del log solo en caso de que el
+        comando inicial contenga la palabra opt
+
+        :param lineainicio: Numero de linea del log desde el cuál se va a empezar a buscar los
+        datos de convergencia
+        :param contenido: contenido del log
+        :return: datosconv: Datos de convergencia, nunca vacío
+
+        '''
         datosconv = []
         for i in range(lineainicio, lineainicio + 5):
             datosconv.append(contenido[i])
@@ -432,7 +568,17 @@ class NResumen:
     # Modificar para que busque en al expresion regular 3 o mas flotantes y una letra al final
 
     @staticmethod
-    def obtendatosmulliken(lineainicio, contenido):
+    def obtendatosaptmulliken(lineainicio, contenido):
+        ''' Obtiene los vectores APT o de Mulliken
+
+        Obtiene los vectores APT atomic charges, Mulliken atomic charges, etc.
+
+        :param lineainicio: Linea desde la cual empezara a extraer los datos
+        :param contenido: contenido del log
+        :return: datos: El vector APT o Mulliken
+
+        '''
+
         datos = []
         vaux = 0
 
@@ -450,6 +596,18 @@ class NResumen:
 
     @staticmethod
     def obtenmatriz(pos, contenido, na):
+        ''' Obtiene la matriz Atomic Charges Matrix o Atomic spin densities
+
+        Obtiene la matriz Atomic Charges Matrix o Atomic spin densities si es que existen
+        para despues extraer de ellas la diagonal correspondiente
+
+        :param pos: Linea de inicio desde la cual empezará a buscar en el log
+        :param contenido: Contenido del log
+        :param na: Número de átomos
+        :return: matriz: Un arreglo en forma de matriz de na * na
+
+        '''
+
         matriz = []
         for i in range(na):
             matriz.append([0] * na)
@@ -482,6 +640,12 @@ class NResumen:
 
     @staticmethod
     def buscarlinea(palabra, contenido):
+        ''' Método en deshuso
+
+        :param palabra:
+        :param contenido:
+        :return:
+        '''
         nl = 0
         posiciones = []
         expreg = re.compile(r'(%s)+' % palabra, re.I)
@@ -496,18 +660,22 @@ class NResumen:
 
     @staticmethod
     def opcacm(resumen, contenidolog, natomos):
+        ''' Opcion Atomic Charges Matrix.
+
+        Se invoca este método en caso de que los argumentos de entrada sea -acm, agrega la
+        diagonal de Atomic Charges Matrix al resumen si se encuentra.
+
+
+        :param resumen: resumen generado hasta el punto que fue llamada la función
+        :param contenidolog: Contenido del log
+        :param natomos: numero de atomos, sirve para generar la matriz
+
+        '''
         r = NResumen.buscapalabra('Condensed to atoms', contenidolog)
         if r == -1 or 'Mulliken atomic charges:' in contenidolog[r + 1]:
             resumen.append(' ')
         else:
             matriz = NResumen.obtenmatriz(r, contenidolog, natomos)
-            """resumen.append('Atomic Charges Matrix')
-            resumen.append(' ')
-            for linea in matriz:
-                caux = ''
-                for elemento in linea:
-                    caux += str(elemento) + '\t'
-                resumen.append(caux)"""
             diagonal = ''
             resumen.append('***** Valores de la diagonal de Atomic Charges Matrix *****\n')
             for i in range(len(matriz)):
@@ -517,24 +685,23 @@ class NResumen:
         resumen.append(' ')
 
     @staticmethod
-    def opcasd(resumen, contenidolog, matriz, natomos):
+    def opcasd(resumen, contenidolog, natomos):
+        ''' Opcion Atomic Charges Matrix.
+
+        Se invoca este método en caso de que los argumentos de entrada sea -asd, agrega la
+        diagonal de Atomic spin densities Matrix al resumen si se encuentra.
+
+        :param resumen: resumen generado hasta el punto que fue llamada la función
+        :param contenidolog: Contenido del log
+        :param natomos: numero de atomos, sirve para generar la matriz
+
+        '''
         r = NResumen.buscapalabra('Atomic-Atomic Spin Densities.', contenidolog)
         diagonal = ''
-        for i in range(len(matriz)):
-            diagonal = diagonal + str(matriz[i][i]) + ' '
-            resumen.append(matriz[i][i])
-        resumen.append(' ')
         if r == -1:
             resumen.append('')
         else:
             matriz2 = NResumen.obtenmatriz(r, contenidolog, natomos)
-            """resumen.append('Atomic Spin Densities Matrix\n\n')
-            resumen.append(' ')
-            for linea in matriz2:
-                caux = ''
-                for elemento in linea:
-                    caux += str(elemento) + '\t'
-                resumen.append(caux)"""
             resumen.append(' ')
             diagonal = ''
             resumen.append('***** Valores de la diagonal de Atomic-Atomic Spin Densities *****\n')
@@ -544,7 +711,18 @@ class NResumen:
             resumen.append(' ')
 
     @staticmethod
-    def opchsd(resumen, contenidolog, matriz, natomos):
+    def opchsd(resumen, contenidolog, natomos):
+        ''' Opcion Hirshfeld spin densities.
+
+        Obtiene los átomos, sus densidades de espin y sus cargas cuando en  los argumentos
+        de entrada está -hsd
+
+        :param resumen: resumen generado hasta el punto que fue llamada la función
+        :param contenidolog: Contenido del log
+        :param natomos: numero de atomos, sirve para generar la matriz
+
+
+        '''
         r = NResumen.buscapalabra('Hirshfeld spin densities, ', contenidolog)
         if r != -1:
             resumen.append(' ******* Hirshfeld spin densities *******\n')
@@ -556,14 +734,23 @@ class NResumen:
 
     @staticmethod
     def opcapt(resumen, contenidolog):
+        ''' Opción APT.
+
+        Obtiene los vectores APT atomic Charges y APT atomic charges with hydrogens summed
+        cuando en los argumentos está -apt
+
+        :param resumen: el resumen generado hasta el momento en que fue llamado el método
+        :param contenidolog: contenido del log
+
+        '''
         r = NResumen.buscapalabra('APT atomic charges:', contenidolog)
         aptch = []
         if r != -1:
-            aptch = NResumen.obtendatosmulliken(r, contenidolog)
+            aptch = NResumen.obtendatosaptmulliken(r, contenidolog)
         r = NResumen.buscapalabra('APT Atomic charges with hydrogens summed', contenidolog)
         aths = []
         if r != -1:
-            aths = NResumen.obtendatosmulliken(r, contenidolog)
+            aths = NResumen.obtendatosaptmulliken(r, contenidolog)
             resumen.append('*** APT atomic charges \t APT atomic charges hydrogens summed ***\n')
         for i in range(len(aptch)):
             resumen.append(' '.join(aptch[i]) + '\t\t\t' + str(aths[i][1]))
@@ -571,12 +758,22 @@ class NResumen:
 
     @staticmethod
     def opcmulliken(resumen, contenidolog):
+        ''' Opción Mulliken.
+
+        Obtiene los vectores Mulliken atomic charges, mulliken atomic spin densities y
+        Mulliken atomic charges with hydrogens summed cuando en los argumentos esta -m
+        y los agrega al resumen
+
+        :param resumen: el resumen generado hasta el momento en que fue llamado el método
+        :param contenidolog: contenido del log
+
+        '''
         resumen.append('')
         r = NResumen.buscapalabra('Mulliken atomic charges:', contenidolog)
         mac = []
         enc = '*** Atom'
         if not r == -1:
-            mac = NResumen.obtendatosmulliken(r, contenidolog)
+            mac = NResumen.obtendatosaptmulliken(r, contenidolog)
             enc = enc + '\tMulliken atomic charges'
             '''resumen.append('*** Mulliken atomic charges ***\n')
             for i in range(len(mac)):
@@ -585,7 +782,7 @@ class NResumen:
         r = NResumen.buscapalabra('^ Mulliken atomic spin', contenidolog)
         mas = []
         if not r == -1:
-            mas = NResumen.obtendatosmulliken(r, contenidolog)
+            mas = NResumen.obtendatosaptmulliken(r, contenidolog)
             enc = enc + '\tMulliken atomic spin densities'
             '''resumen.append('*** Mulliken atomic spin densities ***\n')
             for i in range (len(mas)):
@@ -593,7 +790,7 @@ class NResumen:
         r = NResumen.buscapalabra('^ Mulliken charges with', contenidolog)
         mchs = []
         if not r == -1:
-            mchs = NResumen.obtendatosmulliken(r, contenidolog)
+            mchs = NResumen.obtendatosaptmulliken(r, contenidolog)
             enc = enc + '\tMulliken charges with hidrogens summed'
             '''resumen.append('*** Mulliken charges with hydrogens summed ***\n')
             for i in range(len(mchs)):
@@ -623,18 +820,39 @@ class NResumen:
         resumen.append('')
 
 class DResumen:
+    ''' Clase de datos DResumen
 
+        Se encarga de abrir el archivo .log o .out generado por Gaussian
+        Tambien se encarga de escribir el csv
+
+    '''
 
     @staticmethod
     def abrearchivo(ruta):
+        ''' Abre el archivo indicado en la ruta.
+
+        :param ruta: Ruta del archivo a abrir
+        :return: regresa el texto contenido en el archivo
+        
+        '''
         archivo = open(ruta)
         contenido = archivo.readlines()
         archivo.close()
         return contenido
 
 class VResumenTer:
+    ''' Clase VResumenTer
+
+    Sirve para mostrar los datos directamente en la terminal
+
+    '''
 
     def __init__(self, parametrosentrada, archivo):
+        ''' Constructor para la clase VResumenTer
+
+        :param parametrosentrada: lista con los parámetros ingresados en la terminal
+        :param archivo: Ruta del archivo procesado
+        '''
 
         self.paramentrosresumen = parametrosentrada
         self.contenidoArchivo = NResumen.obtencontenidolog(archivo)
