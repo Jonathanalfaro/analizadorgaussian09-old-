@@ -19,6 +19,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-m', '--mulliken', help='Muestra los datos de Mulliken', action="store_true")
 parser.add_argument('-t', '--texto', help='Muestra los resultados en la salida estandar', action="store_true")
 parser.add_argument('-apt', '--APT_atomic', help='Muestra los datos de APT', action="store_true")
+parser.add_argument('-tq', '--thermochemical', help='Muestra los datos termoquímicos', action="store_true")
 parser.add_argument('-acm', '--atomic_charges_matrix', help='Muestra la matriz de cargas atomicas y su diagonal',
                     action="store_true")
 parser.add_argument('-asd', '--atomic_spin_densities', help='Muestra la matriz de densidades atómicas y su diagonal',
@@ -256,7 +257,7 @@ class NResumen:
         resumen.append(ruta)
         resumen.append('*********************************************************************')
         resumen.append('Analizador  Gaussian09')
-        resumen.append('Ag09 v0.6')
+        resumen.append('Ag09 v0.7')
         resumen.append('*********************************************************************')
         matriz = []
         r = NResumen.buscapalabra(' #', contenidolog)
@@ -279,7 +280,7 @@ class NResumen:
                 terminacion = False
             resumen.append('')
             if 'opt' in comin:
-                resumen.append('*** Datos de convergencia***\n')
+                resumen.append('*** DATOS DE CONVERGENCIA ***\n')
                 r = NResumen.buscapalabra('converged\?', contenidolog)
                 if r != -1:
                     datosconv = NResumen.obtendatosconvergencia(r, contenidolog)
@@ -320,44 +321,6 @@ class NResumen:
                 hf = hf + contenidolog[r][i]
             resumen.append('Valor HF ' + hf)
             resumen.append(' ')
-        r = NResumen.buscapalabra('Dipole=', contenidolog)
-        if not r is -1:
-            dp = ''
-            index = contenidolog[r].index('Dipole=')
-            i = index+6
-            while (True):
-                if contenidolog[r][i] == '\\' or contenidolog[r][i] == '|':
-                    break
-                if contenidolog[r][i] is not ' ':
-                    dp = dp + contenidolog[r][i]
-                i = i + 1
-                if i >= len(contenidolog[r])-1:
-                    r = r+1
-                    i = 0
-            resumen.append('Dipolo ' + dp)
-            resumen.append(' ')
-
-        r = NResumen.buscapalabra('pressure', contenidolog)
-        if r != -1:
-            aux = contenidolog[r].split()
-            resumen.append("Temperatura: " + aux[1] + ' ' + aux[2] + ' Presión: ' + aux[4] + ' ' + aux[5])
-            resumen.append(' ')
-        r = NResumen.buscapalabra('Zero-point correction', contenidolog)
-        if r != -1:
-            for i in range(r, len(contenidolog) - 1, 1):
-                if '(Thermal' in contenidolog[i]:
-                    break
-                resumen.append(' '.join(contenidolog[i].split()))
-            resumen.append('')
-            resumen.append('\t\tE(Thermal)(Kcal/Mol)\tCV(Cal/Mol-Kelvin)\tS(Cal/Mol-Kelvin)')
-            for j in range(i+2,i+100,1):
-                aux = contenidolog[j].split()
-                if len(aux[0])<8:
-                    aux[0] = aux[0] + '\t'
-                resumen.append(aux[0]+'\t\t'+'\t\t\t'.join(aux[1:]))
-                if 'Vibrational ' in contenidolog[j]:
-                    break
-        resumen.append('')
         if 'freq' in comin:
             r = NResumen.buscapalabra('imaginary frequencies \(', contenidolog)
             if r == -1:
@@ -372,6 +335,7 @@ class NResumen:
         # A partir de aqui se mostrarán solo si la palabra se pasó como parámetro en la ejecucion del programa
         for elemento in parametros:
             if '--ALL' in parametros or '-a' in parametros:
+                NResumen.opctq(resumen, contenidolog, natomos)
                 NResumen.opcmulliken(resumen, contenidolog)
                 NResumen.opcapt(resumen, contenidolog)
                 NResumen.opcacm(resumen, contenidolog, natomos)
@@ -379,6 +343,8 @@ class NResumen:
                 NResumen.opchsd(resumen, contenidolog, natomos)
                 break
 
+            if elemento == '-tq':
+                NResumen.opctq(resumen,contenidolog,natomos)
             if elemento == '-apt':
                 NResumen.opcapt(resumen, contenidolog)
             if elemento == '--mulliken' or elemento == '-m':
@@ -389,6 +355,7 @@ class NResumen:
                 NResumen.opcasd(resumen, contenidolog, natomos)
             if elemento == '--hirshfeld spin densities' or elemento == '-hsd':
                 NResumen.opchsd(resumen, contenidolog, natomos)
+
         if not terminacion:
             resumen = []
             resumen.append('Terminación Erronea')
@@ -675,12 +642,13 @@ class NResumen:
         if r == -1 or 'Mulliken atomic charges:' in contenidolog[r + 1]:
             resumen.append(' ')
         else:
+            listaatomos = NResumen.obtenlistaatomos(contenidolog)
             matriz = NResumen.obtenmatriz(r, contenidolog, natomos)
             diagonal = ''
-            resumen.append('***** Valores de la diagonal de Atomic Charges Matrix *****\n')
+            resumen.append('***** VALORES DE LA DIAGONAL DE ATOMIC CHARGES MATRIX *****\n')
             for i in range(len(matriz)):
                 diagonal = diagonal + str(matriz[i][i]) + ' '
-                resumen.append(matriz[i][i])
+                resumen.append(listaatomos[i] + '\t' + matriz[i][i])
             resumen.append(' ')
         resumen.append(' ')
 
@@ -701,13 +669,14 @@ class NResumen:
         if r == -1:
             resumen.append('')
         else:
+            listaatomos = NResumen.obtenlistaatomos(contenidolog)
             matriz2 = NResumen.obtenmatriz(r, contenidolog, natomos)
             resumen.append(' ')
             diagonal = ''
-            resumen.append('***** Valores de la diagonal de Atomic-Atomic Spin Densities *****\n')
+            resumen.append('***** VALORES DE LA DIAGONAL DE ATOMIC-ATOMIC SPIN DENSITIES *****\n')
             for i in range(len(matriz2)):
                 diagonal = diagonal + str(matriz2[i][i]) + ' '
-                resumen.append(matriz2[i][i])
+                resumen.append(listaatomos[i] + '\t' + matriz2[i][i])
             resumen.append(' ')
 
     @staticmethod
@@ -725,7 +694,7 @@ class NResumen:
         '''
         r = NResumen.buscapalabra('Hirshfeld spin densities, ', contenidolog)
         if r != -1:
-            resumen.append(' ******* Hirshfeld spin densities *******\n')
+            resumen.append(' ******* HIRSHFELD SPIN DENSITIES *******\n')
             resumen.append('Átomo\tSpin Densities\tCharges')
             resumen.append('')
             for i in range(r + 2, r + natomos + 2, 1):
@@ -769,12 +738,14 @@ class NResumen:
 
         '''
         resumen.append('')
+        resumen.append('**** MULLIKEN POPULATION ANALISIS *****')
+        resumen.append('')
         r = NResumen.buscapalabra('Mulliken atomic charges:', contenidolog)
         mac = []
-        enc = '*** Atom'
+        enc = 'Atom'
         if not r == -1:
             mac = NResumen.obtendatosaptmulliken(r, contenidolog)
-            enc = enc + '\tMulliken atomic charges'
+            enc = enc + '\tAtomic charges'
             '''resumen.append('*** Mulliken atomic charges ***\n')
             for i in range(len(mac)):
                 resumen.append(' '.join(mac[i]))
@@ -783,7 +754,7 @@ class NResumen:
         mas = []
         if not r == -1:
             mas = NResumen.obtendatosaptmulliken(r, contenidolog)
-            enc = enc + '\tMulliken atomic spin densities'
+            enc = enc + '\tAtomic spin densities'
             '''resumen.append('*** Mulliken atomic spin densities ***\n')
             for i in range (len(mas)):
                 resumen.append(' '.join(mas[i]))'''
@@ -791,17 +762,16 @@ class NResumen:
         mchs = []
         if not r == -1:
             mchs = NResumen.obtendatosaptmulliken(r, contenidolog)
-            enc = enc + '\tMulliken charges with hidrogens summed'
+            enc = enc + '\tCharges with hidrogens summed'
             '''resumen.append('*** Mulliken charges with hydrogens summed ***\n')
             for i in range(len(mchs)):
                 resumen.append(' '.join(mchs[i]))'''
-        enc = enc + ' ***'
         resumen.append(enc)
         j = 0
         for i in range(0, len(mac)-1,1):
-            aux = '\t'
+            aux = ''
             try:
-                aux = aux + '\t\t'.join(mac[i])
+                aux = aux + '\t'.join(mac[i])
             except :
                 pass
             try:
@@ -818,6 +788,79 @@ class NResumen:
                     pass
             resumen.append(aux)
         resumen.append('')
+
+    @staticmethod
+    def opctq(resumen, contenidolog, natomos):
+
+        resumen.append('*** DATOS TERMOQUÍMICOS ***')
+        resumen.append('')
+        r = NResumen.buscapalabra('Dipole=', contenidolog)
+        if not r is -1:
+            dp = ''
+            index = contenidolog[r].index('Dipole=')
+            i = index + 6
+            while (True):
+                if contenidolog[r][i] == '\\' or contenidolog[r][i] == '|':
+                    break
+                if contenidolog[r][i] is not ' ':
+                    dp = dp + contenidolog[r][i]
+                i = i + 1
+                if i >= len(contenidolog[r]) - 1:
+                    r = r + 1
+                    i = 0
+            resumen.append('Dipolo ' + dp)
+            resumen.append(' ')
+
+        r = NResumen.buscapalabra('pressure', contenidolog)
+        if r != -1:
+            aux = contenidolog[r].split()
+            resumen.append("Temperatura: " + aux[1] + ' ' + aux[2] + ' Presión: ' + aux[4] + ' ' + aux[5])
+            resumen.append(' ')
+        r = NResumen.buscapalabra('Zero-point correction', contenidolog)
+        if r != -1:
+            for i in range(r, len(contenidolog) - 1, 1):
+                if '(Thermal' in contenidolog[i]:
+                    break
+                resumen.append(' '.join(contenidolog[i].split()))
+            resumen.append('')
+            resumen.append('\t\tE(Thermal)(Kcal/Mol)\tCV(Cal/Mol-Kelvin)\tS(Cal/Mol-Kelvin)')
+            for j in range(i + 2, i + 100, 1):
+                aux = contenidolog[j].split()
+                if len(aux[0]) < 8:
+                    aux[0] = aux[0] + '\t'
+                resumen.append(aux[0] + '\t\t' + '\t\t\t'.join(aux[1:]))
+                if 'Vibrational ' in contenidolog[j]:
+                    break
+        resumen.append('')
+
+    @staticmethod
+    def obtenlistaatomos(contenido):
+        ''' Obtiene la lista de los átomos
+
+        La lista obtenida sirve para agregar la primera columna en las diagonales
+
+        :param lineainicio: Linea desde donde  empezara a obtener la lista
+        :param contenido: contenido del log
+        :return: listaatomos: La lista que contiene todos los átomos de la molécula
+        '''
+
+        listaatomos = []
+        datos = []
+        vaux = 0
+        lineainicio= NResumen.buscapalabra('Mulliken atomic charges:', contenido)
+        expreg = re.compile(r'\s+\d+\s+[a-zA-Z]+\s+-?\d+.?\d+\s+[A-Z]?$')
+        for i in range(lineainicio + 1, len(contenido) - 1):
+            if expreg.search(contenido[i]) is not None and vaux < 2:
+                cad = contenido[i].split()[1]
+                listaatomos.append(cad)
+                vaux = 1
+            else:
+                if vaux == 1:
+                    break
+                pass
+
+
+        return listaatomos
 
 class DResumen:
     ''' Clase de datos DResumen
