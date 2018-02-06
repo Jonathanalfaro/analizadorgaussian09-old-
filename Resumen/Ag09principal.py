@@ -833,7 +833,7 @@ class DResumen:
 
         :param ruta: Ruta del archivo a abrir
         :return: regresa el texto contenido en el archivo
-        
+
         '''
         archivo = open(ruta)
         contenido = archivo.readlines()
