@@ -626,10 +626,17 @@ class NResumen:
         if not r is -1:
             hf = ''
             index = contenidolog[r].index('HF=')
-            for i in range(index + 3, len(contenidolog[r])):
+            i = index + 3
+            lenren = len(contenidolog[r]) -1
+            while (True):
                 if contenidolog[r][i] == '\\' or contenidolog[r][i] == '|':
                     break
-                hf = hf + contenidolog[r][i]
+                if contenidolog[r][i] is not ' ':
+                    hf = hf + contenidolog[r][i]
+                i = i + 1
+                if i >= len(contenidolog[r]) -1 :
+                    r = r + 1
+                    i = 0
             resumen.append('Valor HF: ' + hf + ' Hartrees ')
             resumen.append(' ')
 
@@ -789,12 +796,11 @@ class NResumen:
                 if i >= len(contenidolog[r]) - 1:
                     r = r + 1
                     i = 0
-                ch ='X'
-
-                cad = ''
-                for elemento in dp.split(','):
-                    cad = cad + ch + '=' + elemento + ' '
-                    ch = chr(ord(ch) + 1)
+            ch ='X'
+            cad = ''
+            for elemento in dp.split(','):
+                cad = cad + ch + '=' + elemento + ' '
+                ch = chr(ord(ch) + 1)
             resumen.append('Dipolo ' + cad)
             resumen.append(' ')
 
