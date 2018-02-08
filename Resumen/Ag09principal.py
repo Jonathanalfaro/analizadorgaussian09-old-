@@ -865,9 +865,16 @@ class DResumen:
         :return: regresa el texto contenido en el archivo
 
         '''
-        archivo = open(ruta)
-        contenido = archivo.readlines()
-        archivo.close()
+        try:
+            archivo = open(ruta)
+            contenido = archivo.readlines()
+            archivo.close()
+        except IOError as e:
+            print  'Error al abir el archivo {0} {1}'.format(ruta ,e.strerror)
+            exit(0)
+        except:
+            print  'Error desconocido al abrir el archivo'
+            exit(0)
         return contenido
 
     @staticmethod
@@ -882,12 +889,19 @@ class DResumen:
 
         '''
         csvfile = nombrearchivo + '.csv'
-        with open(csvfile, 'w') as output:
-            writer = csv.writer(output)
-            for elemento in datos:
-                if elemento is not '' and elemento is not ' ':
-                    writer.writerow(elemento.split())
-        output.close()
+        try:
+            with open(csvfile, 'w') as output:
+                writer = csv.writer(output)
+                for elemento in datos:
+                    if elemento is not '' and elemento is not ' ':
+                        writer.writerow(elemento.split())
+            output.close()
+        except IOError as e:
+            print  'Error al Guardar el archivo {0} {1}'.format(csvfile, e.strerror)
+            exit(0)
+        except:
+            print  'Error desconocido al abrir el archivo'
+            exit(0)
 
 class VResumenTer:
     ''' Clase VResumenTer
