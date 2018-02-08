@@ -17,6 +17,7 @@ locale.setlocale(locale.LC_ALL, '')
 code = locale.getpreferredencoding()
 parser = argparse.ArgumentParser()
 parser.add_argument('-m', '--mulliken', help='Muestra los datos de Mulliken', action="store_true")
+parser.add_argument('-hf', help='Muestra el valor hf', action="store_true")
 parser.add_argument('-t', '--texto', help='Muestra los resultados en la salida estandar', action="store_true")
 parser.add_argument('-apt', '--APT_atomic', help='Muestra los datos de APT', action="store_true")
 parser.add_argument('-tq', '--thermochemical', help='Muestra los datos termoquímicos', action="store_true")
@@ -257,7 +258,7 @@ class NResumen:
         resumen.append(ruta)
         resumen.append('*********************************************************************')
         resumen.append('Analizador  Gaussian09')
-        resumen.append('Ag09 v0.7')
+        resumen.append('Ag09 v0.8')
         resumen.append('*********************************************************************')
         matriz = []
         r = NResumen.buscapalabra(' #', contenidolog)
@@ -311,16 +312,7 @@ class NResumen:
             aux = contenidolog[r].split()
             resumen.append('Carga: ' + aux[2] + ' Multiplicidad: ' + aux[5])
             resumen.append(' ')
-        r = NResumen.buscapalabra('HF=', contenidolog)
-        if not r is -1:
-            hf = ''
-            index = contenidolog[r].index('HF=')
-            for i in range(index + 3, len(contenidolog[r])):
-                if contenidolog[r][i] == '\\' or contenidolog[r][i] == '|':
-                    break
-                hf = hf + contenidolog[r][i]
-            resumen.append('Valor HF ' + hf)
-            resumen.append(' ')
+
         if 'freq' in comin:
             r = NResumen.buscapalabra('imaginary frequencies \(', contenidolog)
             if r == -1:
@@ -335,6 +327,7 @@ class NResumen:
         # A partir de aqui se mostrarán solo si la palabra se pasó como parámetro en la ejecucion del programa
         for elemento in parametros:
             if '--ALL' in parametros or '-a' in parametros:
+                NResumen.opchf(resumen,contenidolog)
                 NResumen.opctq(resumen, contenidolog, natomos)
                 NResumen.opcmulliken(resumen, contenidolog)
                 NResumen.opcapt(resumen, contenidolog)
@@ -343,6 +336,8 @@ class NResumen:
                 NResumen.opchsd(resumen, contenidolog, natomos)
                 break
 
+            if elemento == '-hf':
+                NResumen.opchf(resumen,contenidolog)
             if elemento == '-tq':
                 NResumen.opctq(resumen,contenidolog,natomos)
             if elemento == '-apt':
@@ -371,52 +366,25 @@ class NResumen:
         return resumen
 
     @staticmethod
-    def exporta(resumen,ruta):
+    def exporta(datosarchivo, ruta):
         ''' Exporta el resumen en formato csv.
 
         Exporta el resumen(o lo que tenga el parametro resumen) a un archivo .csv
         cuyo nombre sera igual al del log del que se genera
 
-        :param resumen: Los datos que se van a exportar al csv
+        :param datosarchivo: Los datos que se van a exportar al csv
         :param ruta: ruta del .log o .out, sirve para generar el nombre del archivo csv
 
 
         '''
-        nom = ''
-        for i in range(len(ruta)-1, 0, -1):
+        nombrearchivo = ''
+        for i in range(len(ruta) - 1, 0, -1):
             if ruta[i] == '/':
                 break
-        for j in range (i+1, len(ruta)-4, 1):
-            nom = nom + ruta[j]
-        csvfile = nom+'.csv'
-        with open(csvfile,'w') as output:
-            writer = csv.writer(output)
-            for elemento in resumen:
-                if elemento is not '' and elemento is not ' ':
-                    writer.writerow(elemento.split())
-        output.close()
+        for j in range(i + 1, len(ruta) - 4, 1):
+            nombrearchivo = nombrearchivo + ruta[j]
+        DResumen.guardaarchivo(nombrearchivo, datosarchivo)
 
-    @staticmethod
-    def buscapalabraold(palabra, contenido):
-        ''' Metodo en deshuso
-        
-        :param palabra: 
-        :param contenido: 
-        :return: 
-        '''
-        nl = 0
-        pos = -1
-        expreg = re.compile(r'(%s)+' % palabra, re.I)
-        for linea in contenido:
-            res = expreg.search(linea)
-            if res is None:
-                pass
-            else:
-                pos = nl
-                if palabra == ' #':
-                    break
-            nl = nl + 1
-        return pos
 
     # Codigo redundante, optimizar !!!!!!!!!!!!!
     @staticmethod
@@ -653,6 +621,19 @@ class NResumen:
         resumen.append(' ')
 
     @staticmethod
+    def opchf(resumen,contenidolog):
+        r = NResumen.buscapalabra('HF=', contenidolog)
+        if not r is -1:
+            hf = ''
+            index = contenidolog[r].index('HF=')
+            for i in range(index + 3, len(contenidolog[r])):
+                if contenidolog[r][i] == '\\' or contenidolog[r][i] == '|':
+                    break
+                hf = hf + contenidolog[r][i]
+            resumen.append('Valor HF: ' + hf + ' Hartrees ')
+            resumen.append(' ')
+
+    @staticmethod
     def opcasd(resumen, contenidolog, natomos):
         ''' Opcion Atomic Charges Matrix.
 
@@ -798,7 +779,7 @@ class NResumen:
         if not r is -1:
             dp = ''
             index = contenidolog[r].index('Dipole=')
-            i = index + 6
+            i = index + 7
             while (True):
                 if contenidolog[r][i] == '\\' or contenidolog[r][i] == '|':
                     break
@@ -808,7 +789,13 @@ class NResumen:
                 if i >= len(contenidolog[r]) - 1:
                     r = r + 1
                     i = 0
-            resumen.append('Dipolo ' + dp)
+                ch ='X'
+
+                cad = ''
+                for elemento in dp.split(','):
+                    cad = cad + ch + '=' + elemento + ' '
+                    ch = chr(ord(ch) + 1)
+            resumen.append('Dipolo ' + cad)
             resumen.append(' ')
 
         r = NResumen.buscapalabra('pressure', contenidolog)
@@ -882,6 +869,25 @@ class DResumen:
         contenido = archivo.readlines()
         archivo.close()
         return contenido
+
+    @staticmethod
+    def guardaarchivo(nombrearchivo, datos):
+        ''' Guarda archivos
+
+        Metodo para guardar archivos en formato csv
+
+        :param ruta: Ruta donde se va a guardar el archivo
+        :param datos: los datos que van a ir en el archivo
+        :return:
+
+        '''
+        csvfile = nombrearchivo + '.csv'
+        with open(csvfile, 'w') as output:
+            writer = csv.writer(output)
+            for elemento in datos:
+                if elemento is not '' and elemento is not ' ':
+                    writer.writerow(elemento.split())
+        output.close()
 
 class VResumenTer:
     ''' Clase VResumenTer
