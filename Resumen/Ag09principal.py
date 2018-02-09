@@ -95,7 +95,7 @@ class VResumenCur:
         self.tamxpad1 = 1000
         self.pad1 = curses.newpad(self.tamypad1 + 1, 1000)
         self.pondatospad(self.contenidoPad)
-        self.barraAyuda = "Presiona 'q' para salir"
+        self.barraAyuda = "Presiona 'q' para salir 'e' para exportar"
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_WHITE)
 
@@ -144,7 +144,9 @@ class VResumenCur:
             stdscr.addstr(maxy-1, 0, self.barraAyuda)
             stdscr.attroff(curses.color_pair(2))
 
-
+            if k == ord('e'):
+                ruta =self.dialogoexportar(self.padBuscar)
+                NResumen.exporta(self.contenidoPad,ruta)
             if k == curses.KEY_DOWN:
                 self.posycursor = self.posycursor + 1
             if k == curses.KEY_UP:
@@ -196,6 +198,26 @@ class VResumenCur:
         curses.noecho()
         stdscr.timeout(10)
         return palabra
+
+    def dialogoexportar(stdscr, padbuscar):
+
+        ''' Sirve para mostrar la entrada de busqueda un patrón en el resumen.
+
+        :param stdscr:
+        :param padbuscar: pad donde se ingresa la palabra para buscar en el resumen
+        :return: palabra: devuelve la palabra ingresada por el usuario
+
+        '''
+
+        stdscr.timeout(-1)
+        y, x = stdscr.getmaxyx()
+        curses.echo()
+        padbuscar.addstr(0, 0, 'Ruta y nombre del archivo: ')
+        padbuscar.refresh(0, 0, 0, 0, 1, x - 2)
+        ruta = stdscr.getstr(0, 20, 100)
+        curses.noecho()
+        stdscr.timeout(10)
+        return ruta
 
 
 class NResumen:
@@ -324,6 +346,8 @@ class NResumen:
                 for elemento in fneg:
                     resumen.append(elemento)
                 resumen.append(' ')
+        NResumen.opcnics(resumen, contenidolog, ruta)
+
         # A partir de aqui se mostrarán solo si la palabra se pasó como parámetro en la ejecucion del programa
         for elemento in parametros:
             if '--ALL' in parametros or '-a' in parametros:
@@ -377,13 +401,7 @@ class NResumen:
 
 
         '''
-        nombrearchivo = ''
-        for i in range(len(ruta) - 1, 0, -1):
-            if ruta[i] == '/':
-                break
-        for j in range(i + 1, len(ruta) - 4, 1):
-            nombrearchivo = nombrearchivo + ruta[j]
-        DResumen.guardaarchivo(nombrearchivo, datosarchivo)
+        DResumen.guardaarchivo(ruta, datosarchivo)
 
 
     # Codigo redundante, optimizar !!!!!!!!!!!!!
@@ -592,6 +610,28 @@ class NResumen:
                 posiciones.append(nl)
             nl = nl + 1
         return posiciones
+
+
+    @staticmethod
+    def opcnics(resumen,contenidolog,ruta):
+        ''' Opción NICS
+
+        Calcula el valor de NICS(0) o NICS(1) si en el nombre del archivo dice NICS
+
+
+        :param resumen: resumen generado hasta el punto en que fue llamada la funcion
+        :param contenidolog: contenido del log
+        :param ruta: ruta que contiene el nombre del archivo
+
+        '''
+        nics = ''
+        expreg = re.compile(r'nics', re.I)
+        res = expreg.search(ruta)
+        if res:
+            r = NResumen.buscapalabra('isotropic', contenidolog)
+            linea = contenidolog[r].split()
+            nics = 'NICS= -' + linea[4]
+            resumen.append(nics)
 
     @staticmethod
     def opcacm(resumen, contenidolog, natomos):
@@ -905,8 +945,9 @@ class DResumen:
         except IOError as e:
             print  'Error al Guardar el archivo {0} {1}'.format(csvfile, e.strerror)
             exit(0)
-        except:
-            print  'Error desconocido al abrir el archivo'
+        except :
+
+            print  'Error desconocido al abrir el archivo {0}',  sys.exc_info()[0]
             exit(0)
 
 class VResumenTer:
@@ -922,10 +963,18 @@ class VResumenTer:
         :param parametrosentrada: lista con los parámetros ingresados en la terminal
         :param archivo: Ruta del archivo procesado
         '''
+        ruta =''
+        for elemento in sys.argv:
+            if elemento == '-e':
+
+                ruta = raw_input('Escriba el nombre del archivo y la ruta: ')
 
         self.paramentrosresumen = parametrosentrada
         self.contenidoArchivo = NResumen.obtencontenidolog(archivo)
         self.resumen = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen,archivo)
         for elemento in self.resumen:
             print elemento
+
+
+        NResumen.exporta(self.resumen,ruta)
 
