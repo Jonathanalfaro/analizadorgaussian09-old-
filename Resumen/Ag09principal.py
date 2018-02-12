@@ -409,7 +409,7 @@ class NResumen:
 
         '''
         status, mensaje = DResumen.guardaarchivo(ruta, datosarchivo)
-        return {status,mensaje}
+        return status, mensaje
 
 
     # Codigo redundante, optimizar !!!!!!!!!!!!!
