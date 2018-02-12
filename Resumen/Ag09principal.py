@@ -958,7 +958,7 @@ class DResumen:
         except  :
             mensaje = 'Error desconocido al guardar {0}'.format(csvfile)
             status = 0
-        return {status, mensaje}
+        return status, mensaje
 
 class VResumenTer:
     ''' Clase VResumenTer
