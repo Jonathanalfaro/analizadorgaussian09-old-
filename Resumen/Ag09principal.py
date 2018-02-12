@@ -145,8 +145,10 @@ class VResumenCur:
             stdscr.attroff(curses.color_pair(2))
 
             if k == ord('e'):
-                ruta =self.dialogoexportar(self.padBuscar)
-                NResumen.exporta(self.contenidoPad,ruta)
+                status= -1
+                mensaje = ''
+                ruta =self.dialogoexportar(stdscr,self.padBuscar, self.contenidoPad)
+
             if k == curses.KEY_DOWN:
                 self.posycursor = self.posycursor + 1
             if k == curses.KEY_UP:
@@ -197,9 +199,11 @@ class VResumenCur:
         palabra = stdscr.getstr(0, 20, 100)
         curses.noecho()
         stdscr.timeout(10)
+
         return palabra
 
-    def dialogoexportar(stdscr, padbuscar):
+    @staticmethod
+    def dialogoexportar(stdscr , padbuscar, contenidopad):
 
         ''' Sirve para mostrar la entrada de busqueda un patrón en el resumen.
 
@@ -212,12 +216,18 @@ class VResumenCur:
         stdscr.timeout(-1)
         y, x = stdscr.getmaxyx()
         curses.echo()
+        padbuscar = curses.newpad(1, 1000)
         padbuscar.addstr(0, 0, 'Ruta y nombre del archivo: ')
         padbuscar.refresh(0, 0, 0, 0, 1, x - 2)
-        ruta = stdscr.getstr(0, 20, 100)
+        ruta = stdscr.getstr(0, 30, 100)
         curses.noecho()
         stdscr.timeout(10)
-        return ruta
+        status, mensaje = NResumen.exporta(contenidopad, ruta)
+        mensaje = str(mensaje)
+        padbuscar.addstr(0, 0, mensaje)
+        padbuscar.refresh(0, 0, 0, 0, 1, x - 2)
+        padbuscar = curses.newpad(1, 1000)
+
 
 
 class NResumen:
@@ -383,9 +393,6 @@ class NResumen:
                     for j in range(i+1, len(contenidolog)-1, 1):
                         resumen.append(contenidolog[j])
                     break
-        for elemento in parametros:
-            if elemento == '-e':
-                NResumen.exporta(resumen,ruta)
 
         return resumen
 
@@ -401,7 +408,8 @@ class NResumen:
 
 
         '''
-        DResumen.guardaarchivo(ruta, datosarchivo)
+        status, mensaje = DResumen.guardaarchivo(ruta, datosarchivo)
+        return {status,mensaje}
 
 
     # Codigo redundante, optimizar !!!!!!!!!!!!!
@@ -931,10 +939,12 @@ class DResumen:
 
         :param ruta: Ruta donde se va a guardar el archivo
         :param datos: los datos que van a ir en el archivo
-        :return:
+        :return: status: el estatus de la operación, si es 0 ocurrio un error si es 1 todo estuvo bien
 
         '''
+        status = 1
         csvfile = nombrearchivo + '.csv'
+        mensaje = 'Se guardó correctamente el archivo {0}'.format(csvfile)
         try:
             with open(csvfile, 'w') as output:
                 writer = csv.writer(output)
@@ -943,12 +953,12 @@ class DResumen:
                         writer.writerow(elemento.split())
             output.close()
         except IOError as e:
-            print  'Error al Guardar el archivo {0} {1}'.format(csvfile, e.strerror)
-            exit(0)
-        except :
-
-            print  'Error desconocido al abrir el archivo {0}',  sys.exc_info()[0]
-            exit(0)
+            mensaje = e.strerror + ' no se puede guardar el archivo en: {0}'.format(nombrearchivo)
+            status = 0
+        except  :
+            mensaje = 'Error desconocido al guardar {0}'.format(csvfile)
+            status = 0
+        return {status, mensaje}
 
 class VResumenTer:
     ''' Clase VResumenTer
@@ -974,7 +984,6 @@ class VResumenTer:
         self.resumen = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen,archivo)
         for elemento in self.resumen:
             print elemento
-
-
-        NResumen.exporta(self.resumen,ruta)
+        status, mensaje = NResumen.exporta(self.resumen,ruta)
+        print mensaje
 
