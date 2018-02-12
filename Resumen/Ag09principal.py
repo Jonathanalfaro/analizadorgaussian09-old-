@@ -31,14 +31,15 @@ parser.add_argument('-e', '--exporta', help='Exporta los datos a un archivo EXCE
 parser.add_argument('file', nargs='+', help="Nombre de archivo a procesar")
 args = parser.parse_args()
 
-
 ''' Método principal, manda a llamar a la ventana principal segun el modo
     Si es modo curses abre la ventana interactiva, si es modo terminal
     pone todo en la terminal.
-    
+
     :param stdscr: Pantalla estandar de curses
-    
+
 '''
+
+
 def main(stdscr):
     vprincipal = VResumenCur(sys.argv)
     vprincipal.muestraventana(stdscr)
@@ -47,7 +48,7 @@ def main(stdscr):
 if __name__ == "__main__":
     modo = 'curses'
     for elemento in sys.argv:
-        if elemento == '-t'or elemento == '--texto':
+        if elemento == '-t' or elemento == '--texto':
             modo = 'term'
             break
     if modo == 'term':
@@ -58,13 +59,14 @@ if __name__ == "__main__":
         curses.wrapper(main)
 
 
-#Clase VResumen. Es la ventana que muestra al usuario el resumen del LOG
+# Clase VResumen. Es la ventana que muestra al usuario el resumen del LOG
 class VResumenCur:
     ''' Clase de vista para curses
         :param parametrosentrada: La lista de los parametros ingresados
         en la terminal para ejecutar el programa.(Argumentos, ruta)
 
     '''
+
     def __init__(self, parametrosentrada):
         ''' Constructor para la clase VResumenCur.
 
@@ -75,7 +77,7 @@ class VResumenCur:
 
 
         '''
-        self.ruta1 = parametrosentrada[len(parametrosentrada)-1]
+        self.ruta1 = parametrosentrada[len(parametrosentrada) - 1]
         self.paramentrosresumen = parametrosentrada
         self.contenidoArchivo = NResumen.obtencontenidolog(self.ruta1)
         self.posypad1 = 0
@@ -90,7 +92,7 @@ class VResumenCur:
         self.posxcursor = 0
         self.padactivo = 1
         self.padBuscar = curses.newpad(1, 1000)
-        self.contenidoPad = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen,self.ruta1)
+        self.contenidoPad = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen, self.ruta1)
         self.tamypad1 = len(self.contenidoPad)
         self.tamxpad1 = 1000
         self.pad1 = curses.newpad(self.tamypad1 + 1, 1000)
@@ -98,8 +100,6 @@ class VResumenCur:
         self.barraAyuda = "Presiona 'q' para salir 'e' para exportar"
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_WHITE)
-
-
 
     def pondatospad(self, contenido):
 
@@ -131,7 +131,7 @@ class VResumenCur:
         while k != ord('q'):
             maxy, maxx = stdscr.getmaxyx()
             self.pad1xf = int(maxx - 1)
-            self.pad1yf = maxy-2
+            self.pad1yf = maxy - 2
             stdscr.attron(curses.color_pair(1))
             if len(self.ruta1) <= maxx:
                 stdscr.addstr(1, 0, self.ruta1)
@@ -141,13 +141,13 @@ class VResumenCur:
                 stdscr.addstr(1, 0, ruta)
             stdscr.attroff(curses.color_pair(1))
             stdscr.attron(curses.color_pair(1))
-            stdscr.addstr(maxy-1, 0, self.barraAyuda)
+            stdscr.addstr(maxy - 1, 0, self.barraAyuda)
             stdscr.attroff(curses.color_pair(2))
 
             if k == ord('e'):
-                status= -1
+                status = -1
                 mensaje = ''
-                ruta =self.dialogoexportar(stdscr,self.padBuscar, self.contenidoPad)
+                ruta = self.dialogoexportar(stdscr, self.padBuscar, self.contenidoPad)
 
             if k == curses.KEY_DOWN:
                 self.posycursor = self.posycursor + 1
@@ -158,11 +158,10 @@ class VResumenCur:
             if k == curses.KEY_RIGHT:
                 self.posxcursor = self.posxcursor + 1
 
-
             if self.posycursor > self.pad1yf:
-                self.posypad1 = min(self.posypad1 + 1, self.tamypad1 - (self.pad1yf -self.pad1yi))
+                self.posypad1 = min(self.posypad1 + 1, self.tamypad1 - (self.pad1yf - self.pad1yi))
             if self.posycursor < self.pad1yi:
-                self.posypad1 = max(0, self.posypad1 - 1 )
+                self.posypad1 = max(0, self.posypad1 - 1)
 
             if self.posxcursor > self.pad1xf:
                 self.posxpad1 = min(self.posxpad1 + 1, self.tamxpad1)
@@ -203,7 +202,7 @@ class VResumenCur:
         return palabra
 
     @staticmethod
-    def dialogoexportar(stdscr , padbuscar, contenidopad):
+    def dialogoexportar(stdscr, padbuscar, contenidopad):
 
         ''' Sirve para mostrar la entrada de busqueda un patrón en el resumen.
 
@@ -229,13 +228,13 @@ class VResumenCur:
         padbuscar = curses.newpad(1, 1000)
 
 
-
 class NResumen:
     ''' Clase lógica NResumen, sirve para hacer el resumen.
 
 
 
     '''
+
     @staticmethod
     def obtencontenidolog(ruta):
         ''' Obtiene el contenido del log del cual se va a hacer el resumen.
@@ -256,7 +255,7 @@ class NResumen:
         return contenido
 
     @staticmethod
-    def hazresumen(contenidolog, parametros,ruta):
+    def hazresumen(contenidolog, parametros, ruta):
         ''' Hace el resumen, método principal de este trabajo.
 
         Sirve para hacer el resumen del contenido del log, usa expresiones regulares
@@ -295,7 +294,7 @@ class NResumen:
         matriz = []
         r = NResumen.buscapalabra(' #', contenidolog)
         if r == -1:
-            return ['El archivo '+ ruta +' no es un archivo de salida de Gaussian válido']
+            return ['El archivo ' + ruta + ' no es un archivo de salida de Gaussian válido']
         comin = contenidolog[r]
         datosini = NResumen.obtendatosiniciales(contenidolog, r)
         for elemento in datosini:
@@ -322,14 +321,14 @@ class NResumen:
                 resumen.append('')
                 numpasos = 0
                 paso = 0
-                #for k in range(len(contenidolog -1, 0, -1)):
+                # for k in range(len(contenidolog -1, 0, -1)):
 
-                r = NResumen.buscapalabra('Stationary',contenidolog)
-                if r!= -1:
-                    for i in range(r ,0 ,-1):
+                r = NResumen.buscapalabra('Stationary', contenidolog)
+                if r != -1:
+                    for i in range(r, 0, -1):
                         if 'Converged?' in contenidolog[i]:
                             paso = paso + 1
-                    for i in range(0,len(contenidolog), 1):
+                    for i in range(0, len(contenidolog), 1):
                         if 'Converged?' in contenidolog[i]:
                             numpasos = numpasos + 1
                     resumen.append('Stationary point found en el paso ' + str(paso) + ' de ' + str(numpasos))
@@ -361,7 +360,7 @@ class NResumen:
         # A partir de aqui se mostrarán solo si la palabra se pasó como parámetro en la ejecucion del programa
         for elemento in parametros:
             if '--ALL' in parametros or '-a' in parametros:
-                NResumen.opchf(resumen,contenidolog)
+                NResumen.opchf(resumen, contenidolog)
                 NResumen.opctq(resumen, contenidolog, natomos)
                 NResumen.opcmulliken(resumen, contenidolog)
                 NResumen.opcapt(resumen, contenidolog)
@@ -371,9 +370,9 @@ class NResumen:
                 break
 
             if elemento == '-hf':
-                NResumen.opchf(resumen,contenidolog)
+                NResumen.opchf(resumen, contenidolog)
             if elemento == '-tq':
-                NResumen.opctq(resumen,contenidolog,natomos)
+                NResumen.opctq(resumen, contenidolog, natomos)
             if elemento == '-apt':
                 NResumen.opcapt(resumen, contenidolog)
             if elemento == '--mulliken' or elemento == '-m':
@@ -388,9 +387,9 @@ class NResumen:
         if not terminacion:
             resumen = []
             resumen.append('Terminación Erronea')
-            for i in range(len(contenidolog)-1, 0, -1):
+            for i in range(len(contenidolog) - 1, 0, -1):
                 if '        ' in contenidolog[i]:
-                    for j in range(i+1, len(contenidolog)-1, 1):
+                    for j in range(i + 1, len(contenidolog) - 1, 1):
                         resumen.append(contenidolog[j])
                     break
 
@@ -410,7 +409,6 @@ class NResumen:
         '''
         status, mensaje = DResumen.guardaarchivo(ruta, datosarchivo)
         return status, mensaje
-
 
     # Codigo redundante, optimizar !!!!!!!!!!!!!
     @staticmethod
@@ -595,7 +593,7 @@ class NResumen:
                 ca = ca + str(columna) + '\t'
             matrize.append(ca)
             ca = ''
-        NResumen.exporta(matrize,'/matriz')
+        NResumen.exporta(matrize, '/matriz')
 
         return matriz
 
@@ -619,9 +617,8 @@ class NResumen:
             nl = nl + 1
         return posiciones
 
-
     @staticmethod
-    def opcnics(resumen,contenidolog,ruta):
+    def opcnics(resumen, contenidolog, ruta):
         ''' Opción NICS
 
         Calcula el valor de NICS(0) o NICS(1) si en el nombre del archivo dice NICS
@@ -669,20 +666,20 @@ class NResumen:
         resumen.append(' ')
 
     @staticmethod
-    def opchf(resumen,contenidolog):
+    def opchf(resumen, contenidolog):
         r = NResumen.buscapalabra('HF=', contenidolog)
         if not r is -1:
             hf = ''
             index = contenidolog[r].index('HF=')
             i = index + 3
-            lenren = len(contenidolog[r]) -1
+            lenren = len(contenidolog[r]) - 1
             while (True):
                 if contenidolog[r][i] == '\\' or contenidolog[r][i] == '|':
                     break
                 if contenidolog[r][i] is not ' ':
                     hf = hf + contenidolog[r][i]
                 i = i + 1
-                if i >= len(contenidolog[r]) -1 :
+                if i >= len(contenidolog[r]) - 1:
                     r = r + 1
                     i = 0
             resumen.append('Valor HF: ' + hf + ' Hartrees ')
@@ -804,23 +801,23 @@ class NResumen:
                 resumen.append(' '.join(mchs[i]))'''
         resumen.append(enc)
         j = 0
-        for i in range(0, len(mac)-1,1):
+        for i in range(0, len(mac) - 1, 1):
             aux = ''
             try:
                 aux = aux + '\t'.join(mac[i])
-            except :
+            except:
                 pass
             try:
                 aux = aux + '\t\t'.join(mas[i])[1:]
-            except :
+            except:
                 pass
             if mac[i][0] is 'H':
                 aux = aux + '\t\t' + '0.00000'
             else:
                 try:
                     aux = aux + '\t\t'.join(mchs[j])[1:]
-                    j = j+1
-                except :
+                    j = j + 1
+                except:
                     pass
             resumen.append(aux)
         resumen.append('')
@@ -844,7 +841,7 @@ class NResumen:
                 if i >= len(contenidolog[r]) - 1:
                     r = r + 1
                     i = 0
-            ch ='X'
+            ch = 'X'
             cad = ''
             for elemento in dp.split(','):
                 cad = cad + ch + '=' + elemento + ' '
@@ -888,7 +885,7 @@ class NResumen:
         listaatomos = []
         datos = []
         vaux = 0
-        lineainicio= NResumen.buscapalabra('Mulliken atomic charges:', contenido)
+        lineainicio = NResumen.buscapalabra('Mulliken atomic charges:', contenido)
         expreg = re.compile(r'\s+\d+\s+[a-zA-Z]+\s+-?\d+.?\d+\s+[A-Z]?$')
         for i in range(lineainicio + 1, len(contenido) - 1):
             if expreg.search(contenido[i]) is not None and vaux < 2:
@@ -900,8 +897,8 @@ class NResumen:
                     break
                 pass
 
-
         return listaatomos
+
 
 class DResumen:
     ''' Clase de datos DResumen
@@ -924,7 +921,7 @@ class DResumen:
             contenido = archivo.readlines()
             archivo.close()
         except IOError as e:
-            print  'Error al abir el archivo {0} {1}'.format(ruta ,e.strerror)
+            print  'Error al abir el archivo {0} {1}'.format(ruta, e.strerror)
             exit(0)
         except:
             print  'Error desconocido al abrir el archivo'
@@ -955,10 +952,11 @@ class DResumen:
         except IOError as e:
             mensaje = e.strerror + ' no se puede guardar el archivo en: {0}'.format(nombrearchivo)
             status = 0
-        except  :
+        except:
             mensaje = 'Error desconocido al guardar {0}'.format(csvfile)
             status = 0
         return status, mensaje
+
 
 class VResumenTer:
     ''' Clase VResumenTer
@@ -973,17 +971,16 @@ class VResumenTer:
         :param parametrosentrada: lista con los parámetros ingresados en la terminal
         :param archivo: Ruta del archivo procesado
         '''
-        ruta =''
+        ruta = ''
         for elemento in sys.argv:
             if elemento == '-e':
-
                 ruta = raw_input('Escriba el nombre del archivo y la ruta: ')
 
         self.paramentrosresumen = parametrosentrada
         self.contenidoArchivo = NResumen.obtencontenidolog(archivo)
-        self.resumen = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen,archivo)
+        self.resumen = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen, archivo)
         for elemento in self.resumen:
             print elemento
-        status, mensaje = NResumen.exporta(self.resumen,ruta)
+        status, mensaje = NResumen.exporta(self.resumen, ruta)
         print mensaje
 
