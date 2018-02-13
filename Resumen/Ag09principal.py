@@ -10,7 +10,7 @@ try:
     import csv
     from Ag09principal import *
 except ImportError as ie:
-    print '{0} install first please'.format(ie)
+    print '{0} install first'.format(ie)
     exit(0)
 
 locale.setlocale(locale.LC_ALL, '')
@@ -360,8 +360,15 @@ class NResumen:
         # A partir de aqui se mostrarán solo si la palabra se pasó como parámetro en la ejecucion del programa
         for elemento in parametros:
             if '--ALL' in parametros or '-a' in parametros:
-                NResumen.opchf(resumen, contenidolog)
-                NResumen.opctq(resumen, contenidolog, natomos)
+                hf = NResumen.opchf(contenidolog)
+                if hf:
+                    resumen.append('Valor HF: ' + hf + ' Hartrees ')
+                    resumen.append(' ')
+
+                tq = NResumen.opctq(resumen, contenidolog, natomos)
+                if tq:
+                    resumen.append('Dipolo ' + tq)
+                    resumen.append(' ')
                 NResumen.opcmulliken(resumen, contenidolog)
                 NResumen.opcapt(resumen, contenidolog)
                 NResumen.opcacm(resumen, contenidolog, natomos)
@@ -370,9 +377,15 @@ class NResumen:
                 break
 
             if elemento == '-hf':
-                NResumen.opchf(resumen, contenidolog)
+                hf = NResumen.opchf(contenidolog)
+                if hf:
+                    resumen.append('Valor HF: ' + hf + ' Hartrees ')
+                    resumen.append(' ')
             if elemento == '-tq':
-                NResumen.opctq(resumen, contenidolog, natomos)
+                tq = NResumen.opctq(resumen, contenidolog, natomos)
+                if tq:
+                    resumen.append('Dipolo ' + tq)
+                    resumen.append(' ')
             if elemento == '-apt':
                 NResumen.opcapt(resumen, contenidolog)
             if elemento == '--mulliken' or elemento == '-m':
@@ -666,7 +679,8 @@ class NResumen:
         resumen.append(' ')
 
     @staticmethod
-    def opchf(resumen, contenidolog):
+    def opchf(contenidolog):
+        hf = ''
         r = NResumen.buscapalabra('HF=', contenidolog)
         if not r is -1:
             hf = ''
@@ -682,8 +696,7 @@ class NResumen:
                 if i >= len(contenidolog[r]) - 1:
                     r = r + 1
                     i = 0
-            resumen.append('Valor HF: ' + hf + ' Hartrees ')
-            resumen.append(' ')
+        return hf
 
     @staticmethod
     def opcasd(resumen, contenidolog, natomos):
@@ -846,8 +859,6 @@ class NResumen:
             for elemento in dp.split(','):
                 cad = cad + ch + '=' + elemento + ' '
                 ch = chr(ord(ch) + 1)
-            resumen.append('Dipolo ' + cad)
-            resumen.append(' ')
 
         r = NResumen.buscapalabra('pressure', contenidolog)
         if r != -1:
@@ -871,6 +882,9 @@ class NResumen:
                     break
         resumen.append('')
 
+        return cad
+
+    
     @staticmethod
     def obtenlistaatomos(contenido):
         ''' Obtiene la lista de los átomos
@@ -936,7 +950,7 @@ class DResumen:
 
         :param ruta: Ruta donde se va a guardar el archivo
         :param datos: los datos que van a ir en el archivo
-        :return: status: el estatus de la operación, si es 0 ocurrio un error si es 1 todo estuvo bien
+        :return: status: el estatus de la operación, si es 0 ocurrio un error si es 1 se realizó correctamente
 
         '''
         status = 1
