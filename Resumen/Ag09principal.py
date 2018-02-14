@@ -884,7 +884,7 @@ class NResumen:
 
         return cad
 
-    
+
     @staticmethod
     def obtenlistaatomos(contenido):
         ''' Obtiene la lista de los átomos
