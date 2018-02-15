@@ -766,9 +766,9 @@ class NResumen:
         aths = []
         if r != -1:
             aths = NResumen.obtendatosaptmulliken(r, contenidolog)
-            resumen.append('*** APT atomic charges \t APT atomic charges hydrogens summed ***\n')
+            resumen.append('***Átomo\tAPT atomic charges \t APT atomic charges hydrogens summed ***\n')
         for i in range(len(aptch)):
-            resumen.append(' '.join(aptch[i]) + '\t\t\t' + str(aths[i][1]))
+            resumen.append('\t\t'.join(aptch[i]) + '\t\t\t' + str(aths[i][1]))
         resumen.append('')
 
     @staticmethod
@@ -837,7 +837,7 @@ class NResumen:
 
     @staticmethod
     def opctq(resumen, contenidolog, natomos):
-
+        cad = ''
         resumen.append('*** DATOS TERMOQUÍMICOS ***')
         resumen.append('')
         r = NResumen.buscapalabra('Dipole=', contenidolog)
@@ -855,7 +855,7 @@ class NResumen:
                     r = r + 1
                     i = 0
             ch = 'X'
-            cad = ''
+
             for elemento in dp.split(','):
                 cad = cad + ch + '=' + elemento + ' '
                 ch = chr(ord(ch) + 1)
@@ -900,6 +900,10 @@ class NResumen:
         datos = []
         vaux = 0
         lineainicio = NResumen.buscapalabra('Mulliken atomic charges:', contenido)
+        if lineainicio == -1:
+            lineainicio = NResumen.buscapalabra('Condensed to atoms ', contenido)
+            if lineainicio == -1:
+                lineainicio = NResumen.buscapalabra('Atomic charges:', contenido)
         expreg = re.compile(r'\s+\d+\s+[a-zA-Z]+\s+-?\d+.?\d+\s+[A-Z]?$')
         for i in range(lineainicio + 1, len(contenido) - 1):
             if expreg.search(contenido[i]) is not None and vaux < 2:
