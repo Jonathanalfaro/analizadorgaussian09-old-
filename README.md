@@ -14,31 +14,24 @@ Para uso local del programa primero necesita descargarlo a su computadora.
 3. Extraiga el contenido del archivo
 
 ## Ayuda de uso
-1. Puede ejecutar el programa directamente desde la cuenta Aess(También puedes continuar desde el punto 2)
 
-    `Ag09principal.py [opciones] [ruta]`
-    
-    ***Para esto ya no es necesario descargar nada
-    Ejemplo:
-    
-    ![Imagen_4](Img/i4.jpg)  
-            
-2. En una terminal cambie el directorio de trabajo a la ubicación donde extrajo el contenido del archivo descargado
+1. En una terminal cambie el directorio de trabajo a la ubicación donde extrajo el contenido del archivo descargado
 
-3. Ejecute el programa de la siguiente manera
+2. Ejecute el programa de la siguiente manera
 
     `python Resumen/Ag09principal.py [opciones] [ruta del log]`
 
     Ejemplo:
 
-    `python Resumen/Ag09principal.py -a /home/lsvp/Documentos/SERVICIO_SOCIAL/BzPhsolo.out
+    `python Resumen/Ag09principal.py -a /home/USUARIO/Documentos/SERVICIO_SOCIAL/BzPhsolo.out
 `
 
-4. Ahora puede procesar mas de un archivo a la vez
+3. Ahora puede procesar mas de un archivo a la vez
 
     `python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/*.log`
         o
     `python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/*.out`
+    
 El programa cuenta con una ayuda a la que puede accederse con el atajo -h
 
 `python /home/lsvp/PycharmProjects/ag09/Resumen/Principal.py -h`
@@ -47,22 +40,18 @@ Lo cual da como salida lo siguiente
 
 ![Imagen 3](Img/i3.jpg)
 
-
-
-
 Lista de opciones
 
-
-| Opción | Acción |
+| Opción corta | Opción larga | Acción |
 | - | - | - |
 | -h | --help | show this help message and exit |
-| -m | --mulliken | Muestra los datos de Mulliken |
-| -hf |  | Muestra el valor hf |
 | -t | --texto | Muestra los resultados en la salida estandar |
+| -m | --mulliken | Muestra los datos de Mulliken |
+| -hf | --hirshfeld | Muestra el valor hf |
 | -apt | --APT_atomic | Muestra los datos de APT |
 | -tq | --thermochemical | Muestra los datos termoquímicos |
 | -acm | --atomic_charges_matrix | Muestra la matriz de cargas atomicas y su diagonal |
 | -asd | --atomic_spin_densities | Muestra la matriz de densidades atómicas y su diagonal |
 | -hsd | --hirshfeld_spin_densities | Muestra la matriz de Hirshfeld | 
-| -a | --ALL | Muestra todos los datos | 
-| -e | --exporta | Exporta los datos a un archivo EXCEL |
+| -a | --ALL | Muestra todos los datos posibles | 
+| -e | --exporta | Exporta los datos a un archivo CSV |
