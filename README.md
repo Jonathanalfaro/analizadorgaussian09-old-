@@ -1,9 +1,9 @@
 # analizadorgaussian
-Analizador  de datos de salida del programa Gaussian09 hecho en python y con la libreria curses
+Programa hecho en Python para el análisis de datos de salida del programa Gaussian09
 
 ## Ayuda de descarga
 
-Para el uso local del programa necesita descargar el programa.
+Para uso local del programa primero necesita descargarlo a su computadora.
 
 1. En la página de Github de clic en la opción 'Clone or download'
 ![Imagen 2](Img/i1.jpg)
@@ -54,12 +54,15 @@ Lista de opciones
 
 
 | Opción | Acción |
-| - | - |
-| -a | Muestra toda la informacion que se puede extraer del archivo .log|
-| -m | Muestra la informacion de APT atomic charges y APT atomic charges whit hydrogens summed |
-| -acm | Muestra Atomic Charges Matrix y los valores de su diagonal|
-| -hsd | Muestra Hirshfeld Spin Densities | 
-| -asd | Muestra Atomic Spin Densities Matrix y su diagonal| 
-| -apt | Muestra APT atomic charges| 
-| -t | Muestra el resumen en la salida estándar|
-| -e | Exporta los datos a una hoja de cálculo de Excel | 
+| - | - | - |
+| -h | --help | show this help message and exit |
+| -m | --mulliken | Muestra los datos de Mulliken |
+| -hf |  | Muestra el valor hf |
+| -t | --texto | Muestra los resultados en la salida estandar |
+| -apt | --APT_atomic | Muestra los datos de APT |
+| -tq | --thermochemical | Muestra los datos termoquímicos |
+| -acm | --atomic_charges_matrix | Muestra la matriz de cargas atomicas y su diagonal |
+| -asd | --atomic_spin_densities | Muestra la matriz de densidades atómicas y su diagonal |
+| -hsd | --hirshfeld_spin_densities | Muestra la matriz de Hirshfeld | 
+| -a | --ALL | Muestra todos los datos | 
+| -e | --exporta | Exporta los datos a un archivo EXCEL |
