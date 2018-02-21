@@ -1,8 +1,6 @@
 # analizadorgaussian
 Programa hecho en Python para el análisis de datos de salida del programa Gaussian09
 
-{% include button.html button_name="My Button" button_class="primary" %}
-
 ## Ayuda de descarga
 
 Para uso local del programa primero necesita descargarlo a su computadora.
