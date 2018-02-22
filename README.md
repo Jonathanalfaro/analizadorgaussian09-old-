@@ -1,9 +1,8 @@
 # analizadorgaussian
-    Programa hecho en Python para el análisis de datos de salida del programa Gaussian09r
+Programa hecho en Python para el análisis de datos de salida del programa Gaussian09
 
 ## Ayuda de descarga
-
-    Para uso local del programa primero necesita descargarlo a su computadora.
+Para uso local del programa primero necesita descargarlo a su computadora.
 
 1. En la página de Github de clic en la opción 'Clone or download'
 ![Imagen 2](Img/i1.jpg)
@@ -19,19 +18,24 @@
 
 2. Ejecute el programa de la siguiente manera
 
-    `python Resumen/Ag09principal.py [opciones] [ruta del log]`
+```
+    python Resumen/Ag09principal.py [opciones] [ruta del log]
+```
+Ejemplo:
 
-    Ejemplo:
-
-    `python Resumen/Ag09principal.py -a /home/USUARIO/Documentos/SERVICIO_SOCIAL/BzPhsolo.out
-`
+```
+    python Resumen/Ag09principal.py -a /home/USUARIO/Documentos/SERVICIO_SOCIAL/BzPhsolo.out
+```
 
 3. Ahora puede procesar mas de un archivo a la vez
 
-    `python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/*.log`
-        o
-    `python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/*.out`
-    
+```
+    python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/*.log`
+```
+o
+```
+    python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/*.out`
+```
 ## Ayuda en el programa
 
 El programa cuenta con una ayuda a la que puede accederse con el atajo -h
