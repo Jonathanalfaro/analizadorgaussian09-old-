@@ -32,19 +32,20 @@ Para uso local del programa primero necesita descargarlo a su computadora.
 3. Se puede analizar un archivo o muchos a la vez
 
     ```
-        python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/ARCHIVO.out`
+        python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/ARCHIVO.out
     ```
     o
     ```
-        python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/*.out`
+        python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/*.out
     ```
     
 ## Ayuda en el programa
 
 El programa cuenta con una ayuda a la que puede accederse con el atajo -h
 
-    `python /home/lsvp/PycharmProjects/ag09/Resumen/Principal.py -h`
-
+``` 
+    python /home/lsvp/PycharmProjects/ag09/Resumen/Principal.py -h
+```
 Lo cual da como salida lo siguiente
 
 
