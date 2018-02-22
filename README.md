@@ -58,8 +58,8 @@ Lo cual da como salida lo siguiente
 | Opción corta | Opción larga | Acción |
 | - | - | - |
 | -h | --help | show this help message and exit |
-| -t | --texto | Muestra los resultados en la salida estandar |
-| -m | --mulliken | Muestra los datos de Mulliken |
+| -t | --texto | Muestra los datos solicitados en directamente en la terminal |
+| -m | --mulliken | Muestra los datos  de Mulliken |
 | -hf | --hirshfeld | Muestra el valor hf |
 | -apt | --APT_atomic | Muestra los datos de APT |
 | -tq | --thermochemical | Muestra los datos termoquímicos |
