@@ -38,6 +38,7 @@ Para uso local del programa primero necesita descargarlo a su computadora.
     ```
         python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/*.out`
     ```
+    
 ## Ayuda en el programa
 
 El programa cuenta con una ayuda a la que puede accederse con el atajo -h
