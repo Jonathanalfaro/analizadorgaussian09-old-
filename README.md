@@ -46,9 +46,11 @@ El programa cuenta con una ayuda a la que puede accederse con el atajo -h
 
 Lo cual da como salida lo siguiente
 
-    ![Imagen 3](Img/i3.jpg)
 
-Lista de opciones
+
+![Imagen 3](Img/i3.jpg)
+
+## Lista de opciones
 
 | Opción corta | Opción larga | Acción |
 | - | - | - |
