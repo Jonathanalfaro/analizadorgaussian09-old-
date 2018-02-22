@@ -1,5 +1,5 @@
 # analizadorgaussian
-    Programa hecho en Python para el análisis de datos de salida del programa Gaussian09
+    Programa hecho en Python para el análisis de datos de salida del programa Gaussian09r
 
 ## Ayuda de descarga
 
