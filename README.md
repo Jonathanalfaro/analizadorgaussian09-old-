@@ -5,10 +5,12 @@ Programa hecho en Python para el análisis de datos de salida del programa Gauss
 Para uso local del programa primero necesita descargarlo a su computadora.
 
 1. En la página de Github de clic en la opción 'Clone or download'
-![Imagen 2](Img/i1.jpg)
+
+    ![Imagen 2](Img/i1.jpg)
 
 2. Despues de clic en la opción  'Download ZIP'
-![Imagen 2](Img/i2.jpg)
+    
+    ![Imagen 2](Img/i2.jpg)
 
 3. Extraiga el contenido del archivo
 
@@ -18,24 +20,24 @@ Para uso local del programa primero necesita descargarlo a su computadora.
 
 2. Ejecute el programa de la siguiente manera
 
-```
-    python Resumen/Ag09principal.py [opciones] [ruta del log]
-```
-Ejemplo:
+    ```
+        python Resumen/Ag09principal.py [opciones] [ruta del log]
+    ```
+    Ejemplo:
 
-```
-    python Resumen/Ag09principal.py -a /home/USUARIO/Documentos/SERVICIO_SOCIAL/BzPhsolo.out
-```
+    ```
+        python Resumen/Ag09principal.py -a /home/USUARIO/Documentos/SERVICIO_SOCIAL/BzPhsolo.out
+    ```
 
-3. Ahora puede procesar mas de un archivo a la vez
+3. Se puede analizar un archivo o muchos a la vez
 
-```
-    python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/*.log`
-```
-o
-```
-    python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/*.out`
-```
+    ```
+        python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/ARCHIVO.out`
+    ```
+    o
+    ```
+        python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/*.out`
+    ```
 ## Ayuda en el programa
 
 El programa cuenta con una ayuda a la que puede accederse con el atajo -h
@@ -43,7 +45,8 @@ El programa cuenta con una ayuda a la que puede accederse con el atajo -h
     `python /home/lsvp/PycharmProjects/ag09/Resumen/Principal.py -h`
 
 Lo cual da como salida lo siguiente
-![Imagen 3](Img/i3.jpg)
+
+    ![Imagen 3](Img/i3.jpg)
 
 Lista de opciones
 
