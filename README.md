@@ -1,9 +1,9 @@
 # analizadorgaussian
-Programa hecho en Python para el análisis de datos de salida del programa Gaussian09
+    Programa hecho en Python para el análisis de datos de salida del programa Gaussian09
 
 ## Ayuda de descarga
 
-Para uso local del programa primero necesita descargarlo a su computadora.
+    Para uso local del programa primero necesita descargarlo a su computadora.
 
 1. En la página de Github de clic en la opción 'Clone or download'
 ![Imagen 2](Img/i1.jpg)
