@@ -77,6 +77,7 @@ class VResumenCur:
 
 
         '''
+        self.contenidoPad = []
         self.ruta1 = parametrosentrada[len(parametrosentrada) - 1]
         self.paramentrosresumen = parametrosentrada
         self.contenidoArchivo = NResumen.obtencontenidolog(self.ruta1)
@@ -92,8 +93,10 @@ class VResumenCur:
         self.posxcursor = 0
         self.padactivo = 1
         self.padBuscar = curses.newpad(1, 1000)
-        self.listaopc = []
-        self.contenidoPad, self.listaopc = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen, self.ruta1)
+        if 'Error' in self.contenidoArchivo[0]:
+            self.contenidoPad.append(self.contenidoArchivo[0])
+        else:
+            self.contenidoPad = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen, self.ruta1)
         self.tamypad1 = len(self.contenidoPad)
         self.tamxpad1 = 1000
         self.pad1 = curses.newpad(self.tamypad1 + 1, 1000)
@@ -252,7 +255,6 @@ class NResumen:
         for linea in contenidolog:
             lineaaux = linea.replace('\r', '')
             contenido.append(lineaaux)
-
         return contenido
 
     @staticmethod
@@ -269,33 +271,33 @@ class NResumen:
         :return: El resumen obtenido para mostrarse en modo curses o en modo terminal
 
         '''
-
-        terminacion = True
-        comin = ''
-        for i in range(0, 1000, 1):
-            try:
-                if 'Gaussian(R)' in contenidolog[i]:
-                    break
-            except:
-                return ['El archivo ' + ruta + ' no es un archivo de salida de Gaussian válido']
-        if i == 1000:
-            return ['El archivo ' + ruta + ' no es un archivo de salida de Gaussian válido']
-        r = NResumen.buscapalabra('natoms=', contenidolog)
-        if r != -1:
-            natomos = int(contenidolog[r].split()[1])
-        else:
-            n = NResumen.obtendatosaptmulliken(105, contenidolog)
-            natomos = len(n)
+        cargamult = []
+        r = 0
+        i = 0
+        varexportar = []
         resumen = []
+        comin = ''
+        for linea in contenidolog:
+            if 'Gaussian(R)' in linea:
+                r = NResumen.buscapalabra(' #', contenidolog)
+                if r == -1:
+                    return ['El archivo ' + ruta + ' no es un archivo de salida de Gaussian válido']
+                else:
+                    break
+            i = i+1
+        if i == len(contenidolog):
+            return ['El archivo ' + ruta + ' no es un archivo de salida de Gaussian válido']
+
         resumen.append(ruta)
+        varexportar.append([ruta])
         resumen.append('*********************************************************************')
         resumen.append('Analizador  Gaussian09')
         resumen.append('Ag09 v0.8')
         resumen.append('*********************************************************************')
         matriz = []
         r = NResumen.buscapalabra(' #', contenidolog)
-        if r == -1:
-            return ['El archivo ' + ruta + ' no es un archivo de salida de Gaussian válido']
+        #if r == -1:
+            #return ['El archivo ' + ruta + ' no es un archivo de salida de Gaussian válido']
         comin = contenidolog[r]
         datosini = NResumen.obtendatosiniciales(contenidolog, r)
         for elemento in datosini:
@@ -306,11 +308,19 @@ class NResumen:
         if r == -1:
             resumen.append('')
         else:
-
             if 'Normal' in contenidolog[r]:
                 resumen.append('Terminación normal')
             else:
-                terminacion = False
+
+                resumen = []
+                resumen.append(ruta)
+                resumen.append('Terminación Erronea')
+                for i in range(len(contenidolog) - 1, 0, -1):
+                    if '        ' in contenidolog[i]:
+                        for j in range(i + 1, len(contenidolog) - 1, 1):
+                            resumen.append(contenidolog[j])
+                        break
+                return resumen
             resumen.append('')
             if 'opt' in comin:
                 resumen.append('*** DATOS DE CONVERGENCIA ***\n')
@@ -333,6 +343,13 @@ class NResumen:
                         if 'Converged?' in contenidolog[i]:
                             numpasos = numpasos + 1
                     resumen.append('Stationary point found en el paso ' + str(paso) + ' de ' + str(numpasos))
+        r = NResumen.buscapalabra('natoms=', contenidolog)
+        if r != -1:
+            natomos = int(contenidolog[r].split()[1])
+        else:
+            n = NResumen.obtendatosaptmulliken(105, contenidolog)
+            natomos = len(n)
+
 
         resumen.append(' ')
         resumen.append('Numero de átomos: ' + str(natomos))
@@ -342,8 +359,10 @@ class NResumen:
             resumen.append('')
         else:
             aux = contenidolog[r].split()
+            cargamult.append('Carga: ' + aux[2] + ' Multiplicidad: ' + aux[5])
             resumen.append('Carga: ' + aux[2] + ' Multiplicidad: ' + aux[5])
             resumen.append(' ')
+            varexportar.append(cargamult)
 
         if 'freq' in comin:
             r = NResumen.buscapalabra('imaginary frequencies \(', contenidolog)
@@ -358,7 +377,7 @@ class NResumen:
                 resumen.append(' ')
         if 'nmr=' in comin:
             NResumen.opcnics(resumen, contenidolog, ruta)
-        listaopc = []
+
         # A partir de aqui se mostrarán solo si la palabra se pasó como parámetro en la ejecucion del programa
         for elemento in parametros:
             if '--ALL' in parametros or '-a' in parametros:
@@ -366,18 +385,18 @@ class NResumen:
                 if hf:
                     resumen.append('Valor HF: ' + hf + ' Hartrees ')
                     resumen.append(' ')
-                    listaopc.append(hf)
-
+                    varexportar.append(['Valor_HF: '+  hf])
                 tq = NResumen.opctq(resumen, contenidolog, natomos)
                 if tq:
                     resumen.append('Dipolo ' + tq)
                     resumen.append(' ')
-                    listaopc.append(tq)
-                NResumen.opcmulliken(resumen, contenidolog)
-                NResumen.opcapt(resumen, contenidolog)
-                NResumen.opcacm(resumen, contenidolog, natomos)
-                NResumen.opcasd(resumen, contenidolog, natomos)
-                NResumen.opchsd(resumen, contenidolog, natomos)
+                    varexportar.append(['Dipolo: '+ tq])
+
+                NResumen.opcmulliken(resumen, contenidolog, varexportar)
+                NResumen.opcapt(resumen, contenidolog, varexportar)
+                NResumen.opcacm(resumen, contenidolog, natomos, varexportar)
+                NResumen.opcasd(resumen, contenidolog, natomos, varexportar)
+                NResumen.opchsd(resumen, contenidolog, natomos, varexportar)
                 break
 
             if elemento == '-hf':
@@ -385,33 +404,27 @@ class NResumen:
                 if hf:
                     resumen.append('Valor HF: ' + hf + ' Hartrees ')
                     resumen.append(' ')
+                    varexportar.append(hf)
             if elemento == '-tq':
                 tq = NResumen.opctq(resumen, contenidolog, natomos)
                 if tq:
                     resumen.append('Dipolo ' + tq)
                     resumen.append(' ')
+                    varexportar.append(tq)
             if elemento == '-apt':
-                NResumen.opcapt(resumen, contenidolog)
+                NResumen.opcapt(resumen, contenidolog,varexportar)
             if elemento == '--mulliken' or elemento == '-m':
-                NResumen.opcmulliken(resumen, contenidolog)
+                NResumen.opcmulliken(resumen, contenidolog, varexportar)
             if elemento == '--atomic_charges_matrix' or elemento == '-acm':
-                NResumen.opcacm(resumen, contenidolog, natomos)
+                NResumen.opcacm(resumen, contenidolog, natomos, varexportar)
             if elemento == '--atomic_spin_densities' or elemento == '-asd':
-                NResumen.opcasd(resumen, contenidolog, natomos)
+                NResumen.opcasd(resumen, contenidolog, natomos, varexportar)
             if elemento == '--hirshfeld spin densities' or elemento == '-hsd':
-                NResumen.opchsd(resumen, contenidolog, natomos)
+                NResumen.opchsd(resumen, contenidolog, natomos, varexportar)
 
-        if not terminacion:
-            resumen = []
-            resumen.append(ruta)
-            resumen.append('Terminación Erronea')
-            for i in range(len(contenidolog) - 1, 0, -1):
-                if '        ' in contenidolog[i]:
-                    for j in range(i + 1, len(contenidolog) - 1, 1):
-                        resumen.append(contenidolog[j])
-                    break
 
-        return resumen, listaopc
+        NResumen.exporta(varexportar,ruta)
+        return resumen
 
     @staticmethod
     def exporta(datosarchivo, ruta):
@@ -423,9 +436,13 @@ class NResumen:
         :param datosarchivo: Los datos que se van a exportar al csv
         :param ruta: ruta del .log o .out, sirve para generar el nombre del archivo csv
 
-
         '''
-        status, mensaje = DResumen.guardaarchivo(ruta, datosarchivo)
+        datos = []
+        for dato in datosarchivo:
+            for elemento in dato:
+                datos.append(elemento)
+        status, mensaje = DResumen.guardaarchivo(ruta, datos)
+        print datosarchivo
         return status, mensaje
 
     # Codigo redundante, optimizar !!!!!!!!!!!!!
@@ -634,7 +651,7 @@ class NResumen:
         return posiciones
 
     @staticmethod
-    def opcnics(resumen, contenidolog, ruta):
+    def opcnics(resumen, contenidolog, ruta, varexportar):
         ''' Opción NICS
 
         Calcula el valor de NICS(0) o NICS(1) si en el nombre del archivo dice NICS
@@ -657,9 +674,11 @@ class NResumen:
             nics = '\tNICS= -' + ' '+linea[4]
             cadnics =linea[0] +'\t' + linea[1]+'\t'+'Isotropic= ' + linea[4]+nics
             resumen.append(cadnics)
+            varexportar.append(cadnics)
+
 
     @staticmethod
-    def opcacm(resumen, contenidolog, natomos):
+    def opcacm(resumen, contenidolog, natomos,varexportar):
         ''' Opcion Atomic Charges Matrix.
 
         Se invoca este método en caso de que los argumentos de entrada sea -acm, agrega la
@@ -671,6 +690,7 @@ class NResumen:
         :param natomos: numero de atomos, sirve para generar la matriz
 
         '''
+        diagonal = ''
         r = NResumen.buscapalabra('Condensed to atoms', contenidolog)
         if r == -1 or 'Mulliken atomic charges:' in contenidolog[r + 1]:
             resumen.append('**** NO HAY DATOS DE ATOMIC CHARGES MATRIX ****')
@@ -678,13 +698,13 @@ class NResumen:
         else:
             listaatomos = NResumen.obtenlistaatomos(contenidolog)
             matriz = NResumen.obtenmatriz(r, contenidolog, natomos)
-            diagonal = ''
             resumen.append('***** VALORES DE LA DIAGONAL DE ATOMIC CHARGES MATRIX *****\n')
             for i in range(len(matriz)):
                 diagonal = diagonal + str(matriz[i][i]) + ' '
                 resumen.append(listaatomos[i] + '\t' + matriz[i][i])
             resumen.append(' ')
         resumen.append(' ')
+        varexportar.append(diagonal)
 
     @staticmethod
     def opchf(contenidolog):
@@ -708,7 +728,7 @@ class NResumen:
         return hf
 
     @staticmethod
-    def opcasd(resumen, contenidolog, natomos):
+    def opcasd(resumen, contenidolog, natomos,varexportar):
         ''' Opcion Atomic Charges Matrix.
 
         Se invoca este método en caso de que los argumentos de entrada sea -asd, agrega la
@@ -734,9 +754,10 @@ class NResumen:
                 diagonal = diagonal + str(matriz2[i][i]) + ' '
                 resumen.append(listaatomos[i] + '\t' + matriz2[i][i])
             resumen.append(' ')
+        varexportar.append(diagonal)
 
     @staticmethod
-    def opchsd(resumen, contenidolog, natomos):
+    def opchsd(resumen, contenidolog, natomos, varexportar ):
         ''' Opcion Hirshfeld spin densities.
 
         Obtiene los átomos, sus densidades de espin y sus cargas cuando en  los argumentos
@@ -748,6 +769,7 @@ class NResumen:
 
 
         '''
+        hsd = []
         r = NResumen.buscapalabra('Hirshfeld spin densities, ', contenidolog)
         if r != -1:
             resumen.append(' ******* HIRSHFELD SPIN DENSITIES *******\n')
@@ -755,13 +777,14 @@ class NResumen:
             resumen.append('')
             for i in range(r + 2, r + natomos + 2, 1):
                 resumen.append('\t'.join(contenidolog[i].split()[1:4]))
-
+                hsd.append('\t'.join(contenidolog[i].split()[1:4]))
         else:
             resumen.append('**** NO HAY DATOS DE HIRSHFELD SPIN DENSITIES ****')
         resumen.append(' ')
+        varexportar.append(hsd)
 
     @staticmethod
-    def opcapt(resumen, contenidolog):
+    def opcapt(resumen, contenidolog, varexportar):
         ''' Opción APT.
 
         Obtiene los vectores APT atomic Charges y APT atomic charges with hydrogens summed
@@ -786,9 +809,11 @@ class NResumen:
         else:
             resumen.append(('**** NO HAY DATOS APT *****'))
             resumen.append('')
+        varexportar.append(aptch)
+        varexportar.append(aths)
 
     @staticmethod
-    def opcmulliken(resumen, contenidolog):
+    def opcmulliken(resumen, contenidolog,varexportar):
         ''' Opción Mulliken.
 
         Obtiene los vectores Mulliken atomic charges, mulliken atomic spin densities y
@@ -809,18 +834,32 @@ class NResumen:
             resumen.append('**** MULLIKEN POPULATION ANALISIS *****')
             resumen.append('')
             mac = NResumen.obtendatosaptmulliken(r, contenidolog)
+            varexportar.append(['Mulliken_Atomic_Charges'])
+            for elemento in mac:
+                varexportar.append([' '.join(elemento)])
             enc = enc + '\tAtomic charges'
             r = NResumen.buscapalabra('^ Mulliken atomic spin', contenidolog)
             mas = []
             if not r == -1:
                 mas = NResumen.obtendatosaptmulliken(r, contenidolog)
                 enc = enc + '\tAtomic spin densities'
+                varexportar.append(['Mulliken_atomic_spin_densities'])
+                for elemento in mas:
+                    varexportar.append([' '.join(elemento)])
             r = NResumen.buscapalabra('^ Mulliken charges with', contenidolog)
             mchs = []
             if not r == -1:
                 mchs = NResumen.obtendatosaptmulliken(r, contenidolog)
                 enc = enc + '\tCharges with hidrogens summed'
+                varexportar.append(['Mulliken_charges_with_hydrogens_summed'])
+                for elemento in mchs:
+                    varexportar.append([' '.join(elemento)])
+
             resumen.append(enc)
+
+
+
+
         else:
             resumen.append('**** NO HAY DATOS DE MULLIKEN ****')
         j = 0
@@ -946,16 +985,14 @@ class DResumen:
         :return: regresa el texto contenido en el archivo
 
         '''
+        contenido = []
         try:
             archivo = open(ruta)
             contenido = archivo.readlines()
             archivo.close()
         except IOError as e:
-            print  'Error al abir el archivo {0} {1}'.format(ruta, e.strerror)
-            exit(0)
-        except:
-            print  'Error desconocido al abrir el archivo'
-            exit(0)
+            contenido = []
+            contenido.append('Error al abir el archivo {0} {1}'.format(ruta, e.strerror))
         return contenido
 
     @staticmethod
@@ -1004,22 +1041,27 @@ class VResumenTer:
         '''
         ruta = ''
         mensaje = ''
-        self.listaopc = []
+
+
         self.paramentrosresumen = parametrosentrada
         self.contenidoArchivo = NResumen.obtencontenidolog(archivo)
-        self.resumen, self.listaopc = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen, archivo)
+
+        if 'Error' in self.contenidoArchivo[0]:
+            print self.contenidoArchivo[0]
+            exit(0)
+
+        self.resumen= NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen, archivo)
         for elemento in sys.argv:
             if elemento == '-e':
                 ruta = raw_input('Escriba el nombre del archivo y la ruta: ')
                 if ruta[len(ruta) -1] is '/':
                     mensaje = ' {0} no es un nombre de archivo válido'.format(ruta)
-                else:
-                    status, mensaje = NResumen.exporta(self.listaopc, ruta)
+
         for elemento in self.resumen:
             print elemento
 
         print mensaje
-        print self.listaopc
+
 
 
 
