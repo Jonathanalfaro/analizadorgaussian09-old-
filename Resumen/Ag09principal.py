@@ -28,10 +28,11 @@ parser.add_argument('-asd', '--atomic_spin_densities', help='Muestra la matriz d
 parser.add_argument('-hsd', '--hirshfeld_spin_densities', help='Muestra la matriz de Hirshfeld', action="store_true")
 parser.add_argument('-a', '--ALL', help='Muestra todos los datos', action="store_true")
 parser.add_argument('-e', '--exporta', help='Exporta los datos a un archivo EXCEL', action="store_true")
-parser.add_argument('-nao', action='store', dest='Atomo', help='Análisis NAO al átomo')
+parser.add_argument('-nao', nargs = '?' , action='store', dest='Atomo', help='Natural atomic orbital occupancies')
+parser.add_argument('-mep', help='Muestra las propiedades electrostáticas', action = "store_true")
 parser.add_argument('file', nargs='+', help="Nombre de archivo a procesar")
 args = parser.parse_args()
-
+print args
 ''' Método principal, manda a llamar a la ventana principal segun el modo
     Si es modo curses abre la ventana interactiva, si es modo terminal
     pone todo en la terminal.
@@ -296,7 +297,7 @@ class NResumen:
         varexportar.append([ruta])
         resumen.append('*********************************************************************')
         resumen.append('Analizador  Gaussian09')
-        resumen.append('Ag09 v0.8')
+        resumen.append('Ag09 v0.9')
         resumen.append('*********************************************************************')
         matriz = []
         r = NResumen.buscapalabra(' #', contenidolog)
@@ -401,6 +402,9 @@ class NResumen:
                 NResumen.opcacm(resumen, contenidolog, natomos, varexportar)
                 NResumen.opcasd(resumen, contenidolog, natomos, varexportar)
                 NResumen.opchsd(resumen, contenidolog, natomos, varexportar)
+                NResumen.opcnao(resumen,contenidolog,varexportar)
+                NResumen.opcmep(resumen,contenidolog,varexportar)
+
                 break
 
             if elemento == '-hf':
@@ -425,6 +429,11 @@ class NResumen:
                 NResumen.opcasd(resumen, contenidolog, natomos, varexportar)
             if elemento == '--hirshfeld spin densities' or elemento == '-hsd':
                 NResumen.opchsd(resumen, contenidolog, natomos, varexportar)
+            if elemento == '-nao':
+                NResumen.opcnao(resumen, contenidolog,varexportar)
+            if elemento == '-mep':
+                NResumen.opcmep(resumen, contenidolog, varexportar)
+
 
         if '-e' in parametros:
             rutacsv = raw_input('Escriba el nombre del archivo y la ruta: ')
@@ -968,6 +977,57 @@ class NResumen:
 
         return cad
 
+    @staticmethod
+    def opcnao(resumen,contenidolog,varexportar):
+        '''
+
+        :param resumen: el resumen generado hasta el momento en que fue llamado el método
+        :param contenidolog: contenido del log
+        :return:
+        '''
+        nao = []
+        r = NResumen.buscapalabra('Natural populations:', contenidolog)
+        if r != -1:
+            for i in range (r,len(contenidolog)-1,1):
+                if args.Atomo in contenidolog[i].split():
+                    nao.append(contenidolog[i])
+                    resumen.append('\t'.join(contenidolog[i].split()))
+                if 'Summary of Natural'in contenidolog[i]:
+                    break
+            if len(nao) > 0:
+                resumen.append('**** NATURAL ATOMIC ORBITAL OCCUPANCIES ****')
+                resumen.append('')
+                resumen.append('\t'.join(contenidolog[r + 2].split()))
+                resumen.append('')
+                nao.append('NATURAL_ATOMIC_ORBITAL_OCCUPANCIES')
+                nao.append('NAO	Atom No	lang Type (AO) Occupancy Energy')
+            else:
+                resumen.append('**** NATURAL ATOMIC ORBITAL OCCUPANCIES ****')
+                resumen.append('No hay datos para el átomo: '+ args.Atomo)
+            varexportar.append(nao)
+        else:
+            resumen.append('**** No se encontraron datos NAO ****')
+
+    @staticmethod
+    def opcmep(resumen, contenidolog,varexportar):
+        mep = []
+        r = NResumen.buscapalabra('Electrostatic Properties', contenidolog)
+        if r != -1:
+            resumen.append('**** ELECTROSTATIC PROPERTIES ****')
+            resumen.append('')
+            contador = 0
+            resumen.append('\tCenter\tElectric potential')
+            resumen.append('')
+            mep.append('ELECTROSTATIC_PROPERTIES')
+            mep.append('\t Center Electric_potential')
+            for i in range(r+6,len(contenidolog) -1, 1):
+                if '------------------------' in contenidolog[i]:
+                    break
+                resumen.append('\t'.join(contenidolog[i].split()))
+                mep.append(contenidolog[i])
+        else:
+            resumen.append('No se encontraron datos de Electrostatic Properties')
+        varexportar.append(mep)
 
     @staticmethod
     def obtenlistaatomos(contenido):
@@ -1072,7 +1132,6 @@ class VResumenTer:
         :param parametrosentrada: lista con los parámetros ingresados en la terminal
         :param archivo: Ruta del archivo procesado
         '''
-
         mensaje = ''
         self.paramentrosresumen = parametrosentrada
         self.contenidoArchivo = NResumen.obtencontenidolog(archivo)

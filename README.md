@@ -65,6 +65,8 @@ Lo cual da como salida lo siguiente
 | -tq | --thermochemical | Muestra los datos termoquímicos |
 | -acm | --atomic_charges_matrix | Muestra la matriz de cargas atomicas y su diagonal |
 | -asd | --atomic_spin_densities | Muestra la matriz de densidades atómicas y su diagonal |
-| -hsd | --hirshfeld_spin_densities | Muestra la matriz de Hirshfeld | 
+| -hsd | --hirshfeld_spin_densities | Muestra la matriz de Hirshfeld |
+| -mep | | Muestra las propiedades electrostáticas |
+| -nao [Átomo]|| Muestra Natural atomic orbital occupancies| 
 | -a | --ALL | Muestra todos los datos posibles | 
 | -e | --exporta | Exporta los datos a un archivo CSV |
