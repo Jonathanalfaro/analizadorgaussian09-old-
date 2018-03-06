@@ -435,12 +435,13 @@ class NResumen:
                 NResumen.opcmep(resumen, contenidolog, varexportar)
 
 
-        if '-e' in parametros:
+        if '-e' in parametros and '-t' in parametros:
             rutacsv = raw_input('Escriba el nombre del archivo y la ruta: ')
             if rutacsv[len(rutacsv) - 1] is '/':
                 mensaje = ' {0} no es un nombre de archivo válido'.format(rutacsv)
             else:
-                NResumen.exporta(varexportar,rutacsv)
+                c, mensaje = NResumen.exporta(varexportar,rutacsv)
+        resumen.append(mensaje)
         return resumen
 
     @staticmethod
