@@ -333,7 +333,7 @@ class NResumen:
                 if r != -1:
                     datosconv = NResumen.obtendatosconvergencia(r, contenidolog)
                     for elemento in datosconv:
-                        resumen.append(elemento)
+                        resumen.append(elemento.replace('\n',''))
                 resumen.append('')
                 numpasos = 0
                 paso = 0
@@ -459,7 +459,8 @@ class NResumen:
             for elemento in dato:
                 datos.append(elemento)
         status, mensaje = DResumen.guardaarchivo(ruta, datos)
-
+        print datos
+        print datosarchivo
         return status, mensaje
 
     # Codigo redundante, optimizar !!!!!!!!!!!!!
@@ -720,7 +721,7 @@ class NResumen:
             resumen.append('***** VALORES DE LA DIAGONAL DE ATOMIC CHARGES MATRIX *****\n')
             for i in range(len(matriz)):
                 diagonal = diagonal + str(matriz[i][i]) + ' '
-                resumen.append(listaatomos[i] + '\t' + matriz[i][i])
+                resumen.append(str(i+1) + ' ' + listaatomos[i] + '\t' + matriz[i][i])
             resumen.append(' ')
             d = []
             d = diagonal.split()
@@ -778,7 +779,7 @@ class NResumen:
             resumen.append('***** VALORES DE LA DIAGONAL DE ATOMIC-ATOMIC SPIN DENSITIES *****\n')
             for i in range(len(matriz2)):
                 diagonal = diagonal + str(matriz2[i][i]) + ' '
-                resumen.append(listaatomos[i] + '\t' + matriz2[i][i])
+                resumen.append(str(i+1) + ' ' + listaatomos[i] + '\t' + matriz2[i][i])
             d = []
             d = diagonal.split()
             varexportar.append(['VALORES_DE_LA_DIAGONAL_DE_ATOMIC_SPIN_DENSITIES'])
@@ -808,10 +809,12 @@ class NResumen:
             resumen.append(' ******* HIRSHFELD SPIN DENSITIES *******\n')
             resumen.append('Átomo\tSpin Densities\tCharges')
             resumen.append('')
+            indice = 1
             for i in range(r + 2, r + natomos + 2, 1):
-                resumen.append('\t'.join(contenidolog[i].split()[1:4]))
+                resumen.append(str(indice) + ' ' + '\t'.join(contenidolog[i].split()[1:4]))
                 hsd.append('\t'.join(contenidolog[i].split()[1:4]))
-            varexportar.append(['Hirshfeld_spin_densities'])
+                indice = indice + 1
+            varexportar.append(['Hirshfeld spin densities'])
             varexportar.append(['Átomo Spin_Densities Charges'])
             varexportar.append(hsd)
         else:
@@ -847,7 +850,7 @@ class NResumen:
                 for elemento in aths:
                     varexportar.append([' '.join(elemento)])
             for i in range(0,len(aptch),1):
-                resumen.append(str(i)+' '+'\t\t'.join(aptch[i]) + '\t\t\t' + str(aths[i][1]))
+                resumen.append(str(i + 1)+' '+'\t\t'.join(aptch[i]) + '\t\t\t' + str(aths[i][1]))
             resumen.append('')
         else:
             resumen.append(('**** NO HAY DATOS APT *****'))
@@ -1026,7 +1029,7 @@ class NResumen:
                 resumen.append('\t'.join(contenidolog[i].split()))
                 mep.append(contenidolog[i])
         else:
-            resumen.append('No se encontraron datos de Electrostatic Properties')
+            resumen.append('**** No se encontraron datos de Electrostatic Properties ****')
         varexportar.append(mep)
 
     @staticmethod
@@ -1106,6 +1109,7 @@ class DResumen:
             with open(csvfile, 'w') as output:
                 writer = csv.writer(output)
                 for elemento in datos:
+
                     if elemento is not '' and elemento is not ' ':
                         writer.writerow(elemento.split())
             output.close()
