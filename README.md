@@ -1,62 +1,72 @@
-# [Start Bootstrap - Scrolling Nav](https://startbootstrap.com/template-overviews/scrolling-nav/)
+# analizadorgaussian
+Programa hecho en Python para el análisis de datos de salida del programa Gaussian09
 
-[Scrolling Nav](http://startbootstrap.com/template-overviews/scrolling-nav/) is an unstyled one page starter template with a collapsing, smooth scrolling navigation bar for [Bootstrap](http://getbootstrap.com/) created by [Start Bootstrap](http://startbootstrap.com/).
+## Ayuda de descarga
+Para uso local del programa primero necesita descargarlo a su computadora.
 
-## Preview
+1. En la página de Github de clic en la opción 'Clone or download'
 
-[![Scrolling Nav Preview](https://startbootstrap.com/assets/img/templates/scrolling-nav.jpg)](https://blackrockdigital.github.io/startbootstrap-scrolling-nav/)
+    ![Imagen 2](Img/i1.jpg)
 
-**[View Live Preview](https://blackrockdigital.github.io/startbootstrap-scrolling-nav/)**
+2. Despues de clic en la opción  'Download ZIP'
+    
+    ![Imagen 2](Img/i2.jpg)
 
-## Status
+3. Extraiga el contenido del archivo
 
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/BlackrockDigital/startbootstrap-scrolling-nav/master/LICENSE)
-[![npm version](https://img.shields.io/npm/v/startbootstrap-scrolling-nav.svg)](https://www.npmjs.com/package/startbootstrap-scrolling-nav)
-[![Build Status](https://travis-ci.org/BlackrockDigital/startbootstrap-scrolling-nav.svg?branch=master)](https://travis-ci.org/BlackrockDigital/startbootstrap-scrolling-nav)
-[![dependencies Status](https://david-dm.org/BlackrockDigital/startbootstrap-scrolling-nav/status.svg)](https://david-dm.org/BlackrockDigital/startbootstrap-scrolling-nav)
-[![devDependencies Status](https://david-dm.org/BlackrockDigital/startbootstrap-scrolling-nav/dev-status.svg)](https://david-dm.org/BlackrockDigital/startbootstrap-scrolling-nav?type=dev)
+## Ayuda de uso
 
-## Download and Installation
+1. En una terminal cambie el directorio de trabajo a la ubicación donde extrajo el contenido del archivo descargado
 
-To begin using this template, choose one of the following options to get started:
-* [Download the latest release on Start Bootstrap](https://startbootstrap.com/template-overviews/scrolling-nav/)
-* Install via npm: `npm i startbootstrap-scrolling-nav`
-* Clone the repo: `git clone https://github.com/BlackrockDigital/startbootstrap-scrolling-nav.git`
-* [Fork, Clone, or Download on GitHub](https://github.com/BlackrockDigital/startbootstrap-scrolling-nav)
+2. Ejecute el programa de la siguiente manera
 
-## Usage
+    ```
+        python Resumen/Ag09principal.py [opciones] [ruta del log]
+    ```
+    Ejemplo:
 
-### Basic Usage
+    ```
+        python Resumen/Ag09principal.py -a /home/USUARIO/Documentos/SERVICIO_SOCIAL/BzPhsolo.out
+    ```
 
-After downloading, simply edit the HTML and CSS files included with the template in your favorite text editor to make changes. These are the only files you need to worry about, you can ignore everything else! To preview the changes you make to the code, you can open the `index.html` file in your web browser.
+3. Se puede analizar un archivo o muchos a la vez
 
-### Advanced Usage
+    ```
+        python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/ARCHIVO.out
+    ```
+    o
+    ```
+        python Resumen/Ag09Principal.py -a /home/lsvp/Documentos/*.out
+    ```
+    
+## Ayuda en el programa
 
-After installation, run `npm install` and then run `gulp dev` which will open up a preview of the template in your default browser, watch for changes to core template files, and live reload the browser when changes are saved. You can view the `gulpfile.js` to see which tasks are included with the dev environment.
+El programa cuenta con una ayuda a la que puede accederse con el atajo -h
 
-## Bugs and Issues
+``` 
+    python /home/lsvp/PycharmProjects/ag09/Resumen/Principal.py -h
+```
 
-Have a bug or an issue with this template? [Open a new issue](https://github.com/BlackrockDigital/startbootstrap-scrolling-nav/issues) here on GitHub or leave a comment on the [template overview page at Start Bootstrap](http://startbootstrap.com/template-overviews/scrolling-nav/).
+Lo cual da como salida lo siguiente
 
-## Custom Builds
 
-You can hire Start Bootstrap to create a custom build of any template, or create something from scratch using Bootstrap. For more information, visit the **[custom design services page](https://startbootstrap.com/bootstrap-design-services/)**.
 
-## About
+![Imagen 3](Img/i3.jpg)
 
-Start Bootstrap is an open source library of free Bootstrap templates and themes. All of the free templates and themes on Start Bootstrap are released under the MIT license, which means you can use them for any purpose, even for commercial projects.
+## Lista de opciones
 
-* https://startbootstrap.com
-* https://twitter.com/SBootstrap
-
-Start Bootstrap was created by and is maintained by **[David Miller](http://davidmiller.io/)**, Owner of [Blackrock Digital](http://blackrockdigital.io/).
-
-* http://davidmiller.io
-* https://twitter.com/davidmillerskt
-* https://github.com/davidtmiller
-
-Start Bootstrap is based on the [Bootstrap](http://getbootstrap.com/) framework created by [Mark Otto](https://twitter.com/mdo) and [Jacob Thorton](https://twitter.com/fat).
-
-## Copyright and License
-
-Copyright 2013-2018 Blackrock Digital LLC. Code released under the [MIT](https://github.com/BlackrockDigital/startbootstrap-scrolling-nav/blob/gh-pages/LICENSE) license.
+| Opción corta | Opción larga | Acción |
+| - | - | - |
+| -h | --help | show this help message and exit |
+| -t | --texto | Muestra los datos solicitados en directamente en la terminal |
+| -m | --mulliken | Muestra los datos  de Mulliken |
+| -hf | --hirshfeld | Muestra el valor hf |
+| -apt | --APT_atomic | Muestra los datos de APT |
+| -tq | --thermochemical | Muestra los datos termoquímicos |
+| -acm | --atomic_charges_matrix | Muestra la matriz de cargas atomicas y su diagonal |
+| -asd | --atomic_spin_densities | Muestra la matriz de densidades atómicas y su diagonal |
+| -hsd | --hirshfeld_spin_densities | Muestra la matriz de Hirshfeld |
+| -mep | | Muestra las propiedades electrostáticas |
+| -nao [Átomo]|| Muestra Natural atomic orbital occupancies| 
+| -a | --ALL | Muestra todos los datos posibles | 
+| -e | --exporta | Exporta los datos a un archivo CSV |
