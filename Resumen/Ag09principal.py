@@ -16,20 +16,20 @@ except ImportError as ie:
 locale.setlocale(locale.LC_ALL, '')
 code = locale.getpreferredencoding()
 parser = argparse.ArgumentParser()
-parser.add_argument('-m', '--mulliken', help='Muestra los datos de Mulliken', action="store_true")
-parser.add_argument('-hf', help='Muestra el valor hf', action="store_true")
-parser.add_argument('-t', '--texto', help='Muestra los resultados en la salida estandar', action="store_true")
-parser.add_argument('-apt', '--APT_atomic', help='Muestra los datos de APT', action="store_true")
-parser.add_argument('-tq', '--thermochemical', help='Muestra los datos termoquímicos', action="store_true")
-parser.add_argument('-acm', '--atomic_charges_matrix', help='Muestra la matriz de cargas atomicas y su diagonal',
+parser.add_argument('-hf', help='Muestra el valor de la energía de Hirshfeld', action="store_true")
+parser.add_argument('-m', '--mulliken', help='Muestra las cargas atómicas de Mulliken', action="store_true")
+parser.add_argument('-apt', '--APT_atomic', help='Muestra atomic polar tensor charges (APT)', action="store_true")
+parser.add_argument('-tq', '--thermochemical', help='Muestra los datos termoquímicos como dipolo, temperatura, presión, etc', action="store_true")
+parser.add_argument('-acm', '--atomic_charges_matrix', help='Muestra la diagonal de la matriz de cargas atómicas',
                     action="store_true")
-parser.add_argument('-asd', '--atomic_spin_densities', help='Muestra la matriz de densidades atómicas y su diagonal',
+parser.add_argument('-asd', '--atomic_spin_densities', help='Muestra la diagonal de matriz de densidades atómicas',
                     action="store_true")
-parser.add_argument('-hsd', '--hirshfeld_spin_densities', help='Muestra la matriz de Hirshfeld', action="store_true")
+parser.add_argument('-hsd', '--hirshfeld_spin_densities', help='Muestra las densidades de spin y las cargas de la matriz de Hirshfeld', action="store_true")
+parser.add_argument('-nao', nargs = '?' , action='store', dest='Atomo', help='Muestra Natural atomic orbital occupancies')
+parser.add_argument('-mep', help='Muestra molecular electrostatic potential', action = "store_true")
 parser.add_argument('-a', '--ALL', help='Muestra todos los datos', action="store_true")
-parser.add_argument('-e', '--exporta', help='Exporta los datos a un archivo EXCEL', action="store_true")
-parser.add_argument('-nao', nargs = '?' , action='store', dest='Atomo', help='Natural atomic orbital occupancies')
-parser.add_argument('-mep', help='Muestra las propiedades electrostáticas', action = "store_true")
+parser.add_argument('-e', '--exporta', help='Exporta los datos a un archivo separado por comas (CSV)', action="store_true")
+parser.add_argument('-t', '--texto', help='Muestra los resultados directamente en la terminal', action="store_true")
 parser.add_argument('file', nargs='+', help="Nombre de archivo a procesar")
 args = parser.parse_args()
 print args
@@ -434,7 +434,7 @@ class NResumen:
             if elemento == '-mep':
                 NResumen.opcmep(resumen, contenidolog, varexportar)
 
-
+        mensaje = ''
         if '-e' in parametros and '-t' in parametros:
             rutacsv = raw_input('Escriba el nombre del archivo y la ruta: ')
             if rutacsv[len(rutacsv) - 1] is '/':
