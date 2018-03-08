@@ -32,7 +32,6 @@ parser.add_argument('-e', '--exporta', help='Exporta los datos a un archivo sepa
 parser.add_argument('-t', '--texto', help='Muestra los resultados directamente en la terminal', action="store_true")
 parser.add_argument('file', nargs='+', help="Nombre de archivo a procesar")
 args = parser.parse_args()
-print args
 ''' Método principal, manda a llamar a la ventana principal segun el modo
     Si es modo curses abre la ventana interactiva, si es modo terminal
     pone todo en la terminal.
