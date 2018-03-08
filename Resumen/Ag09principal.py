@@ -30,7 +30,7 @@ parser.add_argument('-mep', help='Muestra molecular electrostatic potential', ac
 parser.add_argument('-a', '--ALL', help='Muestra todos los datos', action="store_true")
 parser.add_argument('-e', '--exporta', help='Exporta los datos a un archivo separado por comas (CSV)', action="store_true")
 parser.add_argument('-t', '--texto', help='Muestra los resultados directamente en la terminal', action="store_true")
-parser.add_argument('-d', '--debug', help='No imprime nada', action="store_true")
+parser.add_argument('-n', '--nada', help='No imprime nada', action="store_true")
 parser.add_argument('file', nargs='+', help="Nombre de archivo a procesar")
 args = parser.parse_args()
 
@@ -1148,7 +1148,7 @@ class VResumenTer:
         except:
             pass
         self.resumen= NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen, archivo)
-        if not args.debug :
+        if not args.nada :
             for elemento in self.resumen:
                 print elemento
 
