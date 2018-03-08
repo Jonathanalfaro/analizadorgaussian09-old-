@@ -37,7 +37,7 @@ args = parser.parse_args()
     Si es modo curses abre la ventana interactiva, si es modo terminal
     pone todo en la terminal.
 
-    :param stdscr: Pantalla estandar de curses
+    :param stdscr: estandar screen de curses
 
 '''
 
