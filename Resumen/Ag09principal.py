@@ -808,7 +808,7 @@ class NResumen:
         hsd = []
         r = NResumen.buscapalabra('Hirshfeld spin densities, ', contenidolog)
         if r != -1:
-            resumen.append(' ******* HIRSHFELD SPIN DENSITIES *******\n')
+            resumen.append(' ******* HIRSHFELD POPULATION ANALISIS *******\n')
             resumen.append('Átomo\tSpin Densities\tCharges')
             resumen.append('')
             indice = 1
