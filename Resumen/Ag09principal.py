@@ -25,13 +25,14 @@ parser.add_argument('-acm', '--atomic_charges_matrix', help='Muestra la diagonal
 parser.add_argument('-asd', '--atomic_spin_densities', help='Muestra la diagonal de matriz de densidades atómicas',
                     action="store_true")
 parser.add_argument('-hsd', '--hirshfeld_spin_densities', help='Muestra las densidades de spin y las cargas de la matriz de Hirshfeld', action="store_true")
-parser.add_argument('-nao', nargs = '?' , action='store', dest='Atomo', help='Muestra Natural atomic orbital occupancies')
+parser.add_argument('-nao', nargs = '?' , action='store', dest='Atomo', default = 'N' ,help='Muestra Natural atomic orbital occupancies')
 parser.add_argument('-mep', help='Muestra molecular electrostatic potential', action = "store_true")
 parser.add_argument('-a', '--ALL', help='Muestra todos los datos', action="store_true")
 parser.add_argument('-e', '--exporta', help='Exporta los datos a un archivo separado por comas (CSV)', action="store_true")
 parser.add_argument('-t', '--texto', help='Muestra los resultados directamente en la terminal', action="store_true")
 parser.add_argument('file', nargs='+', help="Nombre de archivo a procesar")
 args = parser.parse_args()
+
 ''' Método principal, manda a llamar a la ventana principal segun el modo
     Si es modo curses abre la ventana interactiva, si es modo terminal
     pone todo en la terminal.
@@ -991,6 +992,10 @@ class NResumen:
         nao = []
         r = NResumen.buscapalabra('Natural populations:', contenidolog)
         if r != -1:
+            resumen.append('**** NATURAL ATOMIC ORBITAL OCCUPANCIES ****')
+            resumen.append('')
+            resumen.append('\t'.join(contenidolog[r + 2].split()))
+            resumen.append('')
             for i in range (r,len(contenidolog)-1,1):
                 if args.Atomo in contenidolog[i].split():
                     nao.append(contenidolog[i])
@@ -998,10 +1003,6 @@ class NResumen:
                 if 'Summary of Natural'in contenidolog[i]:
                     break
             if len(nao) > 0:
-                resumen.append('**** NATURAL ATOMIC ORBITAL OCCUPANCIES ****')
-                resumen.append('')
-                resumen.append('\t'.join(contenidolog[r + 2].split()))
-                resumen.append('')
                 nao.append('NATURAL_ATOMIC_ORBITAL_OCCUPANCIES')
                 nao.append('NAO	Atom No	lang Type (AO) Occupancy Energy')
             else:
