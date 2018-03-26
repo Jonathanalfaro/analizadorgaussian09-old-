@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 try:
     import curses
@@ -9,6 +8,7 @@ try:
     import re
     import csv
     from Ag09principal import *
+    from subprocess import PIPE, Popen
 except ImportError as ie:
     print '{0} install first'.format(ie)
     exit(0)
@@ -49,6 +49,15 @@ def main(stdscr):
 
 
 if __name__ == "__main__":
+    printenv = Popen(['printenv','TERM'], stdout=PIPE)
+    valorterm = printenv.stdout.read().replace('\n','')
+    printenv.stdout.close()
+    if  'xterm' != valorterm:
+        print('Cambie manualmente el valor de la variable de entorno\n'
+              'TERM por xterm ejecutando el siguiente comando en la terminal:\n'
+              '\'export TERM=xterm\'.\n'
+              'El cambio es temporal y se restaurara a su valor original al volver a iniciar sesión')
+        exit(1)
     modo = 'curses'
     for elemento in sys.argv:
         if elemento == '-t' or elemento == '--texto':
@@ -232,6 +241,8 @@ class VResumenCur:
         curses.noecho()
         stdscr.timeout(10)
         status, mensaje = NResumen.exporta(contenidopad, ruta)
+        if status is 0:
+            enviarmail = raw_input('¿Desea enviar el archvo por correo? (s/n)')
         mensaje = str(mensaje)
         padbuscar.addstr(0, 0, mensaje)
         padbuscar.refresh(0, 0, 0, 0, 1, x - 2)
@@ -441,8 +452,19 @@ class NResumen:
             if rutacsv[len(rutacsv) - 1] is '/':
                 mensaje = ' {0} no es un nombre de archivo válido'.format(rutacsv)
             else:
-                c, mensaje = NResumen.exporta(varexportar,rutacsv)
-        resumen.append(mensaje)
+                status, mensaje = NResumen.exporta(varexportar,rutacsv)
+                if status is 0:
+                    enviarmail = ''
+                    print mensaje
+                    while enviarmail is not 's' and enviarmail is not 'n':
+                        enviarmail = raw_input('¿Desea enviar por correo? [s/n] ')
+                        if enviarmail is 's':
+                            para = raw_input('Escriba la direccion de destino: ')
+                            Correo(para,rutacsv+'.csv')
+                        elif enviarmail is 'n':
+                            pass
+                        else:
+                            print 'Opcion invalida, escriba \'s\' o \'n\''
         return resumen
 
     @staticmethod
@@ -461,8 +483,6 @@ class NResumen:
             for elemento in dato:
                 datos.append(elemento)
         status, mensaje = DResumen.guardaarchivo(ruta, datos)
-        print datos
-        print datosarchivo
         return status, mensaje
 
     # Codigo redundante, optimizar !!!!!!!!!!!!!
@@ -1004,8 +1024,9 @@ class NResumen:
                 if 'Summary of Natural'in contenidolog[i]:
                     break
             if len(nao) > 0:
-                nao.append('NATURAL_ATOMIC_ORBITAL_OCCUPANCIES')
-                nao.append('NAO	Atom No	lang Type (AO) Occupancy Energy')
+                nao.insert(0,'NATURAL_ATOMIC_ORBITAL_OCCUPANCIES')
+                nao.insert(1,'NAO	Atom No	lang Type (AO) Occupancy Energy')
+
             else:
                 resumen.append('**** NATURAL ATOMIC ORBITAL OCCUPANCIES ****')
                 resumen.append('No hay datos para el átomo: '+ args.Atomo)
@@ -1104,7 +1125,7 @@ class DResumen:
         :return: status: el estatus de la operación, si es 0 ocurrio un error si es 1 se realizó correctamente
 
         '''
-        status = 1
+        status = 0
         csvfile = nombrearchivo + '.csv'
         mensaje = 'AAA'
         try:
@@ -1118,10 +1139,10 @@ class DResumen:
             mensaje = 'Se guardó correctamente el archivo {0}'.format(csvfile)
         except IOError as e:
             mensaje = e.strerror + ' no se puede guardar el archivo en: {0}'.format(nombrearchivo)
-            status = 0
+            status = 1
         except:
             mensaje = 'Error desconocido al guardar {0}'.format(csvfile)
-            status = 0
+            status = 1
         return status, mensaje
 
 
@@ -1154,6 +1175,34 @@ class VResumenTer:
 
 
 
+class Correo:
 
+    def __init__(self, para, rutaarchivo):
+        import smtplib
+        from email.MIMEMultipart import MIMEMultipart
+        from email.mime.text import MIMEText
+        from email.mime.base import MIMEBase
+        from email.encoders import encode_base64
 
+        desde = 'correoag09@gmail.com'
+        para = ['jonas4784@gmail.com', 'jonaiap@hotmail.com']
+        contra = 'ag09uami.'
+        mensaje = MIMEMultipart()
+        mensaje['From'] = desde
+        mensaje['To'] = ','.join(para)
+        mensaje['Subject'] = 'Archivo CSV generado por ag09'
+        cuerpo = MIMEText('Correo generado automaticamente, favor de no responder')
 
+        archivo = open(rutaarchivo, 'rb')
+        adjunto = MIMEBase('nonmultipart', 'text', charset='utf-8')
+        adjunto.set_payload(archivo.read())
+        archivo.close()
+        encode_base64(adjunto)
+        adjunto.add_header('Content-Disposition', 'attachment', filename='archivo.csv')
+        mensaje.attach(cuerpo)
+        mensaje.attach(adjunto)
+        servgmail = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        servgmail.ehlo()
+        servgmail.login(desde, contra)
+        servgmail.sendmail(desde, para, mensaje.as_string())
+        servgmail.quit()
