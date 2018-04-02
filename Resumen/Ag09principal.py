@@ -90,6 +90,7 @@ class VResumenCur:
 
         '''
         self.contenidoPad = []
+        self.varexportar = []
         self.ruta1 = parametrosentrada[len(parametrosentrada) - 1]
         self.paramentrosresumen = parametrosentrada
         self.contenidoArchivo = NResumen.obtencontenidolog(self.ruta1)
@@ -109,14 +110,14 @@ class VResumenCur:
             if 'Error' in self.contenidoArchivo[0] or 'no es' in self.contenidoArchivo:
                 self.contenidoPad.append(self.contenidoArchivo[0])
             else:
-                self.contenidoPad = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen, self.ruta1)
+                self.varexportar, self.contenidoPad = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen, self.ruta1)
         except:
             self.contenidoPad.append('No es un archivo válido')
         self.tamypad1 = len(self.contenidoPad)
         self.tamxpad1 = 1000
         self.pad1 = curses.newpad(self.tamypad1 + 1, 1000)
         self.pondatospad(self.contenidoPad)
-        self.barraAyuda = "Presiona 'q' para salir 'e' para exportar"
+        self.barraAyuda = "Presiona 'q' para salir '| e' para exportar | 'c' para enviar por correo"
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_WHITE)
 
@@ -166,7 +167,9 @@ class VResumenCur:
             if k == ord('e'):
                 status = -1
                 mensaje = ''
-                ruta = self.dialogoexportar(stdscr, self.padBuscar, self.contenidoPad)
+                ruta = self.dialogoexportar(stdscr, self.padBuscar, self.contenidoPad,self.varexportar)
+            if k == ord('c'):
+                self.dialogocorreo(stdscr, self.padBuscar,self.contenidoPad,self.varexportar)
 
             if k == curses.KEY_DOWN:
                 self.posycursor = self.posycursor + 1
@@ -221,7 +224,7 @@ class VResumenCur:
         return palabra
 
     @staticmethod
-    def dialogoexportar(stdscr, padbuscar, contenidopad):
+    def dialogoexportar(stdscr, padbuscar, contenidopad, varexportar):
 
         ''' Sirve para mostrar la entrada de busqueda un patrón en el resumen.
 
@@ -240,13 +243,40 @@ class VResumenCur:
         ruta = stdscr.getstr(0, 30, 100)
         curses.noecho()
         stdscr.timeout(10)
-        status, mensaje = NResumen.exporta(contenidopad, ruta)
-        if status is 0:
-            enviarmail = raw_input('¿Desea enviar el archvo por correo? (s/n)')
+        status, mensaje = NResumen.exporta(varexportar, ruta)
         mensaje = str(mensaje)
         padbuscar.addstr(0, 0, mensaje)
         padbuscar.refresh(0, 0, 0, 0, 1, x - 2)
         padbuscar = curses.newpad(1, 1000)
+
+    @staticmethod
+    def dialogocorreo(stdscr, padbuscar, contenidopad, varexportar):
+
+        ''' Sirve para mostrar la entrada de busqueda un patrón en el resumen.
+
+        :param stdscr:
+        :param padbuscar: pad donde se ingresa la palabra para buscar en el resumen
+        :return: palabra: devuelve la palabra ingresada por el usuario
+
+        '''
+
+        stdscr.timeout(-1)
+        y, x = stdscr.getmaxyx()
+        curses.echo()
+        padbuscar = curses.newpad(1, 1000)
+        padbuscar.addstr(0, 0, 'Escriba los correos separados por coma: ')
+        padbuscar.refresh(0, 0, 0, 0, 1, x - 2)
+        para = stdscr.getstr(0, 40, 100)
+        para = para+','
+        curses.noecho()
+        stdscr.timeout(10)
+        status, mensaje = NResumen.exporta(varexportar, 'archivo')
+        Correo(para.replace(' ', '').split(','), 'archivo.csv')
+        mensaje = str(mensaje)
+        padbuscar.addstr(0, 0, mensaje)
+        padbuscar.refresh(0, 0, 0, 0, 1, x - 2)
+        padbuscar = curses.newpad(1, 1000)
+
 
 
 class NResumen:
@@ -337,7 +367,7 @@ class NResumen:
                         for j in range(i + 1, len(contenidolog) - 1, 1):
                             resumen.append(contenidolog[j])
                         break
-                return resumen
+                return [], resumen
             resumen.append('')
             if 'opt' in comin:
                 resumen.append('*** DATOS DE CONVERGENCIA ***\n')
@@ -445,27 +475,7 @@ class NResumen:
                 NResumen.opcnao(resumen, contenidolog,varexportar)
             if elemento == '-mep':
                 NResumen.opcmep(resumen, contenidolog, varexportar)
-
-        mensaje = ''
-        if '-e' in parametros and '-t' in parametros:
-            rutacsv = raw_input('Escriba el nombre del archivo y la ruta: ')
-            if rutacsv[len(rutacsv) - 1] is '/':
-                mensaje = ' {0} no es un nombre de archivo válido'.format(rutacsv)
-            else:
-                status, mensaje = NResumen.exporta(varexportar,rutacsv)
-                if status is 0:
-                    enviarmail = ''
-                    print mensaje
-                    while enviarmail is not 's' and enviarmail is not 'n':
-                        enviarmail = raw_input('¿Desea enviar por correo? [s/n] ')
-                        if enviarmail is 's':
-                            para = raw_input('Escriba la direccion de destino: ')
-                            Correo(para,rutacsv+'.csv')
-                        elif enviarmail is 'n':
-                            pass
-                        else:
-                            print 'Opcion invalida, escriba \'s\' o \'n\''
-        return resumen
+        return varexportar, resumen
 
     @staticmethod
     def exporta(datosarchivo, ruta):
@@ -1168,16 +1178,46 @@ class VResumenTer:
                 exit(0)
         except:
             pass
-        self.resumen= NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen, archivo)
+        varexportar, self.resumen= NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen, archivo)
         if not args.nada :
             for elemento in self.resumen:
                 print elemento
+        mensaje = ''
+        if 'exporta' in args and 'texto' in args:
+            rutacsv = raw_input('Escriba el nombre del archivo y la ruta: ')
+            if rutacsv[len(rutacsv) - 1] is '/':
+                mensaje = ' {0} no es un nombre de archivo válido'.format(rutacsv)
+            else:
+                status, mensaje = NResumen.exporta(varexportar,rutacsv)
+                if status is 0:
+                    enviarmail = ''
+                    while enviarmail is not 's' and enviarmail is not 'n':
+                        enviarmail = raw_input('¿Desea enviar por correo? [s/n] ')
+                        if enviarmail is 's':
+                            para = raw_input('Escriba la o las direccion de destino separadas por coma: ')
+                            Correo(para.replace(' ','').split(','),rutacsv+'.csv')
+                        elif enviarmail is 'n':
+                            pass
+                        else:
+                            print 'Opcion invalida, escriba \'s\' o \'n\''
 
 
 
 class Correo:
+    ''' Clase Correo, sirve para iniciar la conexión con el servidor smtp de gmail
+        y si se desea enviar por correo el archivo csv generado
 
+
+    '''
     def __init__(self, para, rutaarchivo):
+
+        '''
+
+        :param para: lista de correos a los cuales se va a enviar el archivo csv
+        :param rutaarchivo: ruta donde se puede encontrar el archivo csv a enviar
+
+        '''
+
         import smtplib
         from email.MIMEMultipart import MIMEMultipart
         from email.mime.text import MIMEText
@@ -1185,7 +1225,6 @@ class Correo:
         from email.encoders import encode_base64
 
         desde = 'correoag09@gmail.com'
-        para = ['jonas4784@gmail.com', 'jonaiap@hotmail.com']
         contra = 'ag09uami.'
         mensaje = MIMEMultipart()
         mensaje['From'] = desde
@@ -1198,7 +1237,7 @@ class Correo:
         adjunto.set_payload(archivo.read())
         archivo.close()
         encode_base64(adjunto)
-        adjunto.add_header('Content-Disposition', 'attachment', filename='archivo.csv')
+        adjunto.add_header('Content-Disposition', 'attachment', filename=rutaarchivo)
         mensaje.attach(cuerpo)
         mensaje.attach(adjunto)
         servgmail = smtplib.SMTP_SSL('smtp.gmail.com', 465)
