@@ -1052,16 +1052,19 @@ class NResumen:
         if r != -1:
             resumen.append('**** ELECTROSTATIC PROPERTIES ****')
             resumen.append('')
-            contador = 0
             resumen.append('\tCenter\tElectric potential')
             resumen.append('')
             mep.append('ELECTROSTATIC_PROPERTIES')
             mep.append('\t Center Electric_potential')
+            j= 0
+            listaatomos = NResumen.obtenlistaatomos(contenidolog)
             for i in range(r+6,len(contenidolog) -1, 1):
                 if '------------------------' in contenidolog[i]:
                     break
-                resumen.append('\t'.join(contenidolog[i].split()))
+                linea = contenidolog[i].split()[0]+'\t'+listaatomos[j]+'\t'+contenidolog[i].split()[2]
+                resumen.append(linea)
                 mep.append(contenidolog[i])
+                j = j+1
         else:
             resumen.append('**** No se encontraron datos de Electrostatic Properties ****')
         varexportar.append(mep)
@@ -1184,7 +1187,8 @@ class VResumenTer:
             for elemento in self.resumen:
                 print elemento
         mensaje = ''
-        if 'exporta' in args and 'texto' in args:
+
+        if args.exporta and args.texto:
             rutacsv = raw_input('Escriba el nombre del archivo y la ruta: ')
             if rutacsv[len(rutacsv) - 1] is '/':
                 mensaje = ' {0} no es un nombre de archivo válido'.format(rutacsv)
