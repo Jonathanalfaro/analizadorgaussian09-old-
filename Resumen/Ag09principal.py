@@ -1267,6 +1267,6 @@ class Correo:
             msgstatus =  'Se ha desconectado del servidor, intente de nuevo mas tarde'
         listac = ''
         for elemento in para:
-            listac = listac + str(elemento)
+            listac = listac + str(elemento) + ' '
         msgstatus = 'Se envio el correo a: ' + listac
         return msgstatus
