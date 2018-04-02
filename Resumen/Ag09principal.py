@@ -271,7 +271,7 @@ class VResumenCur:
         curses.noecho()
         stdscr.timeout(10)
         status, mensaje = NResumen.exporta(varexportar, 'archivo')
-        Correo(para.replace(' ', '').split(','), 'archivo.csv')
+        mensaje = Correo.enviacorreo(para.replace(' ', '').split(','), 'archivo.csv')
         mensaje = str(mensaje)
         padbuscar.addstr(0, 0, mensaje)
         padbuscar.refresh(0, 0, 0, 0, 1, x - 2)
@@ -1195,11 +1195,12 @@ class VResumenTer:
                         enviarmail = raw_input('¿Desea enviar por correo? [s/n] ')
                         if enviarmail is 's':
                             para = raw_input('Escriba la o las direccion de destino separadas por coma: ')
-                            Correo(para.replace(' ','').split(','),rutacsv+'.csv')
+                            mensaje = Correo.enviacorreo(para.replace(' ','').split(','),rutacsv+'.csv')
                         elif enviarmail is 'n':
                             pass
                         else:
                             print 'Opcion invalida, escriba \'s\' o \'n\''
+                print mensaje
 
 
 
@@ -1209,7 +1210,8 @@ class Correo:
 
 
     '''
-    def __init__(self, para, rutaarchivo):
+    @staticmethod
+    def enviacorreo(para, rutaarchivo):
 
         '''
 
@@ -1218,12 +1220,14 @@ class Correo:
 
         '''
 
+
+
         import smtplib
         from email.MIMEMultipart import MIMEMultipart
         from email.mime.text import MIMEText
         from email.mime.base import MIMEBase
         from email.encoders import encode_base64
-
+        msgstatus = ''
         desde = 'correoag09@gmail.com'
         contra = 'ag09uami.'
         mensaje = MIMEMultipart()
@@ -1240,8 +1244,28 @@ class Correo:
         adjunto.add_header('Content-Disposition', 'attachment', filename=rutaarchivo)
         mensaje.attach(cuerpo)
         mensaje.attach(adjunto)
-        servgmail = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        servgmail.ehlo()
-        servgmail.login(desde, contra)
-        servgmail.sendmail(desde, para, mensaje.as_string())
-        servgmail.quit()
+        try:
+            servgmail = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+            servgmail.ehlo()
+            servgmail.login(desde, contra)
+            servgmail.sendmail(desde, para, mensaje.as_string())
+            servgmail.quit()
+        except smtplib.SMTPAuthenticationError:
+            msgstatus = 'Error de autentificacion'
+        except smtplib.SMTPConnectError:
+            msgstatus= 'Error de conexión, intente mas tarde'
+        except smtplib.SMTPDataError:
+            msgstatus =  'Error en los datos'
+        except smtplib.SMTPRecipientsRefused:
+            msgstatus =  'Error con el o los correos de destino, intente mas tarde'
+        except smtplib.SMTPSenderRefused:
+            msgstatus =  'Error con la cuenta desde la cual se intenta enviar este correo'
+        except smtplib.SMTPResponseException:
+            msgstatus =  'El servidor no responde, intente de nuevo mas tarde'
+        except smtplib.SMTPServerDisconnected:
+            msgstatus =  'Se ha desconectado del servidor, intente de nuevo mas tarde'
+        listac = ''
+        for elemento in para:
+            listac = listac + str(elemento)
+        msgstatus = 'Se envio el correo a: ' + listac
+        return msgstatus
