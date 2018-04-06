@@ -34,6 +34,7 @@ parser.add_argument('-t', '--texto', help='Muestra los resultados directamente e
 parser.add_argument('-n', '--nada', help='No imprime nada', action="store_true")
 parser.add_argument('file', nargs='+', help="Nombre de archivo a procesar")
 args = parser.parse_args()
+rutasarchivos = args.file
 
 ''' Método principal, manda a llamar a la ventana principal segun el modo
     Si es modo curses abre la ventana interactiva, si es modo terminal
@@ -904,7 +905,6 @@ class NResumen:
         '''
         r = NResumen.buscapalabra('Mulliken atomic charges:', contenidolog)
         mac = []
-        enc = 'Atom'
         if  r == -1:
             r = NResumen.buscapalabra('Mulliken charges:',contenidolog)
         if not r == -1:
@@ -915,29 +915,7 @@ class NResumen:
             varexportar.append(['Mulliken_Atomic_Charges'])
             for elemento in mac:
                 varexportar.append([' '.join(elemento)])
-            enc = enc + '\tAtomic charges'
-            r = NResumen.buscapalabra('^ Mulliken atomic spin', contenidolog)
-            mas = []
-            if not r == -1:
-                mas = NResumen.obtendatosaptmulliken(r, contenidolog)
-                enc = enc + '\tAtomic spin densities'
-                varexportar.append(['Mulliken_atomic_spin_densities'])
-                for elemento in mas:
-                    varexportar.append([' '.join(elemento)])
-            r = NResumen.buscapalabra('^ Mulliken charges with', contenidolog)
-            mchs = []
-            if not r == -1:
-                mchs = NResumen.obtendatosaptmulliken(r, contenidolog)
-                enc = enc + '\tCharges with hidrogens summed'
-                varexportar.append(['Mulliken_charges_with_hydrogens_summed'])
-                for elemento in mchs:
-                    varexportar.append([' '.join(elemento)])
-
-            resumen.append(enc)
-
-
-
-
+            resumen.append('Atom\tAtomic charges')
         else:
             resumen.append('**** NO HAY DATOS DE MULLIKEN ****')
         j = 0
@@ -947,19 +925,41 @@ class NResumen:
                 aux = aux + '\t'.join(mac[i])
             except:
                 pass
-            try:
-                aux = aux + '\t\t'.join(mas[i])[1:]
-            except:
-                pass
-            if mac[i][0] is 'H':
-                aux = aux + '\t\t' + '0.00000'
-            else:
+            resumen.append(aux)
+        r = NResumen.buscapalabra('^ Mulliken atomic spin', contenidolog)
+        mas = []
+        if not r == -1:
+            mas = NResumen.obtendatosaptmulliken(r, contenidolog)
+            resumen.append('\tAtomic spin densities')
+            varexportar.append(['Mulliken_atomic_spin_densities'])
+            for elemento in mas:
+                varexportar.append([' '.join(elemento)])
+            for i in range(0, len(mac), 1):
+                aux = str(i + 1) + ' '
                 try:
-                    aux = aux + '\t\t'.join(mchs[j])[1:]
-                    j = j + 1
+                    aux = aux + '\t\t'.join(mas[i])[1:]
                 except:
                     pass
-            resumen.append(aux)
+                resumen.append(aux)
+        r = NResumen.buscapalabra('^ Mulliken charges with', contenidolog)
+        mchs = []
+        if not r == -1:
+            mchs = NResumen.obtendatosaptmulliken(r, contenidolog)
+            resumen.append('\tCharges with hydrogens summed')
+            varexportar.append(['Mulliken_charges_with_hydrogens_summed'])
+            for elemento in mchs:
+                varexportar.append([' '.join(elemento)])
+            for i in range(0, len(mac), 1):
+                aux = str(i + 1) + ' '
+                if mac[i][0] is 'H':
+                    aux = aux + '\t\t' + '0.00000'
+                else:
+                    try:
+                        aux = aux + '\t\t'.join(mchs[j])[1:]
+                        j = j + 1
+                    except:
+                        pass
+                resumen.append(aux)
         resumen.append('')
 
     @staticmethod
@@ -1063,7 +1063,7 @@ class NResumen:
                     break
                 linea = contenidolog[i].split()[0]+'\t'+listaatomos[j]+'\t'+contenidolog[i].split()[2]
                 resumen.append(linea)
-                mep.append(contenidolog[i])
+                mep.append(linea)
                 j = j+1
         else:
             resumen.append('**** No se encontraron datos de Electrostatic Properties ****')
