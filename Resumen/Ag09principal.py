@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 try:
-
     import smtplib
     from email.MIMEMultipart import MIMEMultipart
     from email.mime.text import MIMEText
@@ -42,24 +41,30 @@ parser.add_argument('file', nargs='+', help="Nombre de archivo a procesar")
 args = parser.parse_args()
 rutasarchivos = args.file
 
-''' Método principal, manda a llamar a la ventana principal segun el modo
-    Si es modo curses abre la ventana interactiva, si es modo terminal
-    pone todo en la terminal.
-
-    :param stdscr: estandar screen de curses
-
-'''
 
 
 def main(stdscr):
+    ''' Método principal, manda a llamar a la ventana principal segun el modo
+        Si es modo curses abre la ventana interactiva, si es modo terminal
+        pone todo en la terminal.
+
+        :param stdscr: estandar screen de curses
+
+    '''
     vprincipal = VResumenCur(sys.argv)
     vprincipal.muestraventana(stdscr)
+
 
 
 if __name__ == "__main__":
     printenv = Popen(['printenv','TERM'], stdout=PIPE)
     valorterm = printenv.stdout.read().replace('\n','')
     printenv.stdout.close()
+
+    if len(args.file) > 3 or len(args.file) == 2:
+        print "Solo se pueden procesar 1 o 3 archivos"
+        exit(1)
+
     if  'xterm' != valorterm:
         print('Cambie manualmente el valor de la variable de entorno\n'
               'TERM por xterm ejecutando el siguiente comando en la terminal:\n'
@@ -414,10 +419,15 @@ class NResumen:
             resumen.append('')
         else:
             aux = contenidolog[r].split()
-            cargamult.append('Carga: ' + aux[2] + ' Multiplicidad: ' + aux[5])
+
+            carga = aux[2]
+            mult = aux[5]
+
+
             resumen.append('Carga: ' + aux[2] + ' Multiplicidad: ' + aux[5])
             resumen.append(' ')
-            varexportar['cargamult'] = cargamult
+            varexportar['carga'] = ["Carga " + carga]
+            varexportar['mult'] = ["Multiplicidad " + mult]
 
         if 'freq' in comin:
             r = NResumen.buscapalabra('imaginary frequencies \(', contenidolog)
@@ -445,7 +455,7 @@ class NResumen:
                 if tq:
                     resumen.append('Dipolo ' + tq)
                     resumen.append(' ')
-                    varexportar['dipolo']= ['Dipolo: '+ tq]
+                    varexportar['dipolo']= ['Dipolo: '+ " ".join(tq.split('='))]
 
                 NResumen.opcmulliken(resumen, contenidolog, varexportar)
                 NResumen.opcapt(resumen, contenidolog, varexportar)
@@ -520,7 +530,9 @@ class NResumen:
         if modo == 0:
             try:
                 listadatos.append(datosarchivo['ruta'])
-                listadatos.append(datosarchivo['cargamult'])
+                listadatos.append(datosarchivo['carga'])
+                listadatos.append(datosarchivo['mult'])
+
                 listadatos.append(datosarchivo['vhf'])
                 listadatos.append(datosarchivo['dipolo'])
                 listadatos.append(datosarchivo['mullikenac'])
@@ -1171,7 +1183,8 @@ class NResumen:
             nresumen.append(['*************************************************'])
             nresumen.append(ve['ruta'])
             try:
-                nresumen.append(ve['cargamult'])
+                nresumen.append(ve['carga'])
+                nresumen.append(ve['mult'])
                 nresumen.append(ve['vhf'])
                 nresumen.append(ve['dipolo'])
                 nresumen.append(ve['hsd'])
@@ -1404,9 +1417,6 @@ class Correo:
         :param rutaarchivo: ruta donde se puede encontrar el archivo csv a enviar
 
         '''
-
-
-
         msgstatus = ''
         desde = 'correoag09@gmail.com'
         contra = 'ag09uami.'
