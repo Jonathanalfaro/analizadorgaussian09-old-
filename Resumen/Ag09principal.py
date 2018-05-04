@@ -455,6 +455,7 @@ class NResumen:
                 if tq:
                     resumen.append('Dipolo ' + tq)
                     resumen.append(' ')
+                    
                     varexportar['dipolo']= ['Dipolo: '+ " ".join(tq.split('='))]
 
                 NResumen.opcmulliken(resumen, contenidolog, varexportar)
