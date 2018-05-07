@@ -64,7 +64,6 @@ if __name__ == "__main__":
     if len(args.file) > 3 or len(args.file) == 2:
         print "Solo se pueden procesar 1 o 3 archivos"
         exit(1)
-
     if  'xterm' != valorterm:
         print('Cambie manualmente el valor de la variable de entorno\n'
               'TERM por xterm ejecutando el siguiente comando en la terminal:\n'
@@ -123,7 +122,7 @@ class VResumenCur:
             if 'Error' in self.contenidoArchivo[0] or 'no es' in self.contenidoArchivo:
                 self.contenidoPad.append(self.contenidoArchivo[0])
             else:
-                self.varexportar, self.contenidoPad = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen, [self.ruta1])
+                self.varexportar, self.contenidoPad = NResumen.hazresumen(self.contenidoArchivo, self.paramentrosresumen, self.ruta1)
         except:
             self.contenidoPad.append('No es un archivo válido')
         self.tamypad1 = len(self.contenidoPad)
@@ -256,7 +255,7 @@ class VResumenCur:
         ruta = stdscr.getstr(0, 30, 100)
         curses.noecho()
         stdscr.timeout(10)
-        status, mensaje = NResumen.exporta(varexportar, ruta,0)
+        status, mensaje = NResumen.exporta(varexportar, ruta)
         mensaje = str(mensaje)
         padbuscar.addstr(0, 0, mensaje)
         padbuscar.refresh(0, 0, 0, 0, 1, x - 2)
@@ -426,8 +425,9 @@ class NResumen:
 
             resumen.append('Carga: ' + aux[2] + ' Multiplicidad: ' + aux[5])
             resumen.append(' ')
-            varexportar['carga'] = ["Carga " + carga]
-            varexportar['mult'] = ["Multiplicidad " + mult]
+            varexportar['carga'] = carga
+
+            varexportar['mult'] = mult
 
         if 'freq' in comin:
             r = NResumen.buscapalabra('imaginary frequencies \(', contenidolog)
@@ -450,13 +450,13 @@ class NResumen:
                 if hf:
                     resumen.append('Valor HF: ' + hf + ' Hartrees ')
                     resumen.append(' ')
-                    varexportar['vhf']= ['HF: '+  hf]
+                    varexportar['vhf']= hf
                 tq = NResumen.opctq(resumen, contenidolog, natomos)
                 if tq:
                     resumen.append('Dipolo ' + tq)
                     resumen.append(' ')
-                    
-                    varexportar['dipolo']= ['Dipolo: '+ " ".join(tq.split('='))]
+
+                    varexportar['dipolo']= ' '.join(tq.split('='))
 
                 NResumen.opcmulliken(resumen, contenidolog, varexportar)
                 NResumen.opcapt(resumen, contenidolog, varexportar)
@@ -473,13 +473,13 @@ class NResumen:
                 if hf:
                     resumen.append('Valor HF: ' + hf + ' Hartrees ')
                     resumen.append(' ')
-                    varexportar['vhf'] = ['HF= '+ hf+ ' Hartrees']
+                    varexportar['vhf'] = hf
             if elemento == '-tq':
                 tq = NResumen.opctq(resumen, contenidolog, natomos)
                 if tq:
                     resumen.append('Dipolo ' + tq)
                     resumen.append(' ')
-                    varexportar['dipolo'] = ['Dipolo: '+tq]
+                    varexportar['dipolo'] = tq
             if elemento == '-apt':
                 NResumen.opcapt(resumen, contenidolog,varexportar)
             if elemento == '--mulliken' or elemento == '-m':
@@ -497,7 +497,7 @@ class NResumen:
         return varexportar, resumen
 
     @staticmethod
-    def exporta(datosarchivo, ruta, modo):
+    def exporta(datosarchivo, ruta):
         ''' Exporta el resumen en formato csv.
 
         Exporta el resumen(o lo que tenga el parametro resumen) a un archivo .csv
@@ -528,29 +528,25 @@ class NResumen:
 
         '''
         listadatos = []
-        if modo == 0:
-            try:
-                listadatos.append(datosarchivo['ruta'])
-                listadatos.append(datosarchivo['carga'])
-                listadatos.append(datosarchivo['mult'])
-
-                listadatos.append(datosarchivo['vhf'])
-                listadatos.append(datosarchivo['dipolo'])
-                listadatos.append(datosarchivo['mullikenac'])
-                listadatos.append(datosarchivo['mullikenasd'])
-                listadatos.append(datosarchivo['mullikencwhs'])
-                listadatos.append(datosarchivo['aptac'])
-                listadatos.append(datosarchivo['aptcwhs'])
-                listadatos.append(datosarchivo['acmdiag'])
-                listadatos.append(datosarchivo['asddiag'])
-                listadatos.append(datosarchivo['hsd'])
-                listadatos.append(datosarchivo['mep'])
-                listadatos.append(datosarchivo['nao'])
-                listadatos.append(datosarchivo['nics'])
-            except:
-                pass
-        else:
-            listadatos=datosarchivo
+        try:
+            listadatos.append(datosarchivo['ruta'])
+            listadatos.append(['Carga= '+ datosarchivo['carga']])
+            listadatos.append(['Multiplicidad= ' + datosarchivo['mult']])
+            listadatos.append(['HF= '+ datosarchivo['vhf']])
+            listadatos.append(['Dipolo= ' + datosarchivo['dipolo']])
+            listadatos.append(datosarchivo['mullikenac'])
+            listadatos.append(datosarchivo['mullikenasd'])
+            listadatos.append(datosarchivo['mullikencwhs'])
+            listadatos.append(datosarchivo['aptac'])
+            listadatos.append(datosarchivo['aptcwhs'])
+            listadatos.append(datosarchivo['acmdiag'])
+            listadatos.append(datosarchivo['asddiag'])
+            listadatos.append(datosarchivo['hsd'])
+            listadatos.append(datosarchivo['mep'])
+            listadatos.append(datosarchivo['nao'])
+            listadatos.append(datosarchivo['nics'])
+        except:
+            pass
         datos = []
         for lista in listadatos:
             for elemento in lista:
@@ -1178,22 +1174,33 @@ class NResumen:
 
         return listaatomos
     @staticmethod
-    def hazresumentresarch(varexportar, contenidosArchivo):
+    def hazresumentresarch(listavarexportar, contenidosArchivo):
         nresumen = []
+        varexportar = []
+        for i in range(0,len(listavarexportar)):
+            varexportar.append('')
+        for elemento in listavarexportar:
+            if elemento['carga'] == '0':
+                varexportar[1] = elemento
+            elif elemento['carga'] == '1':
+                varexportar[0] = elemento
+            elif elemento['carga'] == '-1':
+                varexportar[2] = elemento
         for ve in varexportar:
             nresumen.append(['*************************************************'])
             nresumen.append(ve['ruta'])
             try:
-                nresumen.append(ve['carga'])
-                nresumen.append(ve['mult'])
-                nresumen.append(ve['vhf'])
-                nresumen.append(ve['dipolo'])
+                nresumen.append([ve['carga']])
+                nresumen.append([ve['mult']])
+                nresumen.append([ve['vhf']])
+                nresumen.append([ve['dipolo']])
                 nresumen.append(ve['hsd'])
                 nresumen.append(ve['mep'])
                 nresumen.append(ve['nics'])
                 nresumen.append(ve['nao'])
             except:
                 pass
+        #latom -> lista de atomos
         latom = NResumen.obtenlistaatomos(contenidosArchivo[0])
         try:
             if 'mullikenac' in varexportar[0].keys():# and (varexportar[0]['mullikenac'] and varexportar[1]['mullikenac'] and varexportar[2]['mullikenac']):
@@ -1329,6 +1336,7 @@ class DResumen:
         return status, mensaje
 
 
+
 class VResumenTer:
     ''' Clase VResumenTer
 
@@ -1385,9 +1393,9 @@ class VResumenTer:
                 mensaje = ' {0} no es un nombre de nomarchivo válido'.format(rutacsv)
             else:
                 if modo == 0:
-                    status, mensaje = NResumen.exporta(ve,rutacsv,modo)
+                    status, mensaje = NResumen.exporta(ve,rutacsv)
                 else:
-                    status, mensaje = NResumen.exporta(nresumen, rutacsv, modo)
+                    status, mensaje = NResumen.exporta(nresumen, rutacsv)
                 if status is 0:
                     enviarmail = ''
                     while enviarmail is not 's' and enviarmail is not 'n':
