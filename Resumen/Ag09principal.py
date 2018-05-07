@@ -21,25 +21,25 @@ except ImportError as ie:
 
 locale.setlocale(locale.LC_ALL, '')
 code = locale.getpreferredencoding()
-parser = argparse.ArgumentParser()
-parser.add_argument('-hf', help='Muestra el valor de la energía de Hirshfeld', action="store_true")
-parser.add_argument('-m', '--mulliken', help='Muestra las cargas atómicas de Mulliken', action="store_true")
-parser.add_argument('-apt', '--APT_atomic', help='Muestra atomic polar tensor charges (APT)', action="store_true")
-parser.add_argument('-tq', '--thermochemical', help='Muestra los datos termoquímicos como dipolo, temperatura, presión, etc', action="store_true")
+parser = argparse.ArgumentParser(prog='Ag09',usage='%(prog)s [opciones] [archivos]', description='Analizador de datos de salida del programa Gaussian09')
+
+parser.add_argument('-hf', '--hirshfeld-energy', help='Muestra el valor de la energía de Hirshfeld', action="store_true")
+parser.add_argument('-m', '--mulliken-population-analisis', help='hace análisis de Mulliken', action="store_true")
+parser.add_argument('-apt', '--APT-population-analisis', help='Muestra atomic polar tensor charges (APT)', action="store_true")
+parser.add_argument('-tc', '--thermochemical', help='Muestra los datos termoquímicos como dipolo, temperatura, presión, etc', action="store_true")
 parser.add_argument('-acm', '--atomic_charges_matrix', help='Muestra la diagonal de la matriz de cargas atómicas',
                     action="store_true")
 parser.add_argument('-asd', '--atomic_spin_densities', help='Muestra la diagonal de matriz de densidades atómicas',
                     action="store_true")
 parser.add_argument('-hsd', '--hirshfeld_spin_densities', help='Muestra las densidades de spin y las cargas de la matriz de Hirshfeld', action="store_true")
-parser.add_argument('-nao', nargs = '?' , action='store', dest='Atomo', default = 'N' ,help='Muestra Natural atomic orbital occupancies')
-parser.add_argument('-mep', help='Muestra molecular electrostatic potential', action = "store_true")
-parser.add_argument('-a', '--ALL', help='Muestra todos los datos', action="store_true")
+parser.add_argument('-nao', '--natural-atomic-orbital',nargs = '?' , action='store', dest='Atomo', default = 'N' ,help='Muestra Natural atomic orbital occupancies')
+parser.add_argument('-mep', '--molecular-electrostatic-potential',help='Muestra molecular electrostatic potential', action = "store_true")
+parser.add_argument('-a', '--ALL', help='Hace un análisis de todos las opciones posibles', action="store_true")
 parser.add_argument('-e', '--exporta', help='Exporta los datos a un archivo separado por comas (CSV)', action="store_true")
 parser.add_argument('-t', '--texto', help='Muestra los resultados directamente en la terminal', action="store_true")
-parser.add_argument('-n', '--nada', help='No imprime nada', action="store_true")
-parser.add_argument('file', nargs='+', help="Nombre de archivo a procesar")
+parser.add_argument('archivos', nargs='+', help="Nombre de archivo a procesar")
 args = parser.parse_args()
-rutasarchivos = args.file
+rutasarchivos = args.archivos
 
 
 
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     valorterm = printenv.stdout.read().replace('\n','')
     printenv.stdout.close()
 
-    if len(args.file) > 3 or len(args.file) == 2:
+    if len(args.archivos) > 3 or len(args.archivos) == 2:
         print "Solo se pueden procesar 1 o 3 archivos"
         exit(1)
     if  'xterm' != valorterm:
@@ -77,7 +77,7 @@ if __name__ == "__main__":
             break
     if modo == 'term':
         #for archivo in args.file:
-        vprincipal = VResumenTer(sys.argv, args.file)
+        vprincipal = VResumenTer(sys.argv, args.archivos)
 
     else:
         curses.wrapper(main)
@@ -451,12 +451,12 @@ class NResumen:
                     resumen.append('Valor HF: ' + hf + ' Hartrees ')
                     resumen.append(' ')
                     varexportar['vhf']= hf
-                tq = NResumen.opctq(resumen, contenidolog, natomos)
-                if tq:
-                    resumen.append('Dipolo ' + tq)
+                tc = NResumen.opctc(resumen, contenidolog, natomos)
+                if tc:
+                    resumen.append('Dipolo ' + tc)
                     resumen.append(' ')
 
-                    varexportar['dipolo']= ' '.join(tq.split('='))
+                    varexportar['dipolo']= ' '.join(tc.split('='))
 
                 NResumen.opcmulliken(resumen, contenidolog, varexportar)
                 NResumen.opcapt(resumen, contenidolog, varexportar)
@@ -468,21 +468,21 @@ class NResumen:
 
                 break
 
-            if elemento == '-hf':
+            if elemento == '-hf' or elemento =='--hirshfeld-energy':
                 hf = NResumen.opchf(contenidolog)
                 if hf:
                     resumen.append('Valor HF: ' + hf + ' Hartrees ')
                     resumen.append(' ')
                     varexportar['vhf'] = hf
-            if elemento == '-tq':
-                tq = NResumen.opctq(resumen, contenidolog, natomos)
-                if tq:
-                    resumen.append('Dipolo ' + tq)
+            if elemento == '-tc' or elemento == '--thermochemical':
+                tc = NResumen.opctc(resumen, contenidolog, natomos)
+                if tc:
+                    resumen.append('Dipolo ' + tc)
                     resumen.append(' ')
-                    varexportar['dipolo'] = tq
-            if elemento == '-apt':
+                    varexportar['dipolo'] = tc
+            if elemento == '-apt' or elemento == 'APT-population-analisis':
                 NResumen.opcapt(resumen, contenidolog,varexportar)
-            if elemento == '--mulliken' or elemento == '-m':
+            if elemento == '--mulliken-population-analisis' or elemento == '-m':
                 NResumen.opcmulliken(resumen, contenidolog, varexportar)
             if elemento == '--atomic_charges_matrix' or elemento == '-acm':
                 NResumen.opcacm(resumen, contenidolog, natomos, varexportar)
@@ -490,9 +490,9 @@ class NResumen:
                 NResumen.opcasd(resumen, contenidolog, natomos, varexportar)
             if elemento == '--hirshfeld spin densities' or elemento == '-hsd':
                 NResumen.opchsd(resumen, contenidolog, natomos, varexportar)
-            if elemento == '-nao':
+            if elemento == '-nao' or elemento == '--natural-atomic-orbital':
                 NResumen.opcnao(resumen, contenidolog,varexportar)
-            if elemento == '-mep':
+            if elemento == '-mep' or elemento == '--molecular-electrostatic-potential':
                 NResumen.opcmep(resumen, contenidolog, varexportar)
         return varexportar, resumen
 
@@ -1036,7 +1036,7 @@ class NResumen:
         resumen.append('')
 
     @staticmethod
-    def opctq(resumen, contenidolog, natomos):
+    def opctc(resumen, contenidolog, natomos):
         cad = ''
         r = NResumen.buscapalabra('Dipole=', contenidolog)
         if not r is -1:
@@ -1179,6 +1179,8 @@ class NResumen:
         varexportar = []
         for i in range(0,len(listavarexportar)):
             varexportar.append('')
+        # Organiza los archivos de entrada segun la carga
+        #si carga = 0 el archivo es N, si carga = 1 el archivo es N-1 y si carga = -1 el archivo es N+1
         for elemento in listavarexportar:
             if elemento['carga'] == '0':
                 varexportar[1] = elemento
@@ -1186,14 +1188,15 @@ class NResumen:
                 varexportar[0] = elemento
             elif elemento['carga'] == '-1':
                 varexportar[2] = elemento
+
         for ve in varexportar:
             nresumen.append(['*************************************************'])
             nresumen.append(ve['ruta'])
             try:
-                nresumen.append([ve['carga']])
-                nresumen.append([ve['mult']])
-                nresumen.append([ve['vhf']])
-                nresumen.append([ve['dipolo']])
+                nresumen.append(['Carga = '+ve['carga']])
+                nresumen.append(['Multiplicidad = '+ ve['mult']])
+                nresumen.append(['Valor HF ='+ ve['vhf']])
+                nresumen.append(['Dipolo= '+ ve['dipolo']])
                 nresumen.append(ve['hsd'])
                 nresumen.append(ve['mep'])
                 nresumen.append(ve['nics'])
@@ -1217,7 +1220,6 @@ class NResumen:
             if 'mullikenasd' in varexportar[0].keys():# and (varexportar[0]['mullikenasd'] and varexportar[1]['mullikenasd'] and varexportar[2]['mullikenasd']):
                 nresumen.append(['mulliken atomic spin densities'])
                 nresumen.append(['Atom\t\tN-1\t\tN\t\tN+1'])
-
                 for i in range(1, len(varexportar[0]['mullikenasd']), 1):
                     nresumen.append(['%s\t\t%s\t%s\t%s' % (
                     latom[i - 1], varexportar[0]['mullikenasd'][i].split()[1], varexportar[1]['mullikenasd'][i].split()[1],
@@ -1368,7 +1370,7 @@ class VResumenTer:
             ve, res= NResumen.hazresumen(self.contenidosArchivo[i], self.paramentrosresumen, rarchivos[i])
             varexportar.append(ve)
             resumenes.append(res)
-        if not args.nada and len(args.file) != 3 or (varexportar[0]['natomos'] != varexportar[1]['natomos'] or varexportar[0]['natomos'] != varexportar[2]['natomos'] ):
+        if len(args.archivos) != 3 or (varexportar[0]['natomos'] != varexportar[1]['natomos'] or varexportar[0]['natomos'] != varexportar[2]['natomos'] ):
             for resumen in resumenes:
                 for elemento in resumen:
                     print elemento
