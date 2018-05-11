@@ -1,8 +1,9 @@
 site_name: Analizador ag09
 pages:
-    - Home: index.md
+    - Descripción: index.md
     - Descarga: descarga.md
     - Ayuda: ayuda.md
-    - Acerca de: about.md
+    - Lista de opciones: listaopc.md
+    - Contacto: contacto.md
 
 theme: sphinx_rtd_theme
