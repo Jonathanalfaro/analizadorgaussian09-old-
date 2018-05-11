@@ -2,6 +2,7 @@ site_name: Analizador ag09
 pages:
     - Home: index.md
     - Descarga: descarga.md
-    - About: ayuda.md
+    - Ayuda: ayuda.md
+    - Acerca de: about.md
 
 theme: readthedocs
