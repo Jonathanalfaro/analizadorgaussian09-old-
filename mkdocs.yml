@@ -1,4 +1,4 @@
 site_name: Analizador ag09
 pages:
     - Home: index.md
-    - Ayuda: ayuda.md
+    - About: ayuda.md
