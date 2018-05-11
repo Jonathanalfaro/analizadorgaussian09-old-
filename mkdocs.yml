@@ -5,4 +5,4 @@ pages:
     - Ayuda: ayuda.md
     - Acerca de: about.md
 
-theme: readthedocs
+theme: sphinx_rtd_theme
