@@ -1,4 +1,7 @@
 site_name: Analizador ag09
 pages:
     - Home: index.md
+    - Descarga: descarga.md
     - About: ayuda.md
+
+theme: readthedocs
