@@ -11,10 +11,10 @@ Para el uso de wget y git asegúrese de tener instalados estos programas en su s
 
 El programa no ha sido probado en entornos Windows pero debería funcionar si cuenta con lo anterior.
 
-Para empezar a usar este programa escoja una de las siguientes opciones:
-
 Descarga  
 =
+Para empezar a usar este programa escoja una de las siguientes opciones:
+
 Descargue el programa con wget  
 ------
   `  wget https://raw.githubusercontent.com/Jonathanalfaro/ag09/master/Resumen/Ag09principal.py `  
@@ -30,3 +30,4 @@ Descargue desde Github
 
 Desde el siguiente link [Ag09](https://github.com/Jonathanalfaro/ag09/archive/master.zip)
 ----
+
