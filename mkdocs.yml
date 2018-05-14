@@ -1,8 +1,8 @@
 site_name: Analizador ag09
 pages:
     - Descripción: index.md
-    - Descarga: descarga.md
-    - Ayuda: ayuda.md
+    - Descarga e instalación: descarga.md
+    - Uso: uso.md
     - Lista de opciones: listaopc.md
     - Contacto: contacto.md
 
