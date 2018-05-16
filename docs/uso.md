@@ -3,36 +3,36 @@
 Despues de descargar y extraer el programa abra una terminal y cambie al directorio donde extrajo el contenido.  
 El uso del programa es de la siguiente forma:
 
-` $ Ag09principal.py [opciones] [archivos] `  
+` $ python Ag09principal.py [opciones] [archivos] `  
 
 ## Opciones  
 
 Se puede acceder a una lista de opciones que soporta el programa de la siguiente manera:  
 
-` $ Ag09principal.py -h `  
+` $ python Ag09principal.py -h `  
 
 ## Procesar todas las opciones
 
 Se pueden procesar todas las opciones al mismo tiempo con la opcion corta -a o la opcion larga --ALL
 
-` $ Ag09principal.py -a salida.log `  
+` $ python Ag09principal.py -a salida.log `  
 
 o  
 
-` $ Ag09principal.py -ALL salida.log `  
+` $ python Ag09principal.py -ALL salida.log `  
 
 
 ## Opciones -m, -apt, -hf, -tc, hsd, acm, mep
 
 Estas opciones no requieren un parámetro adicional y pueden ser usadas de la siguiente manera:
 
-* ` $ Ag09principal.py -m salida.log `
-* ` $ Ag09principal.py -apt salida.log `
-* ` $ Ag09principal.py -hf salida.log `
-* ` $ Ag09principal.py -tc salida.log `
-* ` $ Ag09principal.py -hsd salida.log `
-* ` $ Ag09principal.py -acm salida.log `
-* ` $ Ag09principal.py -mep salida.log `
+* ` $ python Ag09principal.py -m salida.log `
+* ` $ python Ag09principal.py -apt salida.log `
+* ` $ python Ag09principal.py -hf salida.log `
+* ` $ python Ag09principal.py -tc salida.log `
+* ` $ python Ag09principal.py -hsd salida.log `
+* ` $ python Ag09principal.py -acm salida.log `
+* ` $ python Ag09principal.py -mep salida.log `
 
 Tambien pueden combinarce entre ellas
 
@@ -41,7 +41,7 @@ Tambien pueden combinarce entre ellas
 La opción NAO admite el paso de un parámetro adicional, este parametro es el símbolo químico del átomo al cual se le va a hacer
 el análisis, ejemplo:  
 
-` $ Ag09principal.py -nao H salida.log `  
+` $ python Ag09principal.py -nao H salida.log `  
 
 El comando anterior procesara el archivo ` salida.log ` filtrando el resultado para el átomo de hidrógeno (H).
 
@@ -50,7 +50,7 @@ El comando anterior procesara el archivo ` salida.log ` filtrando el resultado p
 Si se especifica la opcion ` -e ` se guardarán los datos de las opciones especificadas a un archivo separado por comas CSV
 Por ejemplo con el siguiente comando:  
 
-` $ Ag09principal.py -a -e salida.log `  
+` $ python Ag09principal.py -a -e salida.log `  
 
 Se pedirá escriba la ruta o el nombre de un archivo y se guardarán al archivo CSV todas las opciones que se hayan encontrado en el archivo  `salida.log`
 
@@ -69,13 +69,13 @@ Si no se especifica esta opción los resultados se mostrarán en un modo interac
 
 Ejemplo con la opcion -t
 
-` $ Ag09principal.py -t -a salida.log `  
+` $ python Ag09principal.py -t -a salida.log `  
 
   ![Imagen6](Img/i6.jpg)  
 
 Ejemplo sin la opcion -t  
 
-` $ Ag09principal.py -t -a salida.log `  
+` $ python Ag09principal.py -t -a salida.log `  
 
   ![Imagen7](Img/i7.jpg)
 
