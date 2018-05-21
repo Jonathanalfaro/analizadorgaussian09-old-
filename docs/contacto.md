@@ -1,13 +1,13 @@
-## Errores y problemas
+## Contacto
 
 Reporte los errores y problemas en github o al correo del autor
 
-## Datos del autor:
+### Datos del autor:
 
 Jonathan I. Alfaro Pérez
 
-Universidad Autónoma Metropolitana Iztapalapa  
-Iztapalapa Ciudad de México
+Universidad Autónoma Metropolitana Iztapalapa    
+Iztapalapa Ciudad de México  
 
 Contacto:
 
