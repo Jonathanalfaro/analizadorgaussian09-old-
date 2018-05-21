@@ -5,5 +5,5 @@ pages:
     - Uso: uso.md
     - Lista de opciones: listaopc.md
     - Contacto: contacto.md
-
+    - Ayuda: ayuda.md
 theme: sphinx_rtd_theme
