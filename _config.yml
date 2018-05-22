@@ -1,4 +1,4 @@
 theme: jekyll-theme-tactile
 title: Analizador de datos de salida de Gaussian09
 download:
-  source:           "https://github.com/Jonathanalfaro/ag09.git"
+  source:           "https://github.com/Jonathanalfaro/ag09/archive/master.zip"
