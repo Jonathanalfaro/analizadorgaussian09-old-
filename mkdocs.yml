@@ -6,4 +6,4 @@ pages:
     - Lista de opciones: listaopc.md
     - Contacto: contacto.md
     - Ayuda: ayuda.md
-theme: bootstrap386
+theme: sphinx_rtd_theme
