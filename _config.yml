@@ -1,4 +1,4 @@
-theme: bootstrap386
+theme: sphinx_rtd_theme
 title: Analizador de datos de salida de Gaussian09
 download:
   source:           "https://github.com/Jonathanalfaro/ag09/archive/master.zip"
