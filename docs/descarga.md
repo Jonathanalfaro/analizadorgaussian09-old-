@@ -4,17 +4,12 @@
 Ag09 fue programado en Python 2.7, para asegurar su funcionamiento asegúrese de que está usando esta versión o
 instale miniconda para la versión de Python especificada.  
 
-* [Descarga miniconda](https://conda.io/miniconda.html)
+El programa no ha sido probado en el sistema operativo Windows pero no debería tener problema en usarlo si cuenta con la versión 2.7 de Python.
 
-Para el uso de wget y git asegúrese de tener instalados estos programas en su sistema  
+## Descarga  
 
+### Desde el siguiente link  
 
-El programa no ha sido probado en entornos Windows pero debería funcionar si cuenta con lo anterior.
+[Ag09](https://github.com/Jonathanalfaro/ag09/archive/master.zip)
 
-Descarga  
-=
-
-
-Desde el siguiente link [Ag09](https://github.com/Jonathanalfaro/ag09/archive/master.zip)
-----
 
