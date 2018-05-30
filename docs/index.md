@@ -8,7 +8,8 @@ Gaussian es un programa que proporciona capacidades avanzadas para el modelado d
 
 ## ¿Qué es?
 
-Programa hecho en Python para el análisis de datos de salida del programa Gaussian09
+Es un programa que fue parte de mi proyecto de servicio social, realizado en colaboración entre el laboratorio de supercómputo y el área de fisicoquímica teórica de la Universidad Autónoma Metropolitana Unidad Iztapalapa.
+Fue programado en Python y sirve para  el análisis de datos de salida del programa Gaussian09
 
 
 ## ¿Qué hace?
