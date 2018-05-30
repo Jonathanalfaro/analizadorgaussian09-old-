@@ -17,7 +17,7 @@ Para empezar a usar este programa escoja una de las siguientes opciones:
 
 Descargue el programa con wget  
 
-  `  <script src="https://asciinema.org/a/kg8isDQwFnGRzZyuaN6vXQsGH.js" id="asciicast-kg8isDQwFnGRzZyuaN6vXQsGH" async></script>  
+<script src="https://asciinema.org/a/kg8isDQwFnGRzZyuaN6vXQsGH.js" id="asciicast-kg8isDQwFnGRzZyuaN6vXQsGH" async></script>  
 
 Clone el repositorio de Github  
 ----
