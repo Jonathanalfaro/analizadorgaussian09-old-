@@ -39,3 +39,6 @@ Los datos que se pueden extraer son:
 * Densidades de spin de Hirshfeld
 * Ocupaciones orbitales atómicas naturales (NAO)
 * Potencial electrostático Molecular (MEP)
+
+
+<a href="https://asciinema.org/a/14"><img src="https://asciinema.org/a/14.png" width="836"/></a>
