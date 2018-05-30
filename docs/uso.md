@@ -73,8 +73,7 @@ Ejemplo con la opcion -t
 
 Ejemplo sin la opcion -t  
 
-<script src="https://asciinema.org/a/oksIkG1WL6yRrbRbQviiOCI6x.js" id="asciicast-oksIkG1WL6yRrbRbQviiOCI6x" async></script>
-
+<script src="https://asciinema.org/a/MLW34JFR7aP9U9brs3fdiv2CR.js" id="asciicast-MLW34JFR7aP9U9brs3fdiv2CR" async></script>
 
 
 
