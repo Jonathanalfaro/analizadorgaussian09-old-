@@ -16,8 +16,8 @@ Descarga
 Para empezar a usar este programa escoja una de las siguientes opciones:
 
 Descargue el programa con wget  
-------
-  `  wget https://raw.githubusercontent.com/Jonathanalfaro/ag09/master/Resumen/Ag09principal.py `  
+
+  `  <script src="https://asciinema.org/a/kg8isDQwFnGRzZyuaN6vXQsGH.js" id="asciicast-kg8isDQwFnGRzZyuaN6vXQsGH" async></script>  
 
 Clone el repositorio de Github  
 ----
