@@ -75,10 +75,7 @@ Ejemplo con la opcion -t
 
 Ejemplo sin la opcion -t  
 
-<script src="https://asciinema.org/a/oksIkG1WL6yRrbRbQviiOCI6x.js" id="asciicast-oksIkG1WL6yRrbRbQviiOCI6x" async></script> 
-
-  ![Imagen7](Img/i7.jpg)
-
+<script src="https://asciinema.org/a/oksIkG1WL6yRrbRbQviiOCI6x.js" id="asciicast-oksIkG1WL6yRrbRbQviiOCI6x" async></script>
 
 
 
