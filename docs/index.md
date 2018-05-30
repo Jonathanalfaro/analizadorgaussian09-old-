@@ -13,7 +13,7 @@ Programa hecho en Python para el análisis de datos de salida del programa Gauss
 
 ### ¿Qué hace?
 
-Es capaz de extraer información útil para el usario, filtrando el contenido de la bitacora de Gaussian09.
+Es capaz de extraer información útil para el usario, filtrando el contenido de los archivos de salida de Gaussian09.
 También puede guardar los resultados del análisis en un archivo CSV (comma separated values) para facilitar 
 la manipulación de los datos en programas como EXCEL, Libreoffice Calc, etcetera.  
 
