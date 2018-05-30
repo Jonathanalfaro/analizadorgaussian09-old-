@@ -75,7 +75,7 @@ Ejemplo con la opcion -t
 
 Ejemplo sin la opcion -t  
 
-` $ python Ag09principal.py -t -a salida.log `  
+<script src="https://asciinema.org/a/oksIkG1WL6yRrbRbQviiOCI6x.js" id="asciicast-oksIkG1WL6yRrbRbQviiOCI6x" async></script> 
 
   ![Imagen7](Img/i7.jpg)
 
