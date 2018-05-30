@@ -1,17 +1,17 @@
 
-## Gaussian09
+# Gaussian09
 
 Gaussian es un programa que proporciona capacidades avanzadas para el modelado de estructuras electrónicas.
 
 
-## Ag09 (Analizador de datos de salida para Gaussian09)
+# Ag09 (Analizador de datos de salida para Gaussian09)
 
-### ¿Qué es?
+## ¿Qué es?
 
 Programa hecho en Python para el análisis de datos de salida del programa Gaussian09
 
 
-### ¿Qué hace?
+## ¿Qué hace?
 
 Es capaz de extraer información útil para el usario, filtrando el contenido de los archivos de salida de Gaussian09.
 También puede guardar los resultados del análisis en un archivo CSV (comma separated values) para facilitar 
@@ -40,3 +40,45 @@ Los datos que se pueden extraer son:
 * Ocupaciones orbitales atómicas naturales (NAO)
 * Potencial electrostático Molecular (MEP)
 
+# Lista de opciones
+
+#### Opción -hf (Hirshfeld)
+
+Muestra el valor de la energía de Hirshfeld con unidades Hartrees
+
+#### Opción -m (Mulliken)
+
+Muestra el análisis poblacional de Mulliken, es decir, Mulliken atomic charges, mulliken atomic charges with hydrogens summed
+y Mulliken atomic spin densities
+
+#### Opción -apt (Atomic polar tensor)
+
+Muestra el analisis poblacional APT, es decir, APT atomic charges y APT atomic charges with hydrogens summed
+
+#### Opción -tc  (thermochemical)
+
+Muestra los datos termoquímicos como dipolo, temperatura, presión
+
+#### Opción -acm (Atomic charges matrix)
+
+Muestra la diagonal de la matriz de cargas atómicas
+
+#### Opción -asd (Atomic spin densities matrix)
+
+Muestra la diagonal de la matriz de densidades atómicas
+
+#### Opción -hsd (Hirshfeld spin densities)
+
+Muestra las densidades de spin y las cargas de la matriz de Hirshfeld
+
+#### Opción -nao [Átomo] (Natural atomic orbital occupancies)
+
+Muestra Natural atomic orbital occupancies, si no se escribe el parámetro `[Átomo]` se toma por defecto el valor N (Nitrógeno)
+
+#### Opción -mep (Molecular electrostatic potential)
+
+Muestra molecular electrostatic potential
+
+#### Opción -a (ALL)
+
+Muestra todos los datos posibles utilizando todas las opciones anteriores
