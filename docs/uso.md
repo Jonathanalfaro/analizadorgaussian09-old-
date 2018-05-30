@@ -9,32 +9,21 @@ El uso del programa es de la siguiente forma:
 
 Se puede acceder a una lista de opciones que soporta el programa de la siguiente manera:  
 
-` $ python Ag09principal.py -h `  
+<script src="https://asciinema.org/a/1xLsTi5X4O7pHukn4TqQYAZJ8.js" id="asciicast-1xLsTi5X4O7pHukn4TqQYAZJ8" async></script>
 
 ## Procesar todas las opciones
 
 Se pueden procesar todas las opciones al mismo tiempo con la opcion corta -a o la opcion larga --ALL
 
-` $ python Ag09principal.py -a salida.log `  
-
-o  
-
-` $ python Ag09principal.py -ALL salida.log `  
-
+<script src="https://asciinema.org/a/XqYBLYVsG2RDCgik97aTt4cQp.js" id="asciicast-XqYBLYVsG2RDCgik97aTt4cQp" async></script>
 
 ## Opciones -m, -apt, -hf, -tc, hsd, acm, mep
 
-Estas opciones no requieren un parámetro adicional y pueden ser usadas de la siguiente manera:
+Estas opciones no requieren un parámetro adicional y pueden ser combinadas entre ellas
 
-* ` $ python Ag09principal.py -m salida.log `
-* ` $ python Ag09principal.py -apt salida.log `
-* ` $ python Ag09principal.py -hf salida.log `
-* ` $ python Ag09principal.py -tc salida.log `
-* ` $ python Ag09principal.py -hsd salida.log `
-* ` $ python Ag09principal.py -acm salida.log `
-* ` $ python Ag09principal.py -mep salida.log `
 
-Tambien pueden combinarce entre ellas
+<script src="https://asciinema.org/a/IyELYw8hcxTMW8L9BnqWuBjA7.js" id="asciicast-IyELYw8hcxTMW8L9BnqWuBjA7" async></script>
+
 
 ## Opción NAO
 
@@ -47,14 +36,9 @@ El comando anterior procesara el archivo ` salida.log ` filtrando el resultado p
 
 ## Opción exportar -e
 
-Si se especifica la opcion ` -e ` se guardarán los datos de las opciones especificadas a un archivo separado por comas CSV
-Por ejemplo con el siguiente comando:  
+Si se especifica la opcion ` -e ` se guardarán los datos de las opciones especificadas a un archivo separado por comas CSV, y se pedirá que escriba la ruta o el nombre de un archivo donde se guardarán los datos obtenidos segun las opciones que se hayan especificado.
 
-` $ python Ag09principal.py -a -e salida.log `  
-
-Se pedirá escriba la ruta o el nombre de un archivo y se guardarán al archivo CSV todas las opciones que se hayan encontrado en el archivo  `salida.log`
-
-  ![Imagen 5](Img/i5.jpg)  
+<script src="https://asciinema.org/a/928rzEI7VoqBDj0JEgxAt1tQP.js" id="asciicast-928rzEI7VoqBDj0JEgxAt1tQP" async></script>
 
 ##### Nota  
 
