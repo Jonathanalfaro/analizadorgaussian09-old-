@@ -8,8 +8,7 @@ El programa no ha sido probado en el sistema operativo Windows pero no debería 
 
 ## Descarga  
 
-### Desde el siguiente link  
 
-[Ag09](https://github.com/Jonathanalfaro/ag09/archive/master.zip)
+[ag09](https://github.com/Jonathanalfaro/ag09/archive/master.zip)
 
 
